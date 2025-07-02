@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "719023723584",
+    "firebase_url": "https://spider-doctor-default-rtdb.firebaseio.com",
+    "project_id": "spider-doctor",
+    "storage_bucket": "spider-doctor.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719023723584:android:85cdd305ed57d734befba5",
+        "android_client_info": {
+          "package_name": "com.example.spider_doctor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAIq2MJAPMmbl71lWAs50wvSQfZgk4Yms"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
