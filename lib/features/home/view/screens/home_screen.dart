@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/device_bloc.dart';
-import '../bloc/device_event.dart';
-import '../bloc/device_state.dart';
+import '../../bloc/device_bloc.dart';
+import '../../bloc/device_event.dart';
+import '../../bloc/device_state.dart';
 import '../widgets/device_card.dart';
 import 'add_device_screen.dart';
-import '../../auth/services/auth_service.dart';
+import '../../../auth/services/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,17 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Medical Device Monitor'),
+        title: const Text('Real Time Monitoring'),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              context.read<DeviceBloc>().add(LoadDevices());
-            },
-            tooltip: 'Refresh',
-          ),
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'logout') {
@@ -190,25 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
             ),
             const SizedBox(height: 32),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const AddDeviceScreen(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[600],
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-              ),
-              icon: const Icon(Icons.add),
-              label: const Text('Add Your First Device'),
-            ),
+
             const SizedBox(height: 16),
             // Demo button for testing
             OutlinedButton(

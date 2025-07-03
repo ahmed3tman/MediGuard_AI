@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/device_bloc.dart';
-import '../bloc/device_event.dart';
-import '../bloc/device_state.dart';
+import '../../bloc/device_bloc.dart';
+import '../../bloc/device_event.dart';
+import '../../bloc/device_state.dart';
 
 class AddDeviceScreen extends StatefulWidget {
   const AddDeviceScreen({super.key});

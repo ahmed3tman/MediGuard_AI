@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../model/data_model.dart';
-import '../bloc/device_bloc.dart';
-import '../bloc/device_event.dart';
+import '../../model/data_model.dart';
+import '../../bloc/device_bloc.dart';
+import '../../bloc/device_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DeviceCard extends StatelessWidget {
@@ -153,7 +153,7 @@ class DeviceCard extends StatelessWidget {
                     ),
                   ],
                 ),
-
+                SizedBox(height: 14),
                 // Status and last updated information
                 if (device.hasValidReadings && device.lastUpdated != null)
                   Text(
