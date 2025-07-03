@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widget/custom_text_field.dart';
 import '../widget/custom_auth_button.dart';
@@ -20,7 +21,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isLoading = false;
   bool acceptTerms = false;
 
+  Future signup() async {
+    if (passwordConfirmed()) {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+    }
+  }
+
+  bool passwordConfirmed() {
+    if (passwordController.text.trim() ==
+        confirmPasswordController.text.trim()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -207,8 +232,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   CustomAuthButton(
                     text: 'Create Account',
                     isLoading: isLoading,
-                    onPressed: () {
-                      //    : Implement signup logic
+                    onPressed: () async {
+                      if (!acceptTerms) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'You must accept the terms to continue',
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
+                      setState(() {
+                        isLoading = true;
+                      });
+
+                      try {
+                        await signup(); // تم تصحيح الاستدعاء هنا
+                        // Navigate or show success
+                      } catch (e) {
+                        // Show error
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Signup failed: ${e.toString()}'),
+                          ),
+                        );
+                      } finally {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
                     },
                   ),
 

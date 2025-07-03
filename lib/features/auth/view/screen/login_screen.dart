@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:spider_doctor/core/share/theme/my_colors.dart';
 import 'package:spider_doctor/core/share/theme/my_images.dart';
@@ -18,7 +19,20 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
 
+  Future login() async {
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
+  }
+
   @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +141,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, 'home');
                         //   : Implement forgot password
                       },
                       child: Text(
@@ -146,8 +159,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   CustomAuthButton(
                     text: 'Sign In',
                     isLoading: _isLoading,
-                    onPressed: () {
-                      //   : Implement login logic
+                    onPressed: () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+
+                      try {
+                        await login();
+                        // مش محتاج Navigator هنا، Auth widget هيعمل navigation تلقائياً
+                      } catch (e) {
+                        // هنا تقدر تظهر SnackBar أو Alert بالخطأ
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Login failed: ${e.toString()}'),
+                          ),
+                        );
+                      } finally {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      }
                     },
                   ),
 
