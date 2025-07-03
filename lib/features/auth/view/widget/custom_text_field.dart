@@ -38,13 +38,13 @@ class CustomTextField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 16,
+          style: TextStyle(
+            fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF2C3E50),
+            color: MyColors().secondary,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 5),
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
@@ -56,7 +56,7 @@ class CustomTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(color: Colors.grey[400]),
-            prefixIcon: Icon(prefixIcon, color:MyColors().primary),
+            prefixIcon: Icon(prefixIcon, color: MyColors().primary),
             suffixIcon: isPassword
                 ? IconButton(
                     icon: Icon(
@@ -80,7 +80,7 @@ class CustomTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: MyColors().primary , width: 2),
+              borderSide: BorderSide(color: MyColors().primary, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

@@ -20,7 +20,7 @@ class CustomAuthButton extends StatelessWidget {
     this.foregroundColor,
     this.elevation,
     this.height = 56,
-    this.borderRadius = 16,
+    this.borderRadius = 12,
   });
 
   @override
@@ -35,7 +35,7 @@ class CustomAuthButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: bgColor,
           foregroundColor: fgColor,
-          elevation: elevation ?? 8,
+          elevation: elevation ?? 4,
           shadowColor: bgColor.withOpacity(0.4),
           disabledBackgroundColor: bgColor.withOpacity(0.6),
           shape: RoundedRectangleBorder(

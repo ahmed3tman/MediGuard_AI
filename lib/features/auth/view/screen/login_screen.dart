@@ -46,6 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Logo and Title Section
               Column(
                 children: [
+                  SizedBox(height: 10),
                   Container(
                     width: 100,
                     height: 100,
@@ -65,24 +66,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 10),
                   const Text(
                     'Spider Doctor',
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF2C3E50),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 1),
                   Text(
                     'For Real-Time Patient Monitoring',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 15, color: Colors.grey[600]),
                   ),
                 ],
               ),
 
-              const SizedBox(height: 60),
+              const SizedBox(height: 30),
 
               // Login Form
               Column(
@@ -134,8 +135,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 16),
-
                   // Forgot Password
                   Align(
                     alignment: Alignment.centerRight,
@@ -153,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
 
                   // Login Button
                   CustomAuthButton(
@@ -182,7 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 30),
 
                   // Divider
                   Row(
@@ -202,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
                   // Social Login Buttons
                   Row(
@@ -229,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 15),
 
                   // Sign Up Link
                   Row(

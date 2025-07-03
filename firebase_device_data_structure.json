@@ -1,0 +1,96 @@
+{
+  "_comment": "Firebase Realtime Database Structure for Medical Device Readings",
+  "device_readings": {
+    "DEVICE001": {
+      "current": {
+        "temperature": 36.8,
+        "ecg": 75,
+        "spo2": 98,
+        "bloodPressure": {
+          "systolic": 120,
+          "diastolic": 80
+        },
+        "timestamp": 1641072000000,
+        "deviceStatus": "connected"
+      },
+      "history": {
+        "2024-01-01T10:00:00Z": {
+          "temperature": 36.7,
+          "ecg": 72,
+          "spo2": 97,
+          "bloodPressure": {
+            "systolic": 118,
+            "diastolic": 78
+          }
+        }
+      }
+    },
+    "DEVICE002": {
+      "current": {
+        "temperature": 37.2,
+        "ecg": 88,
+        "spo2": 96,
+        "bloodPressure": {
+          "systolic": 130,
+          "diastolic": 85
+        },
+        "timestamp": 1641072000000,
+        "deviceStatus": "connected"
+      }
+    }
+  },
+  "users": {
+    "doctor_user_id": {
+      "devices": {
+        "DEVICE001": {
+          "deviceId": "DEVICE001",
+          "name": "Patient Room 101 Monitor",
+          "readings": {
+            "temperature": 36.8,
+            "ecg": 75,
+            "spo2": 98,
+            "bloodPressure": {
+              "systolic": 120,
+              "diastolic": 80
+            }
+          },
+          "lastUpdated": 1641072000000
+        },
+        "DEVICE002": {
+          "deviceId": "DEVICE002",
+          "name": "ICU Bed 5 Monitor",
+          "readings": {
+            "temperature": 37.2,
+            "ecg": 88,
+            "spo2": 96,
+            "bloodPressure": {
+              "systolic": 130,
+              "diastolic": 85
+            }
+          },
+          "lastUpdated": 1641072000000
+        }
+      }
+    }
+  },
+  "_instructions": {
+    "how_devices_send_data": [
+      "1. Medical devices send readings to /device_readings/{deviceId}/current",
+      "2. The app listens to both user devices and external readings",
+      "3. When external readings are received, they update user device data",
+      "4. If no data received for 5+ minutes, show 'Not Connected'",
+      "5. Device status is determined by timestamp comparison"
+    ],
+    "data_flow": [
+      "Device → Firebase /device_readings/{deviceId}/current",
+      "App listens to external readings stream",
+      "App updates /users/{userId}/devices/{deviceId} with new readings",
+      "UI shows real-time data or 'Not Connected' status"
+    ],
+    "connection_status_logic": [
+      "Connected: Data received within last 5 minutes",
+      "Connection Issues: Data 5-10 minutes old",
+      "Not Connected: No data for 10+ minutes or never received"
+    ]
+  }
+}

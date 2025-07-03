@@ -1,0 +1,61 @@
+// Sample data structure for Firebase Realtime Database
+// This shows how the data will be organized in Firebase
+
+{
+  "users": {
+    "user123": {
+      "devices": {
+        "DEVICE001": {
+          "deviceId": "DEVICE001",
+          "name": "Patient Monitor A",
+          "readings": {
+            "temperature": 37.2,
+            "ecg": 72,
+            "spo2": 98,
+            "bloodPressure": {
+              "systolic": 120,
+              "diastolic": 80
+            }
+          },
+          "lastUpdated": 1641234567890
+        },
+        "DEVICE002": {
+          "deviceId": "DEVICE002",
+          "name": "ICU Monitor B",
+          "readings": {
+            "temperature": 36.8,
+            "ecg": 68,
+            "spo2": 96,
+            "bloodPressure": {
+              "systolic": 110,
+              "diastolic": 70
+            }
+          },
+          "lastUpdated": 1641234567890
+        }
+      }
+    },
+    "user456": {
+      "devices": {
+        "DEVICE003": {
+          "deviceId": "DEVICE003",
+          "name": "Emergency Room Monitor",
+          "readings": {
+            "temperature": 38.1,
+            "ecg": 85,
+            "spo2": 94,
+            "bloodPressure": {
+              "systolic": 140,
+              "diastolic": 90
+            }
+          },
+          "lastUpdated": 1641234567890
+        }
+      }
+    }
+  }
+}
+
+// Each doctor (user) can only see their own devices
+// Real-time updates happen when medical devices send new readings
+// The app will show alerts for abnormal readings

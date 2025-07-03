@@ -1,0 +1,15 @@
+{
+  "rules": {
+    "users": {
+      "$userId": {
+        ".read": "auth != null && auth.uid == $userId",
+        ".write": "auth != null && auth.uid == $userId",
+        "devices": {
+          "$deviceId": {
+            ".validate": "newData.hasChildren(['deviceId', 'name', 'readings'])"
+          }
+        }
+      }
+    }
+  }
+}

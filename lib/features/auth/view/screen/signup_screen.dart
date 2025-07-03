@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widget/custom_text_field.dart';
 import '../widget/custom_auth_button.dart';
-import '../widget/custom_social_button.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -57,21 +56,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              SizedBox(height: 10),
               // Header Section
               Column(
                 children: [
                   const Text(
                     'Create Account',
                     style: TextStyle(
-                      fontSize: 28,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF2C3E50),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 1),
                   Text(
                     'Join Spider Doctor for better healthcare',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                    style: TextStyle(fontSize: 15, color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -180,7 +180,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
                   // Terms and Conditions Checkbox
                   Row(
@@ -226,7 +226,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
 
                   // Sign Up Button
                   CustomAuthButton(
@@ -266,54 +266,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 20),
 
                   // Divider
-                  Row(
-                    children: [
-                      Expanded(child: Divider(color: Colors.grey[300])),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          'Or sign up with',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                      Expanded(child: Divider(color: Colors.grey[300])),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Social Sign Up Buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomSocialButton(
-                          icon: Icons.g_mobiledata,
-                          label: 'Google',
-                          onPressed: () {
-                            //    : Implement Google sign up
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: CustomSocialButton(
-                          icon: Icons.apple,
-                          label: 'Apple',
-                          onPressed: () {
-                            //    : Implement Apple sign up
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 32),
 
                   // Sign In Link
                   Row(
