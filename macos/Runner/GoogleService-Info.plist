@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBHhcYUN5DchWVIHzR_aPWrYAWGU2HKA9k</string>
+	<key>GCM_SENDER_ID</key>
+	<string>719023723584</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.spiderDoctor</string>
+	<key>PROJECT_ID</key>
+	<string>spider-doctor</string>
+	<key>STORAGE_BUCKET</key>
+	<string>spider-doctor.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:719023723584:ios:f2087ea1951f70a8befba5</string>
+	<key>DATABASE_URL</key>
+	<string>https://spider-doctor-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
