@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/home/bloc/device_bloc.dart';
 import 'features/auth/services/auth_service.dart';
-import 'features/auth/screens/login_screen.dart';
+import 'features/auth/view/screens/login_screen.dart';
 import 'features/home/view/screens/home_screen.dart';
 
 class MyApp extends StatelessWidget {

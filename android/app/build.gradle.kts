@@ -1,46 +1,73 @@
-
- plugins {
+plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("com.google.gms.google-services")
     id("dev.flutter.flutter-gradle-plugin")
-    id("com.google.gms.google-services") // <-- Firebase plugin
 }
 
 android {
     namespace = "com.example.spider_doctor"
-    compileSdk = 34 // أو استخدم flutter.compileSdkVersion لو موجود عندك
+    compileSdk = 35  // Updated for Flutter 3.22+ compatibility
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = "17"
+        languageVersion = "2.0"  // For Kotlin 2.1.0 compatibility
     }
 
     defaultConfig {
         applicationId = "com.example.spider_doctor"
-        minSdk = 23 // ⬅️ Firebase requires at least 23
-        targetSdk = 34
+        minSdk = 23
+        targetSdk = 35  // Updated target SDK
         versionCode = 1
         versionName = "1.0"
+        
+        // Ensure proper multidex support for larger applications
+        multiDexEnabled = true
     }
 
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            isDebuggable = true
+            isMinifyEnabled = false
+        }
+    }
+
+    // Packaging options to resolve conflicts
+    packaging {
+        resources {
+            excludes += listOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "/META-INF/versions/9/previous-compilation-data.bin"
+            )
         }
     }
 }
 
 dependencies {
-    // Firebase BoM (Bill of Materials)
-    implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
-
-    // Firebase products you want to use
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-database")
+    // Firebase BOM for version management
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    
+    // Firebase dependencies with KTX extensions
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
+    
+    // AndroidX dependencies
+    implementation("androidx.multidex:multidex:2.0.1")
 }
 
 flutter {
