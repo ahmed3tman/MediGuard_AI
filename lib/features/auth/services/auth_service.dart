@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final DatabaseReference _database = FirebaseDatabase.instance.ref();
 
   // Get current user
   static User? get currentUser => _auth.currentUser;
@@ -11,7 +13,19 @@ class AuthService {
 
   // Sign in anonymously for demo purposes
   static Future<UserCredential> signInAnonymously() async {
-    return await _auth.signInAnonymously();
+    final credential = await _auth.signInAnonymously();
+
+    // Create a basic profile for anonymous users
+    if (credential.user != null) {
+      await _createUserProfile(
+        credential.user!.uid,
+        'Guest User',
+        'guest@demo.com',
+        isAnonymous: true,
+      );
+    }
+
+    return credential;
   }
 
   // Sign in with email and password
@@ -19,21 +33,88 @@ class AuthService {
     String email,
     String password,
   ) async {
-    return await _auth.signInWithEmailAndPassword(
+    final credential = await _auth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
+
+    // Update last login time
+    if (credential.user != null) {
+      await _database.child('users').child(credential.user!.uid).update({
+        'lastLoginAt': ServerValue.timestamp,
+      });
+    }
+
+    return credential;
   }
 
-  // Create account with email and password
+  // Create account with email, password, and name
   static Future<UserCredential> createUserWithEmailAndPassword(
     String email,
     String password,
+    String name,
   ) async {
-    return await _auth.createUserWithEmailAndPassword(
+    final credential = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
+
+    // Create user profile in database
+    if (credential.user != null) {
+      await _createUserProfile(credential.user!.uid, name, email);
+
+      // Update display name in Firebase Auth
+      await credential.user!.updateDisplayName(name);
+    }
+
+    return credential;
+  }
+
+  // Create user profile in database
+  static Future<void> _createUserProfile(
+    String uid,
+    String name,
+    String email, {
+    bool isAnonymous = false,
+  }) async {
+    await _database.child('users').child(uid).set({
+      'name': name,
+      'email': email,
+      'isAnonymous': isAnonymous,
+      'createdAt': ServerValue.timestamp,
+      'lastLoginAt': ServerValue.timestamp,
+    });
+  }
+
+  // Get user profile
+  static Future<Map<String, dynamic>?> getUserProfile(String uid) async {
+    final snapshot = await _database.child('users').child(uid).get();
+    if (snapshot.exists) {
+      return Map<String, dynamic>.from(snapshot.value as Map);
+    }
+    return null;
+  }
+
+  // Update user profile
+  static Future<void> updateUserProfile(
+    String uid,
+    Map<String, dynamic> data,
+  ) async {
+    await _database.child('users').child(uid).update(data);
+  }
+
+  // Get user devices count
+  static Future<int> getUserDevicesCount(String uid) async {
+    final snapshot = await _database
+        .child('users')
+        .child(uid)
+        .child('devices')
+        .get();
+    if (snapshot.exists) {
+      final devices = snapshot.value as Map<dynamic, dynamic>;
+      return devices.length;
+    }
+    return 0;
   }
 
   // Sign out
