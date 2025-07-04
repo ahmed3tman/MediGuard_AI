@@ -13,7 +13,6 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => DeviceBloc(),
       child: MaterialApp(
-        title: 'Spider Doctor',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),

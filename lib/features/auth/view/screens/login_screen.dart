@@ -215,14 +215,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // Show welcome screen for new users
         if (mounted) {
-          Navigator.of(context).push(
+          Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => WelcomeScreen(userName: name),
             ),
+            (route) => false,
           );
         }
       } else {
         await AuthService.signInWithEmailAndPassword(email, password);
+        // For existing users, the StreamBuilder in MyApp will handle navigation automatically
       }
 
       // No need to navigate manually, StreamBuilder will handle main navigation
@@ -248,7 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       await AuthService.signInAnonymously();
-      // No need to navigate manually, StreamBuilder will handle it
+      // The StreamBuilder in MyApp will handle navigation automatically
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -33,19 +33,45 @@ class AuthService {
     String email,
     String password,
   ) async {
-    final credential = await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    // Update last login time
-    if (credential.user != null) {
-      await _database.child('users').child(credential.user!.uid).update({
-        'lastLoginAt': ServerValue.timestamp,
-      });
+      // Update last login time
+      if (credential.user != null) {
+        await _database.child('users').child(credential.user!.uid).update({
+          'lastLoginAt': ServerValue.timestamp,
+        });
+      }
+
+      return credential;
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'No account found with this email address.';
+          break;
+        case 'wrong-password':
+          message = 'Incorrect password. Please try again.';
+          break;
+        case 'invalid-email':
+          message = 'Please enter a valid email address.';
+          break;
+        case 'user-disabled':
+          message = 'This account has been disabled.';
+          break;
+        case 'invalid-credential':
+          message = 'Invalid email or password. Please check your credentials.';
+          break;
+        default:
+          message = 'Login failed. Please try again.';
+      }
+      throw Exception(message);
+    } catch (e) {
+      throw Exception('Login failed. Please check your internet connection.');
     }
-
-    return credential;
   }
 
   // Create account with email, password, and name
@@ -54,20 +80,42 @@ class AuthService {
     String password,
     String name,
   ) async {
-    final credential = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      final credential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    // Create user profile in database
-    if (credential.user != null) {
-      await _createUserProfile(credential.user!.uid, name, email);
+      // Create user profile in database
+      if (credential.user != null) {
+        await _createUserProfile(credential.user!.uid, name, email);
 
-      // Update display name in Firebase Auth
-      await credential.user!.updateDisplayName(name);
+        // Update display name in Firebase Auth
+        await credential.user!.updateDisplayName(name);
+      }
+
+      return credential;
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'weak-password':
+          message = 'Password is too weak. Please use at least 6 characters.';
+          break;
+        case 'email-already-in-use':
+          message = 'An account already exists with this email address.';
+          break;
+        case 'invalid-email':
+          message = 'Please enter a valid email address.';
+          break;
+        default:
+          message = 'Account creation failed. Please try again.';
+      }
+      throw Exception(message);
+    } catch (e) {
+      throw Exception(
+        'Account creation failed. Please check your internet connection.',
+      );
     }
-
-    return credential;
   }
 
   // Create user profile in database
