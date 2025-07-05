@@ -1,11 +1,12 @@
 {
-  "java.configuration.updateBuildConfiguration": "automatic",
+  "dart.flutterSdkPath": "/Users/os/flutter/flutter",
+  "dart.analysisServerFolding": false,
+  "dart.previewAnalyzeAngularTemplates": false,
+  "dart.previewCommitCharacters": false,
+  "dart.previewLsp": false,
+  "dart.allowAnalytics": false,
   "files.exclude": {
-    "**/.git": true,
-    "**/.svn": true,
-    "**/.hg": true,
-    "**/.DS_Store": true,
-    "**/Thumbs.db": true,
-    ".yoyo": true
+    "**/.dart_tool": true,
+    "**/build": true
   }
 }
