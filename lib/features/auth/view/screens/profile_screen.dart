@@ -25,8 +25,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     // Listen for navigation back to this screen to refresh data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadUserData();
+      _ensureUserProfileAndLoad();
     });
+  }
+
+  Future<void> _ensureUserProfileAndLoad() async {
+    await AuthService.ensureUserProfile();
+    await _loadUserData();
   }
 
   @override
@@ -55,11 +60,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadUserData() async {
+    if (!mounted) return;
+
     try {
       final user = AuthService.currentUser;
       if (user != null) {
+        print('Loading user data for UID: ${user.uid}');
+
+        // Check Firebase connection first
+        final isConnected = await AuthService.checkFirebaseConnection();
+        print('Firebase connected: $isConnected');
+
         final profile = await AuthService.getUserProfile(user.uid);
         final devicesCount = await AuthService.getUserDevicesCount(user.uid);
+
+        print('Loaded profile: $profile');
+        print('Devices count: $devicesCount');
 
         if (mounted) {
           setState(() {
@@ -68,8 +84,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             _isLoading = false;
           });
         }
+      } else {
+        print('No current user found');
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     } catch (e) {
+      print('Error loading user data: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -141,7 +165,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                           // User Name
                           Text(
-                            _userProfile?['name'] ?? 'Unknown User',
+                            _userProfile?['name'] ??
+                                AuthService.currentUser?.displayName ??
+                                'Unknown User',
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -207,14 +233,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     _buildInfoCard(
                       'Email Address',
-                      _userProfile?['email'] ?? 'Not available',
+                      _userProfile?['email'] ??
+                          AuthService.currentUser?.email ??
+                          'Not available',
                       Icons.email,
                     ),
                     const SizedBox(height: 12),
 
                     _buildInfoCard(
                       'Full Name',
-                      _userProfile?['name'] ?? 'Not available',
+                      _userProfile?['name'] ??
+                          AuthService.currentUser?.displayName ??
+                          'Not available',
                       Icons.person,
                     ),
                     const SizedBox(height: 12),

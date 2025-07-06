@@ -41,9 +41,14 @@ class AuthService {
 
       // Update last login time
       if (credential.user != null) {
-        await _database.child('users').child(credential.user!.uid).update({
-          'lastLoginAt': ServerValue.timestamp,
-        });
+        try {
+          await _database.child('users').child(credential.user!.uid).update({
+            'lastLoginAt': ServerValue.timestamp,
+          });
+        } catch (e) {
+          print('Error updating last login time: $e');
+          // Don't throw error here as login was successful
+        }
       }
 
       return credential;
@@ -125,22 +130,39 @@ class AuthService {
     String email, {
     bool isAnonymous = false,
   }) async {
-    await _database.child('users').child(uid).set({
-      'name': name,
-      'email': email,
-      'isAnonymous': isAnonymous,
-      'createdAt': ServerValue.timestamp,
-      'lastLoginAt': ServerValue.timestamp,
-    });
+    try {
+      final profileData = {
+        'name': name,
+        'email': email,
+        'isAnonymous': isAnonymous,
+        'createdAt': ServerValue.timestamp,
+        'lastLoginAt': ServerValue.timestamp,
+      };
+
+      print('Creating user profile for $uid with data: $profileData');
+      await _database.child('users').child(uid).set(profileData);
+      print('User profile created successfully for $uid');
+    } catch (e) {
+      print('Error creating user profile: $e');
+      throw e;
+    }
   }
 
   // Get user profile
   static Future<Map<String, dynamic>?> getUserProfile(String uid) async {
-    final snapshot = await _database.child('users').child(uid).get();
-    if (snapshot.exists) {
-      return Map<String, dynamic>.from(snapshot.value as Map);
+    try {
+      final snapshot = await _database.child('users').child(uid).get();
+      if (snapshot.exists && snapshot.value != null) {
+        final data = snapshot.value;
+        if (data is Map) {
+          return Map<String, dynamic>.from(data);
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error getting user profile: $e');
+      return null;
     }
-    return null;
   }
 
   // Update user profile
@@ -153,16 +175,23 @@ class AuthService {
 
   // Get user devices count
   static Future<int> getUserDevicesCount(String uid) async {
-    final snapshot = await _database
-        .child('users')
-        .child(uid)
-        .child('devices')
-        .get();
-    if (snapshot.exists) {
-      final devices = snapshot.value as Map<dynamic, dynamic>;
-      return devices.length;
+    try {
+      final snapshot = await _database
+          .child('users')
+          .child(uid)
+          .child('devices')
+          .get();
+      if (snapshot.exists && snapshot.value != null) {
+        final data = snapshot.value;
+        if (data is Map) {
+          return data.length;
+        }
+      }
+      return 0;
+    } catch (e) {
+      print('Error getting user devices count: $e');
+      return 0;
     }
-    return 0;
   }
 
   // Sign out
@@ -172,4 +201,56 @@ class AuthService {
 
   // Auth state stream
   static Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  // Check Firebase connection and data
+  static Future<bool> checkFirebaseConnection() async {
+    try {
+      final user = currentUser;
+      if (user == null) return false;
+
+      // Try to read from database
+      final snapshot = await _database.child('.info/connected').get();
+      print('Firebase connection status: ${snapshot.value}');
+
+      // Try to read user data
+      final userSnapshot = await _database.child('users').child(user.uid).get();
+      print('User data exists: ${userSnapshot.exists}');
+      print('User data: ${userSnapshot.value}');
+
+      return snapshot.value == true;
+    } catch (e) {
+      print('Firebase connection check failed: $e');
+      return false;
+    }
+  }
+
+  // Ensure user profile exists - create if missing
+  static Future<void> ensureUserProfile() async {
+    try {
+      final user = currentUser;
+      if (user == null) return;
+
+      final profile = await getUserProfile(user.uid);
+      if (profile == null) {
+        print('User profile missing, creating one...');
+
+        // Get user info from Firebase Auth
+        final name = user.displayName ?? 'User';
+        final email = user.email ?? 'unknown@example.com';
+        final isAnonymous = user.isAnonymous;
+
+        await _createUserProfile(
+          user.uid,
+          name,
+          email,
+          isAnonymous: isAnonymous,
+        );
+        print('User profile created successfully');
+      } else {
+        print('User profile exists: $profile');
+      }
+    } catch (e) {
+      print('Error ensuring user profile: $e');
+    }
+  }
 }

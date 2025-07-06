@@ -194,8 +194,13 @@ class _HomeScreenState extends State<HomeScreen> {
             future: user != null ? AuthService.getUserProfile(user.uid) : null,
             builder: (context, snapshot) {
               final userProfile = snapshot.data;
-              final userName = userProfile?['name'] ?? 'Unknown User';
-              final userEmail = userProfile?['email'] ?? 'No email';
+              final userName =
+                  userProfile?['name'] ?? user?.displayName ?? 'Unknown User';
+              final userEmail =
+                  userProfile?['email'] ?? user?.email ?? 'No email';
+
+              print('Drawer - User profile: $userProfile');
+              print('Drawer - User name: $userName, email: $userEmail');
 
               return UserAccountsDrawerHeader(
                 decoration: BoxDecoration(
