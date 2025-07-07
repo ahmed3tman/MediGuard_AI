@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../../services/auth_service.dart';
-import 'login_screen.dart';
+import '../../../auth/services/auth_service.dart';
+import '../../../auth/view/screens/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class CriticalCasesScreen extends StatelessWidget {
+  const CriticalCasesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text('Critical Cases'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.black,
@@ -16,19 +16,19 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.home, size: 80, color: Colors.grey),
+            Icon(Icons.warning, size: 80, color: Colors.red),
             SizedBox(height: 20),
             Text(
-              'Home Screen',
+              'Critical Cases',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey,
+                color: Colors.red,
               ),
             ),
             SizedBox(height: 10),
             Text(
-              'Coming soon...',
+              'Emergency monitoring coming soon...',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ],

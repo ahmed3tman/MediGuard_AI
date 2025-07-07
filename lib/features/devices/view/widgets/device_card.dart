@@ -127,21 +127,21 @@ class DeviceCard extends StatelessWidget {
                       title: 'Temperature',
                       value: '${device.temperature.toStringAsFixed(1)}°C',
                       isNormal: device.isTemperatureNormal,
-                      color: Colors.orange,
+                      color: Colors.grey,
                     ),
                     _buildVitalSignTile(
                       icon: Icons.favorite,
                       title: 'ECG',
                       value: '${device.ecg.toStringAsFixed(0)} BPM',
                       isNormal: device.ecg >= 60 && device.ecg <= 100,
-                      color: Colors.red,
+                      color: Colors.grey,
                     ),
                     _buildVitalSignTile(
                       icon: Icons.air,
                       title: 'SpO2',
                       value: '${device.spo2.toStringAsFixed(0)}%',
                       isNormal: device.isSpo2Normal,
-                      color: Colors.blue,
+                      color: Colors.grey,
                     ),
                     _buildVitalSignTile(
                       icon: Icons.monitor_heart,
@@ -149,7 +149,7 @@ class DeviceCard extends StatelessWidget {
                       value:
                           '${device.bloodPressure['systolic']}/${device.bloodPressure['diastolic']}',
                       isNormal: device.isBloodPressureNormal,
-                      color: Colors.purple,
+                      color: Colors.grey,
                     ),
                   ],
                 ),
@@ -168,7 +168,7 @@ class DeviceCard extends StatelessWidget {
                     'Device connected - Real-time data available',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.green[600],
-                      fontSize: 11,
+                      fontSize: 12,
                     ),
                   )
                 else
@@ -227,8 +227,8 @@ class DeviceCard extends StatelessWidget {
     }
 
     final displayColor = hasValidReading
-        ? (isNormal ? Colors.green[600] : Colors.red[600])
-        : Colors.grey[500];
+        ? (isNormal ? Colors.green : Colors.red)
+        : Colors.grey;
 
     return Container(
       padding: const EdgeInsets.all(8),
@@ -242,7 +242,7 @@ class DeviceCard extends StatelessWidget {
         border: Border.all(color: displayColor!.withOpacity(0.3), width: 1),
         boxShadow: [
           BoxShadow(
-            color: displayColor.withOpacity(0.1),
+            color: displayColor.withOpacity(0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

@@ -144,7 +144,7 @@ class AuthService {
       print('User profile created successfully for $uid');
     } catch (e) {
       print('Error creating user profile: $e');
-      throw e;
+      rethrow;
     }
   }
 

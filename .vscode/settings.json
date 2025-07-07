@@ -6,7 +6,13 @@
   "dart.previewLsp": false,
   "dart.allowAnalytics": false,
   "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
     "**/.dart_tool": true,
-    "**/build": true
+    "**/build": true,
+    ".yoyo": true
   }
 }
