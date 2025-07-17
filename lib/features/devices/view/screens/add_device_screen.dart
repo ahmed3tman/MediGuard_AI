@@ -31,13 +31,13 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
       body: BlocListener<DeviceCubit, DeviceState>(
         listener: (context, state) {
           if (state is DeviceAdded) {
-            CustomSnackBar.showSuccess(
+            FloatingSnackBar.showSuccess(
               context,
               message: 'Device added successfully!',
             );
             Navigator.of(context).pop();
           } else if (state is DeviceError) {
-            CustomSnackBar.showError(context, message: state.message);
+            FloatingSnackBar.showError(context, message: state.message);
           }
         },
         child: Padding(

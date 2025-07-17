@@ -6,6 +6,7 @@ export 'container_widgets.dart';
 export 'custom_button.dart';
 export 'custom_text_field.dart';
 export 'dialog_widgets.dart';
+export 'floating_snackbar.dart';
 export 'info_cards.dart';
 export 'loading_widgets.dart';
 export 'state_widgets.dart';

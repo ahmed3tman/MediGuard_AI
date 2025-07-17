@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'floating_snackbar.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final String title;
@@ -80,25 +81,13 @@ class CustomSnackBar {
     Duration duration = const Duration(seconds: 3),
     IconData? icon,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            if (icon != null) ...[
-              Icon(icon, color: textColor ?? Colors.white),
-              const SizedBox(width: 8),
-            ],
-            Expanded(
-              child: Text(
-                message,
-                style: TextStyle(color: textColor ?? Colors.white),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: backgroundColor,
-        duration: duration,
-      ),
+    FloatingSnackBar.show(
+      context,
+      message: message,
+      backgroundColor: backgroundColor,
+      textColor: textColor,
+      duration: duration,
+      icon: icon,
     );
   }
 
@@ -107,13 +96,7 @@ class CustomSnackBar {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
-    show(
-      context,
-      message: message,
-      backgroundColor: Colors.green,
-      icon: Icons.check_circle,
-      duration: duration,
-    );
+    FloatingSnackBar.showSuccess(context, message: message, duration: duration);
   }
 
   static void showError(
@@ -121,13 +104,7 @@ class CustomSnackBar {
     required String message,
     Duration duration = const Duration(seconds: 4),
   }) {
-    show(
-      context,
-      message: message,
-      backgroundColor: Colors.red,
-      icon: Icons.error,
-      duration: duration,
-    );
+    FloatingSnackBar.showError(context, message: message, duration: duration);
   }
 
   static void showInfo(
@@ -135,13 +112,7 @@ class CustomSnackBar {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
-    show(
-      context,
-      message: message,
-      backgroundColor: Colors.blue,
-      icon: Icons.info,
-      duration: duration,
-    );
+    FloatingSnackBar.showInfo(context, message: message, duration: duration);
   }
 
   static void showWarning(
@@ -149,12 +120,6 @@ class CustomSnackBar {
     required String message,
     Duration duration = const Duration(seconds: 3),
   }) {
-    show(
-      context,
-      message: message,
-      backgroundColor: Colors.orange,
-      icon: Icons.warning,
-      duration: duration,
-    );
+    FloatingSnackBar.showWarning(context, message: message, duration: duration);
   }
 }

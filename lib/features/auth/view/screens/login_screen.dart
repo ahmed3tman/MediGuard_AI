@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/shared/widgets/widgets.dart';
 import '../../../../core/shared/theme/theme.dart';
 import '../../services/auth_service.dart';
+import '../../../../navigation/main_navigation_screen.dart';
 import 'welcome_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -166,9 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                                    const SizedBox(height: 100),
-
-
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -204,13 +203,26 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } else {
         await AuthService.signInWithEmailAndPassword(email, password);
-        // For existing users, the StreamBuilder in MyApp will handle navigation automatically
+
+        // Navigate to main app for existing users
+        if (mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const MainNavigationScreen(),
+            ),
+            (route) => false,
+          );
+        }
       }
 
-      // No need to navigate manually, StreamBuilder will handle main navigation
+      // Navigation handled above for both cases
     } catch (e) {
       if (mounted) {
-        CustomSnackBar.showError(context, message: e.toString());
+        FloatingSnackBar.showError(
+          context,
+          message: e.toString(),
+          position: SnackBarPosition.bottom,
+        );
       }
     } finally {
       if (mounted) {
@@ -221,24 +233,24 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> _handleAnonymousLogin() async {
-    setState(() {
-      _isLoading = true;
-    });
+  // Future<void> _handleAnonymousLogin() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
 
-    try {
-      await AuthService.signInAnonymously();
-      // The StreamBuilder in MyApp will handle navigation automatically
-    } catch (e) {
-      if (mounted) {
-        CustomSnackBar.showError(context, message: e.toString());
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
+  //   try {
+  //     await AuthService.signInAnonymously();
+  //     // The StreamBuilder in MyApp will handle navigation automatically
+  //   } catch (e) {
+  //     if (mounted) {
+  //       CustomSnackBar.showError(context, message: e.toString());
+  //     }
+  //   } finally {
+  //     if (mounted) {
+  //       setState(() {
+  //         _isLoading = false;
+  //       });
+  //     }
+  //   }
+  // }
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:spider_doctor/core/shared/widgets/dialog_widgets.dart';
+import 'package:spider_doctor/core/shared/widgets/floating_snackbar.dart';
 import 'package:spider_doctor/core/shared/widgets/loading_widgets.dart';
 import 'package:spider_doctor/features/auth/services/auth_service.dart';
 import 'package:spider_doctor/features/auth/view/screens/login_screen.dart';
-import 'package:spider_doctor/features/profile/view/screens/profile_screen.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
@@ -63,38 +63,6 @@ class _AppDrawerState extends State<AppDrawer> {
               padding: EdgeInsets.zero,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.person),
-                  title: const Text('Profile'),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) =>
-                            const ProfileScreen(),
-                        transitionDuration: const Duration(milliseconds: 400),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          // Scale from center with fade
-                          var scaleAnimation = Tween(begin: 0.8, end: 1.0)
-                              .chain(CurveTween(curve: Curves.easeOutBack))
-                              .animate(animation);
-
-                          var fadeAnimation = Tween(begin: 0.0, end: 1.0)
-                              .chain(CurveTween(curve: Curves.easeOut))
-                              .animate(animation);
-
-                          return ScaleTransition(
-                            scale: scaleAnimation,
-                            child: FadeTransition(
-                              opacity: fadeAnimation,
-                              child: child,
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
                   leading: const Icon(Icons.home),
                   title: const Text('Dashboard'),
                   onTap: () {
@@ -115,11 +83,9 @@ class _AppDrawerState extends State<AppDrawer> {
                   title: const Text('Settings'),
                   onTap: () {
                     Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Settings - Coming Soon'),
-                        backgroundColor: Colors.orange,
-                      ),
+                    FloatingSnackBar.showWarning(
+                      context,
+                      message: 'Settings - Coming Soon',
                     );
                   },
                 ),
@@ -128,11 +94,9 @@ class _AppDrawerState extends State<AppDrawer> {
                   title: const Text('Help & Support'),
                   onTap: () {
                     Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Help & Support - Coming Soon'),
-                        backgroundColor: Colors.orange,
-                      ),
+                    FloatingSnackBar.showWarning(
+                      context,
+                      message: 'Help & Support - Coming Soon',
                     );
                   },
                 ),
@@ -188,7 +152,7 @@ class _AppDrawerState extends State<AppDrawer> {
       } catch (e) {
         if (mounted) {
           Navigator.of(context).pop(); // Close loading dialog
-          CustomSnackBar.showError(
+          FloatingSnackBar.showError(
             context,
             message: 'Error signing out: ${e.toString()}',
           );

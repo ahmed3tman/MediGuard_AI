@@ -10,48 +10,49 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Welcome illustration
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.blue[400]!, Colors.blue[600]!],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    shape: BoxShape.circle,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 32),
+              // Welcome illustration
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue[400]!, Colors.blue[600]!],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  child: const Icon(Icons.check, size: 60, color: Colors.white),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: 32),
+                child: const Icon(Icons.check, size: 60, color: Colors.white),
+              ),
+              const SizedBox(height: 32),
 
-                // Welcome message
-                Text(
-                  'Welcome, $userName!',
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center,
+              // Welcome message
+              Text(
+                'Welcome, $userName!',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 16),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
 
-                Text(
-                  'Your account has been created successfully',
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 48),
+              Text(
+                'Your account has been created successfully',
+                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 48),
 
-                // Features list
-                Container(
+              // Features list
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
@@ -91,10 +92,13 @@ class WelcomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 48),
+              ),
+              const SizedBox(height: 48),
 
-                // Continue button
-                SizedBox(
+              // Continue button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
@@ -122,8 +126,8 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -90,11 +90,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error loading profile: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+        FloatingSnackBar.showError(
+          context,
+          message: 'Error loading profile: ${e.toString()}',
         );
       }
     }
@@ -103,12 +101,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: AppColors.primaryColor,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
       body: _isLoading
           ? const Center(child: LoadingIndicator())
           : RefreshIndicator(
@@ -138,135 +130,136 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 16),
 
-                        // User Name
-                        Text(
-                          _userProfile?['name'] ??
-                              AuthService.currentUser?.displayName ??
-                              'Unknown User',
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                          // User Name
+                          Text(
+                            _userProfile?['name'] ??
+                                AuthService.currentUser?.displayName ??
+                                'Unknown User',
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+
+                          // User Role
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              _userProfile?['isAnonymous'] == true
+                                  ? 'Guest User'
+                                  : 'Medical Professional',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Statistics Cards
+                    Row(
+                      children: [
+                        Expanded(
+                          child: StatCard(
+                            title: 'Devices',
+                            value: _devicesCount.toString(),
+                            icon: Icons.medical_services,
+                            color: Colors.green,
                           ),
                         ),
-                        const SizedBox(height: 8),
-
-                        // User Role
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            _userProfile?['isAnonymous'] == true
-                                ? 'Guest User'
-                                : 'Medical Professional',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: StatCard(
+                            title: 'Account Type',
+                            value: _userProfile?['isAnonymous'] == true
+                                ? 'Guest'
+                                : 'Full',
+                            icon: Icons.account_circle,
+                            color: Colors.orange,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                  // Statistics Cards
-                  Row(
-                    children: [
-                      Expanded(
-                        child: StatCard(
-                          title: 'Devices',
-                          value: _devicesCount.toString(),
-                          icon: Icons.medical_services,
-                          color: Colors.green,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: StatCard(
-                          title: 'Account Type',
-                          value: _userProfile?['isAnonymous'] == true
-                              ? 'Guest'
-                              : 'Full',
-                          icon: Icons.account_circle,
-                          color: Colors.orange,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
+                    // Profile Information
+                    _buildSectionTitle('Account Information'),
+                    const SizedBox(height: 16),
 
-                  // Profile Information
-                  _buildSectionTitle('Account Information'),
-                  const SizedBox(height: 16),
-
-                  InfoCard(
-                    title: 'Email Address',
-                    value:
-                        _userProfile?['email'] ??
-                        AuthService.currentUser?.email ??
-                        'Not available',
-                    icon: Icons.email,
-                  ),
-                  const SizedBox(height: 12),
-
-                  InfoCard(
-                    title: 'Full Name',
-                    value:
-                        _userProfile?['name'] ??
-                        AuthService.currentUser?.displayName ??
-                        'Not available',
-                    icon: Icons.person,
-                  ),
-                  const SizedBox(height: 12),
-
-                  InfoCard(
-                    title: 'Member Since',
-                    value: _formatDate(_userProfile?['createdAt']),
-                    icon: Icons.calendar_today,
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Coming Soon Features
-                  _buildSectionTitle('Coming Soon'),
-                  const SizedBox(height: 16),
-
-                  ComingSoonCard(
-                    title: 'Push Notifications',
-                    icon: Icons.notifications,
-                  ),
-                  const SizedBox(height: 12),
-                  ComingSoonCard(title: 'Data Export', icon: Icons.download),
-                  const SizedBox(height: 12),
-                  ComingSoonCard(title: 'Device Sharing', icon: Icons.share),
-                  const SizedBox(height: 12),
-                  ComingSoonCard(
-                    title: 'Advanced Analytics',
-                    icon: Icons.analytics,
-                  ),
-                  const SizedBox(height: 32),
-
-                  // Sign Out Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: CustomButton(
-                      text: 'Sign Out',
-                      icon: Icons.logout,
-                      onPressed: _handleSignOut,
-                      backgroundColor: Colors.red[600],
-                      foregroundColor: Colors.white,
+                    InfoCard(
+                      title: 'Email Address',
+                      value:
+                          _userProfile?['email'] ??
+                          AuthService.currentUser?.email ??
+                          'Not available',
+                      icon: Icons.email,
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+
+                    InfoCard(
+                      title: 'Full Name',
+                      value:
+                          _userProfile?['name'] ??
+                          AuthService.currentUser?.displayName ??
+                          'Not available',
+                      icon: Icons.person,
+                    ),
+                    const SizedBox(height: 12),
+
+                    InfoCard(
+                      title: 'Member Since',
+                      value: _formatDate(_userProfile?['createdAt']),
+                      icon: Icons.calendar_today,
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Coming Soon Features
+                    _buildSectionTitle('Coming Soon'),
+                    const SizedBox(height: 16),
+
+                    ComingSoonCard(
+                      title: 'Push Notifications',
+                      icon: Icons.notifications,
+                    ),
+                    const SizedBox(height: 12),
+                    ComingSoonCard(title: 'Data Export', icon: Icons.download),
+                    const SizedBox(height: 12),
+                    ComingSoonCard(title: 'Device Sharing', icon: Icons.share),
+                    const SizedBox(height: 12),
+                    ComingSoonCard(
+                      title: 'Advanced Analytics',
+                      icon: Icons.analytics,
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Sign Out Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomButton(
+                        text: 'Sign Out',
+                        icon: Icons.logout,
+                        onPressed: _handleSignOut,
+                        backgroundColor: Colors.red[600],
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                ),
               ),
             ),
-          ),
     );
   }
 
@@ -320,7 +313,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       } catch (e) {
         if (mounted) {
           Navigator.of(context).pop(); // Close loading dialog
-          CustomSnackBar.showError(
+          FloatingSnackBar.showError(
             context,
             message: 'Error signing out: ${e.toString()}',
           );
