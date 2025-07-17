@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../core/shared/widgets/widgets.dart';
+import '../../../../core/shared/theme/theme.dart';
 import '../../services/auth_service.dart';
 import 'welcome_screen.dart';
 
@@ -40,54 +42,47 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   // Logo and title
                   Container(
+                    width: 120,
                     height: 120,
                     decoration: BoxDecoration(
-                      color: Colors.blue[50],
+                      color: AppColors.primaryColor.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.medical_services,
                       size: 60,
-                      color: Colors.blue[600],
+                      color: AppColors.primaryColor,
                     ),
                   ),
                   const SizedBox(height: 32),
                   Text(
                     'Spider Doctor',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue[700],
+                    style: AppTextStyles.title.copyWith(
+                      color: AppColors.primaryColor,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Real Time Monitoring System',
                     textAlign: TextAlign.center,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+                    style: AppTextStyles.caption,
                   ),
                   const SizedBox(height: 48),
 
                   // Name field (only for sign up)
                   if (_isSignUp) ...[
-                    TextFormField(
+                    CustomTextField(
+                      labelText: 'Full Name',
                       controller: _nameController,
                       keyboardType: TextInputType.name,
-                      decoration: const InputDecoration(
-                        labelText: 'Full Name',
-                        prefixIcon: Icon(Icons.person),
-                        border: OutlineInputBorder(),
-                      ),
+                      prefixIcon: Icons.person,
                       validator: (value) {
-                        if (_isSignUp) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Please enter your full name';
-                          }
-                          if (value.trim().length < 2) {
-                            return 'Name must be at least 2 characters';
-                          }
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your full name';
+                        }
+                        if (value.trim().length < 2) {
+                          return 'Name must be at least 2 characters';
                         }
                         return null;
                       },
@@ -96,14 +91,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
 
                   // Email field
-                  TextFormField(
+                  CustomTextField(
+                    labelText: 'Email',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(),
-                    ),
+                    prefixIcon: Icons.email,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter your email';
@@ -117,14 +109,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16),
 
                   // Password field
-                  TextFormField(
+                  CustomTextField(
+                    labelText: 'Password',
                     controller: _passwordController,
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
-                      border: OutlineInputBorder(),
-                    ),
+                    prefixIcon: Icons.lock,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter your password';
@@ -138,57 +127,48 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 24),
 
                   // Login/Sign up button
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _handleAuth,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[600],
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                            ),
-                          )
-                        : Text(
-                            _isSignUp ? 'Create Account' : 'Login',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                  CustomButton(
+                    text: _isSignUp ? 'Create Account' : 'Login',
+                    onPressed: _handleAuth,
+                    isLoading: _isLoading,
+                    width: double.infinity,
                   ),
                   const SizedBox(height: 16),
 
                   // Switch between login and signup
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _isSignUp = !_isSignUp;
-                      });
-                    },
-                    child: Text(
-                      _isSignUp
-                          ? 'Already have an account? Login'
-                          : 'Don\'t have an account? Sign up',
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _isSignUp
+                            ? 'Already have an account? '
+                            : 'Don\'t have an account? ',
+                        style: AppTextStyles.body,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _isSignUp = !_isSignUp;
+                          });
+                        },
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          _isSignUp ? 'Login' : 'Sign up',
+                          style: AppTextStyles.body.copyWith(
+                            color: AppColors.primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 24),
+                                    const SizedBox(height: 100),
 
-                  // Demo login button
-                  OutlinedButton(
-                    onPressed: _isLoading ? null : _handleAnonymousLogin,
-                    child: const Text('Login as Guest (Demo)'),
-                  ),
+
                 ],
               ),
             ),
@@ -230,9 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // No need to navigate manually, StreamBuilder will handle main navigation
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-        );
+        CustomSnackBar.showError(context, message: e.toString());
       }
     } finally {
       if (mounted) {
@@ -253,9 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // The StreamBuilder in MyApp will handle navigation automatically
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
-        );
+        CustomSnackBar.showError(context, message: e.toString());
       }
     } finally {
       if (mounted) {

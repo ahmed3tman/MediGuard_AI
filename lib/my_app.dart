@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'core/shared/theme/theme.dart';
 import 'features/auth/services/auth_service.dart';
 import 'features/auth/view/screens/login_screen.dart';
 import 'navigation/main_navigation_screen.dart';
@@ -10,10 +11,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
+      title: 'Spider Doctor',
+      theme: AppTheme.lightTheme,
       home: const AuthWrapper(),
     );
   }

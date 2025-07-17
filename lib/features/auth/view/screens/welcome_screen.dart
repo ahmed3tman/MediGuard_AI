@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:spider_doctor/features/home/view/screens/home_screen.dart';
+import 'package:spider_doctor/navigation/main_navigation_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final String userName;
@@ -100,7 +100,7 @@ class WelcomeScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
+                          builder: (context) => const MainNavigationScreen(),
                         ),
                         (route) => false,
                       );

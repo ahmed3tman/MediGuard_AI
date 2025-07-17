@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../bloc/device_bloc.dart';
-import '../../bloc/device_event.dart';
-import '../../bloc/device_state.dart';
+import '../../../../core/shared/widgets/widgets.dart';
+import '../../../../core/shared/theme/theme.dart';
+import '../../cubit/device_cubit.dart';
+import '../../cubit/device_state.dart';
 
 class AddDeviceScreen extends StatefulWidget {
   const AddDeviceScreen({super.key});
@@ -26,28 +27,17 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add New Device'),
-        backgroundColor: Colors.blue[600],
-        foregroundColor: Colors.white,
-      ),
-      body: BlocListener<DeviceBloc, DeviceState>(
+      appBar: CustomAppBar(title: 'Add New Device'),
+      body: BlocListener<DeviceCubit, DeviceState>(
         listener: (context, state) {
           if (state is DeviceAdded) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Device added successfully!'),
-                backgroundColor: Colors.green,
-              ),
+            CustomSnackBar.showSuccess(
+              context,
+              message: 'Device added successfully!',
             );
             Navigator.of(context).pop();
           } else if (state is DeviceError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
+            CustomSnackBar.showError(context, message: state.message);
           }
         },
         child: Padding(
@@ -59,29 +49,29 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Header illustration
-                  Container(
+                  GradientContainer(
                     height: 120,
-                    decoration: BoxDecoration(
-                      color: Colors.blue[50],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.medical_services,
-                      size: 60,
-                      color: Colors.blue,
+                    colors: [
+                      AppColors.primaryColor.withOpacity(0.1),
+                      AppColors.primaryColor.withOpacity(0.05),
+                    ],
+                    borderRadius: BorderRadius.circular(12),
+                    child: const Center(
+                      child: Icon(
+                        Icons.medical_services,
+                        size: 60,
+                        color: AppColors.primaryColor,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
 
                   // Device ID field
-                  TextFormField(
+                  CustomTextField(
                     controller: _deviceIdController,
-                    decoration: const InputDecoration(
-                      labelText: 'Device ID',
-                      hintText: 'Enter unique device identifier',
-                      prefixIcon: Icon(Icons.qr_code),
-                      border: OutlineInputBorder(),
-                    ),
+                    labelText: 'Device ID',
+                    hintText: 'Enter unique device identifier',
+                    prefixIcon: Icons.qr_code,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter a device ID';
@@ -95,14 +85,11 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                   const SizedBox(height: 16),
 
                   // Device Name field
-                  TextFormField(
+                  CustomTextField(
                     controller: _deviceNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Device Name',
-                      hintText: 'Enter a friendly name for the device',
-                      prefixIcon: Icon(Icons.label),
-                      border: OutlineInputBorder(),
-                    ),
+                    labelText: 'Device Name',
+                    hintText: 'Enter a friendly name for the device',
+                    prefixIcon: Icons.label,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter a device name';
@@ -139,45 +126,15 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                   const SizedBox(height: 32),
 
                   // Add button
-                  BlocBuilder<DeviceBloc, DeviceState>(
+                  BlocBuilder<DeviceCubit, DeviceState>(
                     builder: (context, state) {
                       final isLoading = state is DeviceAdding;
 
-                      return ElevatedButton(
-                        onPressed: isLoading ? null : _addDevice,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[600],
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: isLoading
-                            ? const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 12),
-                                  Text('Adding Device...'),
-                                ],
-                              )
-                            : const Text(
-                                'Add Device',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                      return CustomButton(
+                        text: 'Add Device',
+                        onPressed: _addDevice,
+                        isLoading: isLoading,
+                        width: double.infinity,
                       );
                     },
                   ),
@@ -195,7 +152,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
       final deviceId = _deviceIdController.text.trim();
       final deviceName = _deviceNameController.text.trim();
 
-      context.read<DeviceBloc>().add(AddDevice(deviceId, deviceName));
+      context.read<DeviceCubit>().addDevice(deviceId, deviceName);
     }
   }
 }

@@ -1,8 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../model/data_model.dart';
-import '../../bloc/device_bloc.dart';
-import '../../bloc/device_event.dart';
+import '../../cubit/device_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DeviceCard extends StatelessWidget {
@@ -239,7 +238,7 @@ class DeviceCard extends StatelessWidget {
           colors: [color.withOpacity(0.1), color.withOpacity(0.05)],
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: displayColor!.withOpacity(0.3), width: 1),
+        border: Border.all(color: displayColor.withOpacity(0.3), width: 1),
         boxShadow: [
           BoxShadow(
             color: displayColor.withOpacity(0.2),
@@ -310,7 +309,7 @@ class DeviceCard extends StatelessWidget {
   }
 
   void _showDeleteDialog(BuildContext context) {
-    final deviceBloc = context.read<DeviceBloc>();
+    final deviceCubit = context.read<DeviceCubit>();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -323,7 +322,7 @@ class DeviceCard extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              deviceBloc.add(DeleteDevice(device.deviceId));
+              deviceCubit.deleteDevice(device.deviceId);
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),

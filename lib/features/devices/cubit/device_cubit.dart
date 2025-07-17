@@ -2,91 +2,77 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../services/device_service.dart';
 import '../model/data_model.dart';
-import 'device_event.dart';
 import 'device_state.dart';
 
-class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
+class DeviceCubit extends Cubit<DeviceState> {
   StreamSubscription? _devicesSubscription;
   final Map<String, StreamSubscription> _externalReadingsSubscriptions = {};
 
-  DeviceBloc() : super(DeviceInitial()) {
-    on<LoadDevices>(_onLoadDevices);
-    on<AddDevice>(_onAddDevice);
-    on<DeleteDevice>(_onDeleteDevice);
-    on<SimulateDeviceData>(_onSimulateDeviceData);
-    on<DevicesUpdated>(_onDevicesUpdated);
-    on<ListenToExternalReadings>(_onListenToExternalReadings);
-    on<ExternalReadingsReceived>(_onExternalReadingsReceived);
-  }
+  DeviceCubit() : super(DeviceInitial());
 
-  void _onLoadDevices(LoadDevices event, Emitter<DeviceState> emit) {
+  // Load devices from the service
+  void loadDevices() {
     emit(DeviceLoading());
 
     _devicesSubscription?.cancel();
     _devicesSubscription = DeviceService.getDevicesStream().listen(
-      (devices) => add(DevicesUpdated(devices)),
+      (devices) => _onDevicesUpdated(devices),
       onError: (error) => emit(DeviceError(error.toString())),
     );
   }
 
-  Future<void> _onAddDevice(AddDevice event, Emitter<DeviceState> emit) async {
+  // Add a new device
+  Future<void> addDevice(String deviceId, String deviceName) async {
     emit(DeviceAdding());
     try {
-      await DeviceService.addDevice(event.deviceId, event.deviceName);
+      await DeviceService.addDevice(deviceId, deviceName);
       emit(DeviceAdded());
-      add(LoadDevices()); // Reload devices after adding
+      loadDevices(); // Reload devices after adding
     } catch (e) {
       emit(DeviceError('Failed to add device: ${e.toString()}'));
     }
   }
 
-  Future<void> _onDeleteDevice(
-    DeleteDevice event,
-    Emitter<DeviceState> emit,
-  ) async {
+  // Delete a device
+  Future<void> deleteDevice(String deviceId) async {
     emit(DeviceDeleting());
     try {
-      await DeviceService.deleteDevice(event.deviceId);
+      await DeviceService.deleteDevice(deviceId);
 
       // Cancel the external readings subscription for deleted device
-      _externalReadingsSubscriptions[event.deviceId]?.cancel();
-      _externalReadingsSubscriptions.remove(event.deviceId);
+      _externalReadingsSubscriptions[deviceId]?.cancel();
+      _externalReadingsSubscriptions.remove(deviceId);
 
       emit(DeviceDeleted());
-      add(LoadDevices()); // Reload devices after deleting
+      loadDevices(); // Reload devices after deleting
     } catch (e) {
       emit(DeviceError('Failed to delete device: ${e.toString()}'));
     }
   }
 
-  Future<void> _onSimulateDeviceData(
-    SimulateDeviceData event,
-    Emitter<DeviceState> emit,
-  ) async {
+  // Simulate device data
+  Future<void> simulateDeviceData(String deviceId) async {
     try {
-      await DeviceService.simulateDeviceData(event.deviceId);
+      await DeviceService.simulateDeviceData(deviceId);
     } catch (e) {
       emit(DeviceError('Failed to simulate device data: ${e.toString()}'));
     }
   }
 
-  void _onDevicesUpdated(DevicesUpdated event, Emitter<DeviceState> emit) {
-    final devices = List<Device>.from(event.devices);
+  // Handle devices updated from stream
+  void _onDevicesUpdated(List devices) {
+    final deviceList = List<Device>.from(devices);
 
     // Start listening to external readings for each device
-    for (final device in devices) {
-      add(ListenToExternalReadings(device.deviceId));
+    for (final device in deviceList) {
+      _listenToExternalReadings(device.deviceId);
     }
 
-    emit(DeviceLoaded(devices));
+    emit(DeviceLoaded(deviceList));
   }
 
-  void _onListenToExternalReadings(
-    ListenToExternalReadings event,
-    Emitter<DeviceState> emit,
-  ) {
-    final deviceId = event.deviceId;
-
+  // Listen to external readings for a device
+  void _listenToExternalReadings(String deviceId) {
     // Cancel existing subscription if any
     _externalReadingsSubscriptions[deviceId]?.cancel();
 
@@ -95,7 +81,7 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
         DeviceService.getExternalDeviceReadings(deviceId).listen(
           (readings) {
             if (readings != null) {
-              add(ExternalReadingsReceived(deviceId, readings));
+              _onExternalReadingsReceived(deviceId, readings);
             }
           },
           onError: (error) {
@@ -104,15 +90,13 @@ class DeviceBloc extends Bloc<DeviceEvent, DeviceState> {
         );
   }
 
+  // Handle external readings received
   Future<void> _onExternalReadingsReceived(
-    ExternalReadingsReceived event,
-    Emitter<DeviceState> emit,
+    String deviceId,
+    Map<String, dynamic> readings,
   ) async {
     try {
-      await DeviceService.updateDeviceWithExternalReadings(
-        event.deviceId,
-        event.readings,
-      );
+      await DeviceService.updateDeviceWithExternalReadings(deviceId, readings);
     } catch (e) {
       // Handle error silently - don't interrupt the flow
     }
