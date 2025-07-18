@@ -9,7 +9,7 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appTitle => 'طبيب العنكبوت';
+  String get appTitle => 'الطبيب العنكبوت';
 
   @override
   String get realTimeMonitoring => 'المراقبة في الوقت الفعلي';
@@ -395,4 +395,67 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get passwordMinLength => 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+
+  @override
+  String get noDevicesAdded => 'لم تتم إضافة أجهزة';
+
+  @override
+  String get addFirstMedicalDevice =>
+      'أضف جهازك الطبي الأول لبدء مراقبة العلامات الحيوية في الوقت الفعلي.';
+
+  @override
+  String get addDemoDevice => 'إضافة جهاز تجريبي';
+
+  @override
+  String get loadingDevices => 'جاري تحميل الأجهزة...';
+
+  @override
+  String get justNow => 'الآن';
+
+  @override
+  String get deleteDevice => 'حذف الجهاز';
+
+  @override
+  String deleteDeviceConfirm(String deviceName) {
+    return 'هل أنت متأكد من أنك تريد حذف \"$deviceName\"؟';
+  }
+
+  @override
+  String get delete => 'حذف';
+
+  @override
+  String get confirm => 'تأكيد';
+
+  @override
+  String get demo => 'تجريبي';
+
+  @override
+  String get noEmail => 'لا يوجد بريد إلكتروني';
+
+  @override
+  String get languageTest => 'اختبار اللغة';
+
+  @override
+  String get saveEnglish => 'حفظ الإنجليزية';
+
+  @override
+  String get saveArabic => 'حفظ العربية';
+
+  @override
+  String get reloadLanguage => 'إعادة تحميل اللغة';
+
+  @override
+  String get savedLanguage => 'اللغة المحفوظة';
+
+  @override
+  String get currentLanguage => 'اللغة الحالية';
+
+  @override
+  String get notSet => 'غير محدد';
+
+  @override
+  String get pressSaveArabic => 'اضغط على \"حفظ العربية\"';
+
+  @override
+  String get checkLanguageStillAr => 'تحقق إذا كانت اللغة لا تزال \"ar\"';
 }

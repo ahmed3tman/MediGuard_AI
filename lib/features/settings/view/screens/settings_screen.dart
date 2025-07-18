@@ -91,30 +91,22 @@ class _SettingsView extends StatelessWidget {
                   icon: Icons.language,
                 ),
                 Card(
-                  child: Column(
-                    children: [
-                      const LanguageSettingTile(),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.translate),
-                        title: Text(
-                          AppLocalizations.of(context).selectLanguage,
-                        ),
-                        subtitle: BlocBuilder<LocaleCubit, Locale>(
-                          builder: (context, locale) {
-                            return Text(
-                              locale.languageCode == 'en'
-                                  ? AppLocalizations.of(context).english
-                                  : AppLocalizations.of(context).arabic,
-                            );
-                          },
-                        ),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () {
-                          _showLanguageDialog(context);
-                        },
-                      ),
-                    ],
+                  child: ListTile(
+                    leading: const Icon(Icons.translate),
+                    title: Text(AppLocalizations.of(context).selectLanguage),
+                    subtitle: BlocBuilder<LocaleCubit, Locale>(
+                      builder: (context, locale) {
+                        return Text(
+                          locale.languageCode == 'en'
+                              ? AppLocalizations.of(context).english
+                              : AppLocalizations.of(context).arabic,
+                        );
+                      },
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      _showLanguageDialog(context);
+                    },
                   ),
                 ),
 

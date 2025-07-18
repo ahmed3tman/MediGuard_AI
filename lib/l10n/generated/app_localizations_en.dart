@@ -397,4 +397,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordMinLength => 'Password must be at least 6 characters';
+
+  @override
+  String get noDevicesAdded => 'No Devices Added';
+
+  @override
+  String get addFirstMedicalDevice =>
+      'Add your first medical device to start monitoring vital signs in real-time.';
+
+  @override
+  String get addDemoDevice => 'Add Demo Device';
+
+  @override
+  String get loadingDevices => 'Loading devices...';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String get deleteDevice => 'Delete Device';
+
+  @override
+  String deleteDeviceConfirm(String deviceName) {
+    return 'Are you sure you want to delete \"$deviceName\"?';
+  }
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get demo => 'Demo';
+
+  @override
+  String get noEmail => 'No email';
+
+  @override
+  String get languageTest => 'Language Test';
+
+  @override
+  String get saveEnglish => 'Save English';
+
+  @override
+  String get saveArabic => 'Save Arabic';
+
+  @override
+  String get reloadLanguage => 'Reload Language';
+
+  @override
+  String get savedLanguage => 'Saved Language';
+
+  @override
+  String get currentLanguage => 'Current Language';
+
+  @override
+  String get notSet => 'Not set';
+
+  @override
+  String get pressSaveArabic => 'Press \"Save Arabic\"';
+
+  @override
+  String get checkLanguageStillAr => 'Check if language is still \"ar\"';
 }

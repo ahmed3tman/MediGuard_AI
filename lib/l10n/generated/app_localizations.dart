@@ -470,7 +470,7 @@ abstract class AppLocalizations {
   /// **'Not available'**
   String get notAvailable;
 
-  /// Unknown user text
+  /// Default text when user name is not available
   ///
   /// In en, this message translates to:
   /// **'Unknown User'**
@@ -554,7 +554,7 @@ abstract class AppLocalizations {
   /// **'Last updated'**
   String get lastUpdated;
 
-  /// Not connected status
+  /// Status when device is not connected
   ///
   /// In en, this message translates to:
   /// **'Not Connected'**
@@ -859,6 +859,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password must be at least 6 characters'**
   String get passwordMinLength;
+
+  /// Title shown when no devices are added
+  ///
+  /// In en, this message translates to:
+  /// **'No Devices Added'**
+  String get noDevicesAdded;
+
+  /// Subtitle shown when no devices are added
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first medical device to start monitoring vital signs in real-time.'**
+  String get addFirstMedicalDevice;
+
+  /// Button text to add a demo device
+  ///
+  /// In en, this message translates to:
+  /// **'Add Demo Device'**
+  String get addDemoDevice;
+
+  /// Loading message when fetching devices
+  ///
+  /// In en, this message translates to:
+  /// **'Loading devices...'**
+  String get loadingDevices;
+
+  /// Time indicator for recent updates
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// Delete device dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Device'**
+  String get deleteDevice;
+
+  /// Delete device confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{deviceName}\"?'**
+  String deleteDeviceConfirm(String deviceName);
+
+  /// Delete button text
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Confirm button text
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// Demo label
+  ///
+  /// In en, this message translates to:
+  /// **'Demo'**
+  String get demo;
+
+  /// Default text when email is not available
+  ///
+  /// In en, this message translates to:
+  /// **'No email'**
+  String get noEmail;
+
+  /// Language test screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Language Test'**
+  String get languageTest;
+
+  /// Save English language button
+  ///
+  /// In en, this message translates to:
+  /// **'Save English'**
+  String get saveEnglish;
+
+  /// Save Arabic language button
+  ///
+  /// In en, this message translates to:
+  /// **'Save Arabic'**
+  String get saveArabic;
+
+  /// Reload language button
+  ///
+  /// In en, this message translates to:
+  /// **'Reload Language'**
+  String get reloadLanguage;
+
+  /// Saved language label
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Language'**
+  String get savedLanguage;
+
+  /// Current language label
+  ///
+  /// In en, this message translates to:
+  /// **'Current Language'**
+  String get currentLanguage;
+
+  /// Text when value is not set
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get notSet;
+
+  /// Instruction to press save arabic button
+  ///
+  /// In en, this message translates to:
+  /// **'Press \"Save Arabic\"'**
+  String get pressSaveArabic;
+
+  /// Instruction to check if language is still arabic
+  ///
+  /// In en, this message translates to:
+  /// **'Check if language is still \"ar\"'**
+  String get checkLanguageStillAr;
 }
 
 class _AppLocalizationsDelegate

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spider_doctor/core/shared/theme/my_colors.dart';
 import 'locale_cubit.dart';
 import '../../l10n/generated/app_localizations.dart';
 
@@ -11,7 +12,7 @@ class LanguageSwitcher extends StatelessWidget {
     return BlocBuilder<LocaleCubit, Locale>(
       builder: (context, locale) {
         return PopupMenuButton<String>(
-          icon: const Icon(Icons.language, color: Colors.black),
+          icon: const Icon(Icons.language, color: AppColors.primaryColor),
           onSelected: (String languageCode) {
             context.read<LocaleCubit>().changeLanguage(languageCode);
           },

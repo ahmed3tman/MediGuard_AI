@@ -6,6 +6,7 @@ import '../../cubit/device_cubit.dart';
 import '../../cubit/device_state.dart';
 import '../widgets/device_card.dart';
 import '../../../auth/services/auth_service.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class DevicesScreen extends StatefulWidget {
   const DevicesScreen({super.key});
@@ -46,16 +47,18 @@ class _DevicesScreenState extends State<DevicesScreen> {
     return BlocBuilder<DeviceCubit, DeviceState>(
       builder: (context, state) {
         if (state is DeviceLoading) {
-          return const Center(
-            child: LoadingIndicator(message: 'Loading devices...'),
+          return Center(
+            child: LoadingIndicator(
+              message: AppLocalizations.of(context).loadingDevices,
+            ),
           );
         }
 
         if (state is DeviceError) {
           return ErrorStateWidget(
-            title: 'Error',
+            title: AppLocalizations.of(context).error,
             message: state.message,
-            buttonText: 'Retry',
+            buttonText: AppLocalizations.of(context).retry,
             onButtonPressed: () {
               context.read<DeviceCubit>().loadDevices();
             },
@@ -91,14 +94,16 @@ class _DevicesScreenState extends State<DevicesScreen> {
       children: [
         Expanded(
           child: EmptyStateWidget(
-            title: 'No Devices Added',
-            subtitle:
-                'Add your first medical device to start monitoring vital signs in real-time.',
+            title: AppLocalizations.of(context).noDevicesAdded,
+            subtitle: AppLocalizations.of(context).addFirstMedicalDevice,
             icon: Icons.medical_services,
-            buttonText: 'Add Demo Device',
+            buttonText: AppLocalizations.of(context).addDemoDevice,
             onButtonPressed: () {
               // Add a demo device for testing
-              context.read<DeviceCubit>().addDevice('DEMO001', 'Demo Device');
+              context.read<DeviceCubit>().addDevice(
+                'DEMO001',
+                '${AppLocalizations.of(context).demo} Device',
+              );
             },
           ),
         ),

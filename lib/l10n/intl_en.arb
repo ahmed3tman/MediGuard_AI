@@ -536,5 +536,98 @@
   "passwordMinLength": "Password must be at least 6 characters",
   "@passwordMinLength": {
     "description": "Password minimum length validation"
+  },
+  "noDevicesAdded": "No Devices Added",
+  "@noDevicesAdded": {
+    "description": "Title shown when no devices are added"
+  },
+  "addFirstMedicalDevice": "Add your first medical device to start monitoring vital signs in real-time.",
+  "@addFirstMedicalDevice": {
+    "description": "Subtitle shown when no devices are added"
+  },
+  "addDemoDevice": "Add Demo Device",
+  "@addDemoDevice": {
+    "description": "Button text to add a demo device"
+  },
+  "loadingDevices": "Loading devices...",
+  "@loadingDevices": {
+    "description": "Loading message when fetching devices"
+  },
+  "notConnected": "Not Connected",
+  "@notConnected": {
+    "description": "Status when device is not connected"
+  },
+  "justNow": "Just now",
+  "@justNow": {
+    "description": "Time indicator for recent updates"
+  },
+  "deleteDevice": "Delete Device",
+  "@deleteDevice": {
+    "description": "Delete device dialog title"
+  },
+  "deleteDeviceConfirm": "Are you sure you want to delete \"{deviceName}\"?",
+  "@deleteDeviceConfirm": {
+    "description": "Delete device confirmation message",
+    "placeholders": {
+      "deviceName": {
+        "type": "String"
+      }
+    }
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+  "demo": "Demo",
+  "@demo": {
+    "description": "Demo label"
+  },
+  "unknownUser": "Unknown User",
+  "@unknownUser": {
+    "description": "Default text when user name is not available"
+  },
+  "noEmail": "No email",
+  "@noEmail": {
+    "description": "Default text when email is not available"
+  },
+  "languageTest": "Language Test",
+  "@languageTest": {
+    "description": "Language test screen title"
+  },
+  "saveEnglish": "Save English",
+  "@saveEnglish": {
+    "description": "Save English language button"
+  },
+  "saveArabic": "Save Arabic",
+  "@saveArabic": {
+    "description": "Save Arabic language button"
+  },
+  "reloadLanguage": "Reload Language",
+  "@reloadLanguage": {
+    "description": "Reload language button"
+  },
+  "savedLanguage": "Saved Language",
+  "@savedLanguage": {
+    "description": "Saved language label"
+  },
+  "currentLanguage": "Current Language",
+  "@currentLanguage": {
+    "description": "Current language label"
+  },
+  "notSet": "Not set",
+  "@notSet": {
+    "description": "Text when value is not set"
+  },
+  "pressSaveArabic": "Press \"Save Arabic\"",
+  "@pressSaveArabic": {
+    "description": "Instruction to press save arabic button"
+  },
+  "checkLanguageStillAr": "Check if language is still \"ar\"",
+  "@checkLanguageStillAr": {
+    "description": "Instruction to check if language is still arabic"
   }
 }

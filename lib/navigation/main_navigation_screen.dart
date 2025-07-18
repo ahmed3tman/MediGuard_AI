@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spider_doctor/core/shared/theme/my_colors.dart';
 import 'package:spider_doctor/core/shared/widgets/app_drawer.dart';
 import 'package:spider_doctor/l10n/generated/app_localizations.dart';
-import 'package:spider_doctor/core/localization/language_switcher.dart';
 
 // استيراد صفحات التطبيق
 import 'package:spider_doctor/features/home/view/screens/home_screen.dart';

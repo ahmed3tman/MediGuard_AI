@@ -5,6 +5,8 @@ import '../../cubit/device_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
+enum VitalSignType { temperature, ecg, spo2, bloodPressure, unknown }
+
 class DeviceCard extends StatelessWidget {
   final Device device;
 
@@ -127,7 +129,7 @@ class DeviceCard extends StatelessWidget {
                       title: AppLocalizations.of(context).temperature,
                       value: '${device.temperature.toStringAsFixed(1)}°C',
                       isNormal: device.isTemperatureNormal,
-                      color: Colors.grey,
+                      color: Colors.orange,
                       context: context,
                     ),
                     _buildVitalSignTile(
@@ -135,7 +137,7 @@ class DeviceCard extends StatelessWidget {
                       title: AppLocalizations.of(context).ecg,
                       value: '${device.ecg.toStringAsFixed(0)} BPM',
                       isNormal: device.ecg >= 60 && device.ecg <= 100,
-                      color: Colors.grey,
+                      color: Colors.red,
                       context: context,
                     ),
                     _buildVitalSignTile(
@@ -143,7 +145,7 @@ class DeviceCard extends StatelessWidget {
                       title: AppLocalizations.of(context).spo2,
                       value: '${device.spo2.toStringAsFixed(0)}%',
                       isNormal: device.isSpo2Normal,
-                      color: Colors.grey,
+                      color: Colors.blue,
                       context: context,
                     ),
                     _buildVitalSignTile(
@@ -152,7 +154,7 @@ class DeviceCard extends StatelessWidget {
                       value:
                           '${device.bloodPressure['systolic']}/${device.bloodPressure['diastolic']}',
                       isNormal: device.isBloodPressureNormal,
-                      color: Colors.grey,
+                      color: Colors.purple,
                       context: context,
                     ),
                   ],
@@ -161,7 +163,7 @@ class DeviceCard extends StatelessWidget {
                 // Status and last updated information
                 if (device.hasValidReadings && device.lastUpdated != null)
                   Text(
-                    '${AppLocalizations.of(context).lastUpdated}: ${_formatDateTime(device.lastUpdated!)}',
+                    '${AppLocalizations.of(context).lastUpdated}: ${_formatDateTime(device.lastUpdated!, context)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey[600],
                       fontSize: 11,
@@ -187,7 +189,7 @@ class DeviceCard extends StatelessWidget {
                       border: Border.all(color: Colors.orange[200]!),
                     ),
                     child: Text(
-                      'Waiting for device data...',
+                      AppLocalizations.of(context).waitingForDeviceData,
                       style: TextStyle(
                         color: Colors.orange[700],
                         fontSize: 11,
@@ -213,27 +215,56 @@ class DeviceCard extends StatelessWidget {
   }) {
     // Check if this specific reading has valid data
     bool hasValidReading = false;
-    String displayValue = 'Not Connected';
+    String displayValue = AppLocalizations.of(context).notConnected;
 
-    if (title == 'Temperature' && device.temperature > 0) {
-      hasValidReading = true;
-      displayValue = value;
-    } else if (title == 'ECG' && device.ecg > 0) {
-      hasValidReading = true;
-      displayValue = value;
-    } else if (title == 'SpO2' && device.spo2 > 0) {
-      hasValidReading = true;
-      displayValue = value;
-    } else if (title == 'Blood Pressure' &&
-        (device.bloodPressure['systolic']! > 0 ||
-            device.bloodPressure['diastolic']! > 0)) {
-      hasValidReading = true;
-      displayValue = value;
+    // Check reading validity using helper method
+    VitalSignType signType = _getVitalSignType(title, context);
+
+    switch (signType) {
+      case VitalSignType.temperature:
+        if (device.temperature > 0) {
+          hasValidReading = true;
+          displayValue = value;
+        }
+        break;
+      case VitalSignType.ecg:
+        if (device.ecg > 0) {
+          hasValidReading = true;
+          displayValue = value;
+        }
+        break;
+      case VitalSignType.spo2:
+        if (device.spo2 > 0) {
+          hasValidReading = true;
+          displayValue = value;
+        }
+        break;
+      case VitalSignType.bloodPressure:
+        if (device.bloodPressure['systolic']! > 0 ||
+            device.bloodPressure['diastolic']! > 0) {
+          hasValidReading = true;
+          displayValue = value;
+        }
+        break;
+      case VitalSignType.unknown:
+        // Keep default values
+        break;
     }
 
     final displayColor = hasValidReading
         ? (isNormal ? Colors.green : Colors.red)
         : Colors.grey;
+
+    // Use grey color for background when no data is available
+    final backgroundColors = hasValidReading
+        ? [color.withOpacity(0.1), color.withOpacity(0.05)]
+        : [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0.05)];
+
+    // Add red stroke for dangerous readings
+    final borderColor = hasValidReading && !isNormal
+        ? Colors.red
+        : displayColor.withOpacity(0.3);
+    final borderWidth = hasValidReading && !isNormal ? 1.5 : 1.0;
 
     return Container(
       padding: const EdgeInsets.all(8),
@@ -241,17 +272,10 @@ class DeviceCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [color.withOpacity(0.1), color.withOpacity(0.05)],
+          colors: backgroundColors,
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: displayColor.withOpacity(0.3), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: displayColor.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: borderColor, width: borderWidth),
       ),
       child: Row(
         //   mainAxisAlignment: MainAxisAlignment.center,
@@ -299,12 +323,12 @@ class DeviceCard extends StatelessWidget {
     );
   }
 
-  String _formatDateTime(DateTime dateTime) {
+  String _formatDateTime(DateTime dateTime, BuildContext context) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
     if (difference.inMinutes < 1) {
-      return 'Just now';
+      return AppLocalizations.of(context).justNow;
     } else if (difference.inMinutes < 60) {
       return '${difference.inMinutes}m ago';
     } else if (difference.inHours < 24) {
@@ -314,17 +338,34 @@ class DeviceCard extends StatelessWidget {
     }
   }
 
+  VitalSignType _getVitalSignType(String title, BuildContext context) {
+    if (title == AppLocalizations.of(context).temperature ||
+        title == 'Temperature') {
+      return VitalSignType.temperature;
+    } else if (title == AppLocalizations.of(context).ecg || title == 'ECG') {
+      return VitalSignType.ecg;
+    } else if (title == AppLocalizations.of(context).spo2 || title == 'SpO2') {
+      return VitalSignType.spo2;
+    } else if (title == AppLocalizations.of(context).bloodPressure ||
+        title == 'Blood Pressure') {
+      return VitalSignType.bloodPressure;
+    }
+    return VitalSignType.unknown;
+  }
+
   void _showDeleteDialog(BuildContext context) {
     final deviceCubit = context.read<DeviceCubit>();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Device'),
-        content: Text('Are you sure you want to delete "${device.name}"?'),
+        title: Text(AppLocalizations.of(context).deleteDevice),
+        content: Text(
+          AppLocalizations.of(context).deleteDeviceConfirm(device.name),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           TextButton(
             onPressed: () {
@@ -332,7 +373,7 @@ class DeviceCard extends StatelessWidget {
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: Text(AppLocalizations.of(context).delete),
           ),
         ],
       ),

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'floating_snackbar.dart';
+import '../../../l10n/generated/app_localizations.dart';
 
 class ConfirmationDialog extends StatelessWidget {
   final String title;
   final String content;
-  final String confirmText;
-  final String cancelText;
+  final String? confirmText;
+  final String? cancelText;
   final VoidCallback? onConfirm;
   final VoidCallback? onCancel;
   final Color? confirmColor;
@@ -16,8 +17,8 @@ class ConfirmationDialog extends StatelessWidget {
     super.key,
     required this.title,
     required this.content,
-    this.confirmText = 'Confirm',
-    this.cancelText = 'Cancel',
+    this.confirmText,
+    this.cancelText,
     this.onConfirm,
     this.onCancel,
     this.confirmColor,
@@ -34,14 +35,17 @@ class ConfirmationDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: onCancel ?? () => Navigator.of(context).pop(false),
-          child: Text(cancelText, style: TextStyle(color: cancelColor)),
+          child: Text(
+            cancelText ?? AppLocalizations.of(context).cancel,
+            style: TextStyle(color: cancelColor),
+          ),
         ),
         TextButton(
           onPressed: onConfirm ?? () => Navigator.of(context).pop(true),
           style: TextButton.styleFrom(
             foregroundColor: confirmColor ?? Colors.red,
           ),
-          child: Text(confirmText),
+          child: Text(confirmText ?? AppLocalizations.of(context).confirm),
         ),
       ],
     );
@@ -51,8 +55,10 @@ class ConfirmationDialog extends StatelessWidget {
     BuildContext context, {
     required String title,
     required String content,
-    String confirmText = 'Confirm',
-    String cancelText = 'Cancel',
+    String? confirmText,
+    String? cancelText,
+    VoidCallback? onConfirm,
+    VoidCallback? onCancel,
     Color? confirmColor,
     Color? cancelColor,
     IconData? icon,

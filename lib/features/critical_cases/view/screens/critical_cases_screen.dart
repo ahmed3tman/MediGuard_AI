@@ -19,11 +19,6 @@ class CriticalCasesScreen extends StatelessWidget {
               color: Colors.red,
             ),
           ),
-          SizedBox(height: 10),
-          Text(
-            'Emergency monitoring system coming soon...',
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
         ],
       ),
     );

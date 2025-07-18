@@ -28,9 +28,13 @@ class _AppDrawerState extends State<AppDrawer> {
             builder: (context, snapshot) {
               final userProfile = snapshot.data;
               final userName =
-                  userProfile?['name'] ?? user?.displayName ?? 'Unknown User';
+                  userProfile?['name'] ??
+                  user?.displayName ??
+                  AppLocalizations.of(context).unknownUser;
               final userEmail =
-                  userProfile?['email'] ?? user?.email ?? 'No email';
+                  userProfile?['email'] ??
+                  user?.email ??
+                  AppLocalizations.of(context).noEmail;
 
               print('Drawer - User profile: $userProfile');
               print('Drawer - User name: $userName, email: $userEmail');
