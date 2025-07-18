@@ -22,7 +22,7 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -58,12 +58,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 text: 'Doctor', // Primary medical view
               ),
               Tab(
-                icon: const Icon(Icons.analytics),
-                text: 'Analytics', // Historical data and trends
-              ),
-              Tab(
-                icon: const Icon(Icons.settings),
-                text: 'Settings', // Device settings and calibration
+                icon: const Icon(Icons.smart_toy),
+                text: 'AI', // AI assistant tab
               ),
             ],
           ),
@@ -110,18 +106,11 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 // Doctor Tab - Main medical monitoring view
                 const PatientDetailDoctorTab(),
 
-                // Analytics Tab - Coming soon
+                // AI Tab - AI assistant
                 _buildComingSoonTab(
-                  icon: Icons.analytics,
-                  title: 'Analytics & Trends',
-                  description: 'Historical data analysis and patient trends',
-                ),
-
-                // Settings Tab - Coming soon
-                _buildComingSoonTab(
-                  icon: Icons.settings,
-                  title: 'Device Settings',
-                  description: 'Device configuration and calibration options',
+                  icon: Icons.smart_toy,
+                  title: 'AI Assistant',
+                  description: 'AI-powered medical insights and assistance',
                 ),
               ],
             );

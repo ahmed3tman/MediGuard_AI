@@ -35,6 +35,20 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
         final vitalSigns = state.vitalSigns;
         final ecgReadings = state.ecgReadings;
 
+        // Debug information
+        print('ECG Readings in build: ${ecgReadings.length}');
+        print(
+          'Vital Signs: Temperature=${vitalSigns.temperature}, HR=${vitalSigns.heartRate}',
+        );
+        if (ecgReadings.isNotEmpty) {
+          print(
+            'First ECG reading: ${ecgReadings.first.value} at ${ecgReadings.first.timestamp}',
+          );
+          print(
+            'Last ECG reading: ${ecgReadings.last.value} at ${ecgReadings.last.timestamp}',
+          );
+        }
+
         return RefreshIndicator(
           onRefresh: () async {
             await context.read<PatientDetailCubit>().refreshData();
@@ -54,7 +68,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                 const SizedBox(height: 24),
 
                 // ECG Chart Section
-                _buildEcgSection(ecgReadings),
+                _buildEcgSection(ecgReadings, vitalSigns),
                 const SizedBox(height: 20),
 
                 // Controls
@@ -335,7 +349,10 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     );
   }
 
-  Widget _buildEcgSection(List<EcgReading> ecgReadings) {
+  Widget _buildEcgSection(
+    List<EcgReading> ecgReadings,
+    PatientVitalSigns vitalSigns,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -406,32 +423,60 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'No ECG data available',
+                        'No ECG data available (${ecgReadings.length} readings)',
                         style: TextStyle(color: Colors.grey[600], fontSize: 14),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Waiting for device connection...',
+                        'ECG requires active heart rate monitoring',
                         style: TextStyle(color: Colors.grey[500], fontSize: 12),
                       ),
                     ],
                   ),
                 )
-              : _buildEcgChart(ecgReadings),
+              : Column(
+                  children: [
+                    Text(
+                      'ECG Chart - ${ecgReadings.length} readings (HR: ${vitalSigns.heartRate.toInt()} BPM)',
+                      style: TextStyle(
+                        color: Colors.blue[700],
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(child: _buildEcgChart(ecgReadings)),
+                  ],
+                ),
         ),
       ],
     );
   }
 
   Widget _buildEcgChart(List<EcgReading> readings) {
+    // Debug print to check if we have data
+    print('ECG Readings count: ${readings.length}');
+    if (readings.isNotEmpty) {
+      print(
+        'First reading: ${readings.first.value} at ${readings.first.timestamp}',
+      );
+    }
+
     if (readings.isEmpty) {
-      return const Center(child: Text('No ECG data available'));
+      return Center(
+        child: Text(
+          'No ECG data available',
+          style: TextStyle(color: Colors.grey[600], fontSize: 14),
+        ),
+      );
     }
 
     // Convert ECG readings to chart data points
     final spots = readings.asMap().entries.map((entry) {
       return FlSpot(entry.key.toDouble(), entry.value.value);
     }).toList();
+
+    print('Chart spots count: ${spots.length}');
 
     // Calculate dynamic Y-axis range for better visualization
     final values = readings.map((e) => e.value).toList();
@@ -440,6 +485,8 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     final padding = (maxValue - minValue) * 0.1; // 10% padding
     final minY = minValue - padding;
     final maxY = maxValue + padding;
+
+    print('Y-axis range: $minY to $maxY');
 
     return LineChart(
       LineChartData(

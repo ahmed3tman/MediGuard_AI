@@ -27,12 +27,15 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
       _vitalSignsSubscription =
           PatientDetailService.getPatientVitalSignsStream(deviceId).listen(
             (vitalSigns) {
+              print('Vital signs received: $vitalSigns');
               if (vitalSigns != null) {
+                print('Heart rate from vital signs: ${vitalSigns.heartRate}');
                 _currentVitalSigns = vitalSigns;
                 _updateState();
               }
             },
             onError: (error) {
+              print('Error loading vital signs: $error');
               emit(PatientDetailError('Error loading vital signs: $error'));
             },
           );
@@ -41,6 +44,9 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
       _ecgSubscription = PatientDetailService.getEcgReadingsStream(deviceId)
           .listen(
             (ecgReadings) {
+              print(
+                'ECG data received in cubit: ${ecgReadings.length} readings',
+              );
               _currentEcgReadings = ecgReadings;
               _updateState();
             },
@@ -59,6 +65,7 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
   /// Update the state when new data arrives
   void _updateState() {
     if (_currentVitalSigns != null) {
+      print('Updating state - ECG readings: ${_currentEcgReadings.length}');
       emit(
         PatientDetailLoaded(
           vitalSigns: _currentVitalSigns!,
