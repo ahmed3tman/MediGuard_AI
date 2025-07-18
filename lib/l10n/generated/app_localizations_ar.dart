@@ -1,0 +1,398 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Arabic (`ar`).
+class AppLocalizationsAr extends AppLocalizations {
+  AppLocalizationsAr([String locale = 'ar']) : super(locale);
+
+  @override
+  String get appTitle => 'طبيب العنكبوت';
+
+  @override
+  String get realTimeMonitoring => 'المراقبة في الوقت الفعلي';
+
+  @override
+  String get realTimeMonitoringSystem => 'نظام المراقبة في الوقت الفعلي';
+
+  @override
+  String get waitingForDeviceData => 'في انتظار بيانات الجهاز...';
+
+  @override
+  String get temperature => 'درجة الحرارة';
+
+  @override
+  String get tellMeYourQuestion => 'أخبرني بسؤالك...';
+
+  @override
+  String get home => 'الرئيسية';
+
+  @override
+  String get profile => 'الملف الشخصي';
+
+  @override
+  String get settings => 'الإعدادات';
+
+  @override
+  String get login => 'تسجيل الدخول';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get signIn => 'تسجيل الدخول';
+
+  @override
+  String get logout => 'تسجيل الخروج';
+
+  @override
+  String get language => 'اللغة';
+
+  @override
+  String get english => 'الإنجليزية';
+
+  @override
+  String get arabic => 'العربية';
+
+  @override
+  String get selectLanguage => 'اختر اللغة';
+
+  @override
+  String get manageProfile => 'إدارة الملف الشخصي';
+
+  @override
+  String get continueToHome => 'المتابعة إلى الرئيسية';
+
+  @override
+  String get loading => 'جاري التحميل...';
+
+  @override
+  String get error => 'خطأ';
+
+  @override
+  String get devices => 'الأجهزة';
+
+  @override
+  String get criticalCases => 'الحالات الحرجة';
+
+  @override
+  String get deviceStatus => 'حالة الجهاز';
+
+  @override
+  String get heartRate => 'نبضات القلب';
+
+  @override
+  String get bloodPressure => 'ضغط الدم';
+
+  @override
+  String get oxygenSaturation => 'تشبع الأكسجين';
+
+  @override
+  String get normal => 'طبيعي';
+
+  @override
+  String get abnormal => 'غير طبيعي';
+
+  @override
+  String get connected => 'متصل';
+
+  @override
+  String get disconnected => 'غير متصل';
+
+  @override
+  String get dashboard => 'لوحة التحكم';
+
+  @override
+  String get myDevices => 'أجهزتي';
+
+  @override
+  String get helpSupport => 'المساعدة والدعم';
+
+  @override
+  String get signOut => 'تسجيل الخروج';
+
+  @override
+  String get signOutConfirm =>
+      'هل أنت متأكد من أنك تريد تسجيل الخروج من حسابك؟';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get signingOut => 'جاري تسجيل الخروج...';
+
+  @override
+  String get notifications => 'الإشعارات';
+
+  @override
+  String get manageNotifications => 'إدارة إشعارات التطبيق';
+
+  @override
+  String get darkMode => 'الوضع المظلم';
+
+  @override
+  String get toggleTheme => 'التبديل بين الوضع الفاتح والمظلم';
+
+  @override
+  String get privacy => 'الخصوصية';
+
+  @override
+  String get privacySettings => 'إعدادات الخصوصية والأمان';
+
+  @override
+  String get deviceSettings => 'إعدادات الجهاز';
+
+  @override
+  String get wifiSettings => 'إعدادات الواي فاي';
+
+  @override
+  String get manageConnections => 'إدارة اتصالات الواي فاي';
+
+  @override
+  String get bluetoothSettings => 'إعدادات البلوتوث';
+
+  @override
+  String get manageDevices => 'إدارة الأجهزة المتصلة';
+
+  @override
+  String get support => 'الدعم';
+
+  @override
+  String get getHelp => 'الحصول على المساعدة والدعم';
+
+  @override
+  String get about => 'حول التطبيق';
+
+  @override
+  String get appVersion => 'إصدار التطبيق والمعلومات';
+
+  @override
+  String get appDescription =>
+      'نظام مراقبة طبية شامل لتتبع الصحة في الوقت الفعلي وإدارة الأجهزة.';
+
+  @override
+  String get comingSoon => 'قريباً';
+
+  @override
+  String get emergency => 'الطوارئ';
+
+  @override
+  String get accountInformation => 'معلومات الحساب';
+
+  @override
+  String get emailAddress => 'عنوان البريد الإلكتروني';
+
+  @override
+  String get fullName => 'الاسم الكامل';
+
+  @override
+  String get memberSince => 'عضو منذ';
+
+  @override
+  String get notAvailable => 'غير متاح';
+
+  @override
+  String get unknownUser => 'مستخدم غير معروف';
+
+  @override
+  String get guestUser => 'مستخدم ضيف';
+
+  @override
+  String get medicalProfessional => 'أخصائي طبي';
+
+  @override
+  String get accountType => 'نوع الحساب';
+
+  @override
+  String get guest => 'ضيف';
+
+  @override
+  String get full => 'كامل';
+
+  @override
+  String get pushNotifications => 'الإشعارات الفورية';
+
+  @override
+  String get dataExport => 'تصدير البيانات';
+
+  @override
+  String get deviceSharing => 'مشاركة الجهاز';
+
+  @override
+  String get advancedAnalytics => 'التحليلات المتقدمة';
+
+  @override
+  String get addDevice => 'إضافة جهاز';
+
+  @override
+  String get addDeviceTooltip => 'إضافة جهاز جديد';
+
+  @override
+  String get unknown => 'غير معروف';
+
+  @override
+  String get lastUpdated => 'آخر تحديث';
+
+  @override
+  String get notConnected => 'غير متصل';
+
+  @override
+  String get addDeviceScreen => 'إضافة جهاز';
+
+  @override
+  String get deviceName => 'اسم الجهاز';
+
+  @override
+  String get enterDeviceName => 'أدخل اسم الجهاز';
+
+  @override
+  String get deviceId => 'معرف الجهاز';
+
+  @override
+  String get enterDeviceId => 'أدخل معرف الجهاز';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get deviceAddedSuccessfully => 'تم إضافة الجهاز بنجاح';
+
+  @override
+  String get errorAddingDevice => 'خطأ في إضافة الجهاز';
+
+  @override
+  String get pleaseEnterDeviceName => 'يرجى إدخال اسم الجهاز';
+
+  @override
+  String get pleaseEnterDeviceId => 'يرجى إدخال معرف الجهاز';
+
+  @override
+  String get deviceIdMinLength => 'معرف الجهاز يجب أن يكون 3 أحرف على الأقل';
+
+  @override
+  String get deviceNameMinLength => 'اسم الجهاز يجب أن يكون حرفين على الأقل';
+
+  @override
+  String get deviceInfoMessage =>
+      'تأكد من أن معرف الجهاز يتطابق مع معرف الجهاز الفعلي. سيتم استخدامه لاستقبال البيانات في الوقت الفعلي.';
+
+  @override
+  String get errorSigningOut => 'خطأ في تسجيل الخروج';
+
+  @override
+  String get settingsComingSoon => 'الإعدادات - قريباً';
+
+  @override
+  String get helpSupportComingSoon => 'المساعدة والدعم - قريباً';
+
+  @override
+  String get deviceConnected => 'الجهاز متصل - البيانات متاحة في الوقت الفعلي';
+
+  @override
+  String get ecg => 'تخطيط القلب';
+
+  @override
+  String get spo2 => 'نسبة الأكسجين';
+
+  @override
+  String get noDevicesFound => 'لم يتم العثور على أجهزة';
+
+  @override
+  String get searchingForDevices => 'البحث عن الأجهزة...';
+
+  @override
+  String get connectingToDevice => 'الاتصال بالجهاز...';
+
+  @override
+  String get deviceConnectedSuccessfully => 'تم الاتصال بالجهاز بنجاح';
+
+  @override
+  String get failedToConnectToDevice => 'فشل في الاتصال بالجهاز';
+
+  @override
+  String get deviceDisconnected => 'انقطع الاتصال بالجهاز';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get refresh => 'تحديث';
+
+  @override
+  String get searching => 'البحث';
+
+  @override
+  String get connecting => 'الاتصال';
+
+  @override
+  String get success => 'نجح';
+
+  @override
+  String get warning => 'تحذير';
+
+  @override
+  String get info => 'معلومات';
+
+  @override
+  String get signUp => 'إنشاء حساب';
+
+  @override
+  String get createAccount => 'إنشاء حساب';
+
+  @override
+  String get alreadyHaveAccount => 'لديك حساب بالفعل؟';
+
+  @override
+  String get dontHaveAccount => 'ليس لديك حساب؟';
+
+  @override
+  String welcomeUser(String userName) {
+    return 'مرحباً، $userName!';
+  }
+
+  @override
+  String get accountCreatedSuccessfully => 'تم إنشاء حسابك بنجاح';
+
+  @override
+  String get whatYouCanDoNow => 'ما يمكنك فعله الآن:';
+
+  @override
+  String get addMedicalDevices => 'إضافة الأجهزة الطبية';
+
+  @override
+  String get addMedicalDevicesDesc =>
+      'اربط وراقب أجهزتك الطبية في الوقت الفعلي';
+
+  @override
+  String get viewLiveData => 'عرض البيانات المباشرة';
+
+  @override
+  String get viewLiveDataDesc =>
+      'راقب العلامات الحيوية وقراءات الأجهزة بشكل مستمر';
+
+  @override
+  String get manageProfileDesc => 'قم بتحديث معلوماتك وعرض إحصائيات الحساب';
+
+  @override
+  String get pleaseEnterName => 'يرجى إدخال اسمك الكامل';
+
+  @override
+  String get nameMinLength => 'الاسم يجب أن يكون حرفين على الأقل';
+
+  @override
+  String get pleaseEnterEmail => 'يرجى إدخال بريدك الإلكتروني';
+
+  @override
+  String get pleaseEnterValidEmail => 'يرجى إدخال بريد إلكتروني صحيح';
+
+  @override
+  String get pleaseEnterPassword => 'يرجى إدخال كلمة المرور';
+
+  @override
+  String get passwordMinLength => 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+}

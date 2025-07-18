@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../../../core/shared/widgets/widgets.dart';
 import '../../../../core/shared/theme/theme.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../auth/services/auth_service.dart';
-import '../../../auth/view/screens/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -134,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Text(
                             _userProfile?['name'] ??
                                 AuthService.currentUser?.displayName ??
-                                'Unknown User',
+                                AppLocalizations.of(context).unknownUser,
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -155,8 +155,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             child: Text(
                               _userProfile?['isAnonymous'] == true
-                                  ? 'Guest User'
-                                  : 'Medical Professional',
+                                  ? AppLocalizations.of(context).guestUser
+                                  : AppLocalizations.of(
+                                      context,
+                                    ).medicalProfessional,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
@@ -173,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Expanded(
                           child: StatCard(
-                            title: 'Devices',
+                            title: AppLocalizations.of(context).devices,
                             value: _devicesCount.toString(),
                             icon: Icons.medical_services,
                             color: Colors.green,
@@ -182,10 +184,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(width: 16),
                         Expanded(
                           child: StatCard(
-                            title: 'Account Type',
+                            title: AppLocalizations.of(context).accountType,
                             value: _userProfile?['isAnonymous'] == true
-                                ? 'Guest'
-                                : 'Full',
+                                ? AppLocalizations.of(context).guest
+                                : AppLocalizations.of(context).full,
                             icon: Icons.account_circle,
                             color: Colors.orange,
                           ),
@@ -195,67 +197,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 24),
 
                     // Profile Information
-                    _buildSectionTitle('Account Information'),
+                    _buildSectionTitle(
+                      AppLocalizations.of(context).accountInformation,
+                    ),
                     const SizedBox(height: 16),
 
                     InfoCard(
-                      title: 'Email Address',
+                      title: AppLocalizations.of(context).emailAddress,
                       value:
                           _userProfile?['email'] ??
                           AuthService.currentUser?.email ??
-                          'Not available',
+                          AppLocalizations.of(context).notAvailable,
                       icon: Icons.email,
                     ),
                     const SizedBox(height: 12),
 
                     InfoCard(
-                      title: 'Full Name',
+                      title: AppLocalizations.of(context).fullName,
                       value:
                           _userProfile?['name'] ??
                           AuthService.currentUser?.displayName ??
-                          'Not available',
+                          AppLocalizations.of(context).notAvailable,
                       icon: Icons.person,
                     ),
                     const SizedBox(height: 12),
 
                     InfoCard(
-                      title: 'Member Since',
+                      title: AppLocalizations.of(context).memberSince,
                       value: _formatDate(_userProfile?['createdAt']),
                       icon: Icons.calendar_today,
                     ),
                     const SizedBox(height: 24),
 
                     // Coming Soon Features
-                    _buildSectionTitle('Coming Soon'),
+                    _buildSectionTitle(AppLocalizations.of(context).comingSoon),
                     const SizedBox(height: 16),
 
                     ComingSoonCard(
-                      title: 'Push Notifications',
+                      title: AppLocalizations.of(context).pushNotifications,
                       icon: Icons.notifications,
                     ),
                     const SizedBox(height: 12),
-                    ComingSoonCard(title: 'Data Export', icon: Icons.download),
-                    const SizedBox(height: 12),
-                    ComingSoonCard(title: 'Device Sharing', icon: Icons.share),
+                    ComingSoonCard(
+                      title: AppLocalizations.of(context).dataExport,
+                      icon: Icons.download,
+                    ),
                     const SizedBox(height: 12),
                     ComingSoonCard(
-                      title: 'Advanced Analytics',
+                      title: AppLocalizations.of(context).deviceSharing,
+                      icon: Icons.share,
+                    ),
+                    const SizedBox(height: 12),
+                    ComingSoonCard(
+                      title: AppLocalizations.of(context).advancedAnalytics,
                       icon: Icons.analytics,
                     ),
-                    const SizedBox(height: 32),
-
-                    // Sign Out Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: CustomButton(
-                        text: 'Sign Out',
-                        icon: Icons.logout,
-                        onPressed: _handleSignOut,
-                        backgroundColor: Colors.red[600],
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
@@ -271,54 +268,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _formatDate(dynamic timestamp) {
-    if (timestamp == null) return 'Unknown';
+    if (timestamp == null) return AppLocalizations.of(context).unknown;
 
     try {
       final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
       return '${date.day}/${date.month}/${date.year}';
     } catch (e) {
-      return 'Unknown';
-    }
-  }
-
-  Future<void> _handleSignOut() async {
-    final shouldSignOut = await ConfirmationDialog.show(
-      context,
-      title: 'Sign Out',
-      content: 'Are you sure you want to sign out from your account?',
-      confirmText: 'Sign Out',
-      cancelText: 'Cancel',
-      confirmColor: Colors.red,
-    );
-
-    if (shouldSignOut == true) {
-      try {
-        // Show loading indicator
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => const LoadingDialog(message: 'Signing out...'),
-        );
-
-        await AuthService.signOut();
-
-        // Navigate to root and clear all previous routes
-        if (mounted) {
-          Navigator.of(context).pop(); // Close loading dialog
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const LoginScreen()),
-            (route) => false,
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          Navigator.of(context).pop(); // Close loading dialog
-          FloatingSnackBar.showError(
-            context,
-            message: 'Error signing out: ${e.toString()}',
-          );
-        }
-      }
+      return AppLocalizations.of(context).unknown;
     }
   }
 }

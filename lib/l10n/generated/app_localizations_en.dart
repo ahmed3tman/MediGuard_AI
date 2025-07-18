@@ -1,0 +1,400 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appTitle => 'Spider Doctor';
+
+  @override
+  String get realTimeMonitoring => 'Real Time Monitoring';
+
+  @override
+  String get realTimeMonitoringSystem => 'Real Time Monitoring System';
+
+  @override
+  String get waitingForDeviceData => 'Waiting for device data...';
+
+  @override
+  String get temperature => 'Temperature';
+
+  @override
+  String get tellMeYourQuestion => 'Tell me your question...';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get signIn => 'Sign In';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get arabic => 'Arabic';
+
+  @override
+  String get selectLanguage => 'Select Language';
+
+  @override
+  String get manageProfile => 'Manage Profile';
+
+  @override
+  String get continueToHome => 'Continue to Home';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get devices => 'Devices';
+
+  @override
+  String get criticalCases => 'Critical Cases';
+
+  @override
+  String get deviceStatus => 'Device Status';
+
+  @override
+  String get heartRate => 'Heart Rate';
+
+  @override
+  String get bloodPressure => 'Blood Pressure';
+
+  @override
+  String get oxygenSaturation => 'Oxygen Saturation';
+
+  @override
+  String get normal => 'Normal';
+
+  @override
+  String get abnormal => 'Abnormal';
+
+  @override
+  String get connected => 'Connected';
+
+  @override
+  String get disconnected => 'Disconnected';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get myDevices => 'My Devices';
+
+  @override
+  String get helpSupport => 'Help & Support';
+
+  @override
+  String get signOut => 'Sign Out';
+
+  @override
+  String get signOutConfirm =>
+      'Are you sure you want to sign out from your account?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get signingOut => 'Signing out...';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get manageNotifications => 'Manage app notifications';
+
+  @override
+  String get darkMode => 'Dark Mode';
+
+  @override
+  String get toggleTheme => 'Toggle between light and dark theme';
+
+  @override
+  String get privacy => 'Privacy';
+
+  @override
+  String get privacySettings => 'Privacy and security settings';
+
+  @override
+  String get deviceSettings => 'Device Settings';
+
+  @override
+  String get wifiSettings => 'Wi-Fi Settings';
+
+  @override
+  String get manageConnections => 'Manage Wi-Fi connections';
+
+  @override
+  String get bluetoothSettings => 'Bluetooth Settings';
+
+  @override
+  String get manageDevices => 'Manage connected devices';
+
+  @override
+  String get support => 'Support';
+
+  @override
+  String get getHelp => 'Get help and support';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get appVersion => 'App version and information';
+
+  @override
+  String get appDescription =>
+      'A comprehensive medical monitoring system for real-time health tracking and device management.';
+
+  @override
+  String get comingSoon => 'Coming Soon';
+
+  @override
+  String get emergency => 'Emergency';
+
+  @override
+  String get accountInformation => 'Account Information';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get fullName => 'Full Name';
+
+  @override
+  String get memberSince => 'Member Since';
+
+  @override
+  String get notAvailable => 'Not available';
+
+  @override
+  String get unknownUser => 'Unknown User';
+
+  @override
+  String get guestUser => 'Guest User';
+
+  @override
+  String get medicalProfessional => 'Medical Professional';
+
+  @override
+  String get accountType => 'Account Type';
+
+  @override
+  String get guest => 'Guest';
+
+  @override
+  String get full => 'Full';
+
+  @override
+  String get pushNotifications => 'Push Notifications';
+
+  @override
+  String get dataExport => 'Data Export';
+
+  @override
+  String get deviceSharing => 'Device Sharing';
+
+  @override
+  String get advancedAnalytics => 'Advanced Analytics';
+
+  @override
+  String get addDevice => 'Add Device';
+
+  @override
+  String get addDeviceTooltip => 'Add a new device';
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get lastUpdated => 'Last updated';
+
+  @override
+  String get notConnected => 'Not Connected';
+
+  @override
+  String get addDeviceScreen => 'Add Device';
+
+  @override
+  String get deviceName => 'Device Name';
+
+  @override
+  String get enterDeviceName => 'Enter device name';
+
+  @override
+  String get deviceId => 'Device ID';
+
+  @override
+  String get enterDeviceId => 'Enter device ID';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get deviceAddedSuccessfully => 'Device added successfully';
+
+  @override
+  String get errorAddingDevice => 'Error adding device';
+
+  @override
+  String get pleaseEnterDeviceName => 'Please enter device name';
+
+  @override
+  String get pleaseEnterDeviceId => 'Please enter device ID';
+
+  @override
+  String get deviceIdMinLength => 'Device ID must be at least 3 characters';
+
+  @override
+  String get deviceNameMinLength => 'Device name must be at least 2 characters';
+
+  @override
+  String get deviceInfoMessage =>
+      'Make sure the device ID matches the physical device identifier. This will be used to receive real-time data.';
+
+  @override
+  String get errorSigningOut => 'Error signing out';
+
+  @override
+  String get settingsComingSoon => 'Settings - Coming Soon';
+
+  @override
+  String get helpSupportComingSoon => 'Help & Support - Coming Soon';
+
+  @override
+  String get deviceConnected => 'Device connected - Real-time data available';
+
+  @override
+  String get ecg => 'ECG';
+
+  @override
+  String get spo2 => 'SpO2';
+
+  @override
+  String get noDevicesFound => 'No devices found';
+
+  @override
+  String get searchingForDevices => 'Searching for devices...';
+
+  @override
+  String get connectingToDevice => 'Connecting to device...';
+
+  @override
+  String get deviceConnectedSuccessfully => 'Device connected successfully';
+
+  @override
+  String get failedToConnectToDevice => 'Failed to connect to device';
+
+  @override
+  String get deviceDisconnected => 'Device disconnected';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get searching => 'Searching';
+
+  @override
+  String get connecting => 'Connecting';
+
+  @override
+  String get success => 'Success';
+
+  @override
+  String get warning => 'Warning';
+
+  @override
+  String get info => 'Information';
+
+  @override
+  String get signUp => 'Sign Up';
+
+  @override
+  String get createAccount => 'Create Account';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account?';
+
+  @override
+  String welcomeUser(String userName) {
+    return 'Welcome, $userName!';
+  }
+
+  @override
+  String get accountCreatedSuccessfully =>
+      'Your account has been created successfully';
+
+  @override
+  String get whatYouCanDoNow => 'What you can do now:';
+
+  @override
+  String get addMedicalDevices => 'Add Medical Devices';
+
+  @override
+  String get addMedicalDevicesDesc =>
+      'Connect and monitor your medical devices in real-time';
+
+  @override
+  String get viewLiveData => 'View Live Data';
+
+  @override
+  String get viewLiveDataDesc =>
+      'Monitor vital signs and device readings continuously';
+
+  @override
+  String get manageProfileDesc =>
+      'Update your information and view account statistics';
+
+  @override
+  String get pleaseEnterName => 'Please enter your full name';
+
+  @override
+  String get nameMinLength => 'Name must be at least 2 characters';
+
+  @override
+  String get pleaseEnterEmail => 'Please enter your email';
+
+  @override
+  String get pleaseEnterValidEmail => 'Please enter a valid email';
+
+  @override
+  String get pleaseEnterPassword => 'Please enter your password';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 6 characters';
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spider_doctor/navigation/main_navigation_screen.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class WelcomeScreen extends StatelessWidget {
   final String userName;
@@ -33,7 +34,7 @@ class WelcomeScreen extends StatelessWidget {
 
               // Welcome message
               Text(
-                'Welcome, $userName!',
+                AppLocalizations.of(context).welcomeUser(userName),
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -43,7 +44,7 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               Text(
-                'Your account has been created successfully',
+                AppLocalizations.of(context).accountCreatedSuccessfully,
                 style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 textAlign: TextAlign.center,
               ),
@@ -61,7 +62,7 @@ class WelcomeScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        'What you can do now:',
+                        AppLocalizations.of(context).whatYouCanDoNow,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -72,22 +73,22 @@ class WelcomeScreen extends StatelessWidget {
 
                       _buildFeatureItem(
                         Icons.medical_services,
-                        'Add Medical Devices',
-                        'Connect and monitor your medical devices in real-time',
+                        AppLocalizations.of(context).addMedicalDevices,
+                        AppLocalizations.of(context).addMedicalDevicesDesc,
                       ),
                       const SizedBox(height: 16),
 
                       _buildFeatureItem(
                         Icons.timeline,
-                        'View Live Data',
-                        'Monitor vital signs and device readings continuously',
+                        AppLocalizations.of(context).viewLiveData,
+                        AppLocalizations.of(context).viewLiveDataDesc,
                       ),
                       const SizedBox(height: 16),
 
                       _buildFeatureItem(
                         Icons.person,
-                        'Manage Profile',
-                        'Update your information and view account statistics',
+                        AppLocalizations.of(context).manageProfile,
+                        AppLocalizations.of(context).manageProfileDesc,
                       ),
                     ],
                   ),
@@ -117,9 +118,9 @@ class WelcomeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Continue to Home',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context).continueToHome,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),

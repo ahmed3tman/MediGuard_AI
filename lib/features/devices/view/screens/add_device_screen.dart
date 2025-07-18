@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/shared/widgets/widgets.dart';
 import '../../../../core/shared/theme/theme.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../cubit/device_cubit.dart';
 import '../../cubit/device_state.dart';
 
@@ -27,13 +28,13 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Add New Device'),
+      appBar: CustomAppBar(title: AppLocalizations.of(context).addDeviceScreen),
       body: BlocListener<DeviceCubit, DeviceState>(
         listener: (context, state) {
           if (state is DeviceAdded) {
             FloatingSnackBar.showSuccess(
               context,
-              message: 'Device added successfully!',
+              message: AppLocalizations.of(context).deviceAddedSuccessfully,
             );
             Navigator.of(context).pop();
           } else if (state is DeviceError) {
@@ -69,15 +70,15 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                   // Device ID field
                   CustomTextField(
                     controller: _deviceIdController,
-                    labelText: 'Device ID',
-                    hintText: 'Enter unique device identifier',
+                    labelText: AppLocalizations.of(context).deviceId,
+                    hintText: AppLocalizations.of(context).enterDeviceId,
                     prefixIcon: Icons.qr_code,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter a device ID';
+                        return AppLocalizations.of(context).pleaseEnterDeviceId;
                       }
                       if (value.trim().length < 3) {
-                        return 'Device ID must be at least 3 characters';
+                        return AppLocalizations.of(context).deviceIdMinLength;
                       }
                       return null;
                     },
@@ -87,15 +88,17 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                   // Device Name field
                   CustomTextField(
                     controller: _deviceNameController,
-                    labelText: 'Device Name',
-                    hintText: 'Enter a friendly name for the device',
+                    labelText: AppLocalizations.of(context).deviceName,
+                    hintText: AppLocalizations.of(context).enterDeviceName,
                     prefixIcon: Icons.label,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter a device name';
+                        return AppLocalizations.of(
+                          context,
+                        ).pleaseEnterDeviceName;
                       }
                       if (value.trim().length < 2) {
-                        return 'Device name must be at least 2 characters';
+                        return AppLocalizations.of(context).deviceNameMinLength;
                       }
                       return null;
                     },
@@ -114,10 +117,10 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                       children: [
                         Icon(Icons.info, color: Colors.amber[700]),
                         const SizedBox(width: 12),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'Make sure the device ID matches the physical device identifier. This will be used to receive real-time data.',
-                            style: TextStyle(fontSize: 13),
+                            AppLocalizations.of(context).deviceInfoMessage,
+                            style: const TextStyle(fontSize: 13),
                           ),
                         ),
                       ],
@@ -131,7 +134,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                       final isLoading = state is DeviceAdding;
 
                       return CustomButton(
-                        text: 'Add Device',
+                        text: AppLocalizations.of(context).addDevice,
                         onPressed: _addDevice,
                         isLoading: isLoading,
                         width: double.infinity,

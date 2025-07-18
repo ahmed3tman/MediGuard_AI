@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // استيراد الثيمات والويدجتس المشتركة
 import 'package:spider_doctor/core/shared/theme/my_colors.dart';
 import 'package:spider_doctor/core/shared/widgets/app_drawer.dart';
+import 'package:spider_doctor/l10n/generated/app_localizations.dart';
+import 'package:spider_doctor/core/localization/language_switcher.dart';
 
 // استيراد صفحات التطبيق
 import 'package:spider_doctor/features/home/view/screens/home_screen.dart';
@@ -95,15 +97,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
     switch (_currentIndex) {
       case 0: // صفحة الهوم
         return AppBar(
-          title: const Text('Home'),
+          title: Text(AppLocalizations.of(context).home),
           centerTitle: true,
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
+          // actions: [LanguageSwitcher()],
         );
       case 1: // صفحة الأجهزة
         return AppBar(
-          title: const Text('Real Time Monitoring'),
+          title: Text(AppLocalizations.of(context).realTimeMonitoring),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
@@ -123,27 +126,27 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                   ),
                 );
               },
-              tooltip: 'Add Device',
+              tooltip: AppLocalizations.of(context).addDeviceTooltip,
             ),
           ],
         );
       case 2: // صفحة الحالات الحرجة
         return AppBar(
-          title: const Text('Critical Cases'),
+          title: Text(AppLocalizations.of(context).criticalCases),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
         );
       case 3: // صفحة الملف الشخصي
         return AppBar(
-          title: const Text('Profile'),
+          title: Text(AppLocalizations.of(context).profile),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
         );
       default: // الآب بار الافتراضي
         return AppBar(
-          title: const Text('Spider Doctor'),
+          title: Text(AppLocalizations.of(context).appTitle),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
@@ -277,19 +280,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                       fontWeight: FontWeight.w500,
                     ),
                     // تابات البوتوم بار
-                    tabs: const [
+                    tabs: [
                       Tab(
-                        icon: Icon(Icons.home_outlined, size: 24),
-                        text: 'Home',
-                      ),
-                      Tab(icon: Icon(Icons.devices, size: 24), text: 'Devices'),
-                      Tab(
-                        icon: Icon(Icons.warning_outlined, size: 24),
-                        text: 'Emergency',
+                        icon: const Icon(Icons.home_outlined, size: 24),
+                        text: AppLocalizations.of(context).home,
                       ),
                       Tab(
-                        icon: Icon(Icons.person_outline, size: 24),
-                        text: 'Profile',
+                        icon: const Icon(Icons.devices, size: 24),
+                        text: AppLocalizations.of(context).devices,
+                      ),
+                      Tab(
+                        icon: const Icon(Icons.warning_outlined, size: 24),
+                        text: AppLocalizations.of(context).criticalCases,
+                      ),
+                      Tab(
+                        icon: const Icon(Icons.person_outline, size: 24),
+                        text: AppLocalizations.of(context).profile,
                       ),
                     ],
                   ),

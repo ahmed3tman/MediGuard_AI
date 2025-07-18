@@ -1,0 +1,540 @@
+{
+  "@@locale": "en",
+  "appTitle": "Spider Doctor",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "realTimeMonitoring": "Real Time Monitoring",
+  "@realTimeMonitoring": {
+    "description": "Real time monitoring title"
+  },
+  "realTimeMonitoringSystem": "Real Time Monitoring System",
+  "@realTimeMonitoringSystem": {
+    "description": "Real time monitoring system title"
+  },
+  "waitingForDeviceData": "Waiting for device data...",
+  "@waitingForDeviceData": {
+    "description": "Message shown when waiting for device data"
+  },
+  "temperature": "Temperature",
+  "@temperature": {
+    "description": "Temperature label"
+  },
+  "tellMeYourQuestion": "Tell me your question...",
+  "@tellMeYourQuestion": {
+    "description": "Placeholder text for question input"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Home navigation label"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile navigation label"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings navigation label"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "Login button text"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email input label"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password input label"
+  },
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in button text"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language setting label"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "arabic": "Arabic",
+  "@arabic": {
+    "description": "Arabic language option"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Select language dialog title"
+  },
+  "manageProfile": "Manage Profile",
+  "@manageProfile": {
+    "description": "Manage profile button text"
+  },
+  "continueToHome": "Continue to Home",
+  "@continueToHome": {
+    "description": "Continue to home button text"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading message"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error message"
+  },
+  "devices": "Devices",
+  "@devices": {
+    "description": "Devices navigation label"
+  },
+  "criticalCases": "Critical Cases",
+  "@criticalCases": {
+    "description": "Critical cases navigation label"
+  },
+  "deviceStatus": "Device Status",
+  "@deviceStatus": {
+    "description": "Device status label"
+  },
+  "heartRate": "Heart Rate",
+  "@heartRate": {
+    "description": "Heart rate label"
+  },
+  "bloodPressure": "Blood Pressure",
+  "@bloodPressure": {
+    "description": "Blood pressure label"
+  },
+  "oxygenSaturation": "Oxygen Saturation",
+  "@oxygenSaturation": {
+    "description": "Oxygen saturation label"
+  },
+  "normal": "Normal",
+  "@normal": {
+    "description": "Normal status"
+  },
+  "abnormal": "Abnormal",
+  "@abnormal": {
+    "description": "Abnormal status"
+  },
+  "connected": "Connected",
+  "@connected": {
+    "description": "Connected status"
+  },
+  "disconnected": "Disconnected",
+  "@disconnected": {
+    "description": "Disconnected status"
+  },
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Dashboard navigation label"
+  },
+  "myDevices": "My Devices",
+  "@myDevices": {
+    "description": "My devices menu item"
+  },
+  "helpSupport": "Help & Support",
+  "@helpSupport": {
+    "description": "Help and support menu item"
+  },
+  "signOut": "Sign Out",
+  "@signOut": {
+    "description": "Sign out menu item"
+  },
+  "signOutConfirm": "Are you sure you want to sign out from your account?",
+  "@signOutConfirm": {
+    "description": "Sign out confirmation message"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "signingOut": "Signing out...",
+  "@signingOut": {
+    "description": "Signing out loading message"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications setting"
+  },
+  "manageNotifications": "Manage app notifications",
+  "@manageNotifications": {
+    "description": "Manage notifications description"
+  },
+  "darkMode": "Dark Mode",
+  "@darkMode": {
+    "description": "Dark mode setting"
+  },
+  "toggleTheme": "Toggle between light and dark theme",
+  "@toggleTheme": {
+    "description": "Toggle theme description"
+  },
+  "privacy": "Privacy",
+  "@privacy": {
+    "description": "Privacy setting"
+  },
+  "privacySettings": "Privacy and security settings",
+  "@privacySettings": {
+    "description": "Privacy settings description"
+  },
+  "deviceSettings": "Device Settings",
+  "@deviceSettings": {
+    "description": "Device settings section"
+  },
+  "wifiSettings": "Wi-Fi Settings",
+  "@wifiSettings": {
+    "description": "Wi-Fi settings"
+  },
+  "manageConnections": "Manage Wi-Fi connections",
+  "@manageConnections": {
+    "description": "Manage connections description"
+  },
+  "bluetoothSettings": "Bluetooth Settings",
+  "@bluetoothSettings": {
+    "description": "Bluetooth settings"
+  },
+  "manageDevices": "Manage connected devices",
+  "@manageDevices": {
+    "description": "Manage devices description"
+  },
+  "support": "Support",
+  "@support": {
+    "description": "Support section"
+  },
+  "getHelp": "Get help and support",
+  "@getHelp": {
+    "description": "Get help description"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About menu item"
+  },
+  "appVersion": "App version and information",
+  "@appVersion": {
+    "description": "App version description"
+  },
+  "appDescription": "A comprehensive medical monitoring system for real-time health tracking and device management.",
+  "@appDescription": {
+    "description": "App description"
+  },
+  "comingSoon": "Coming Soon",
+  "@comingSoon": {
+    "description": "Coming soon message"
+  },
+  "criticalCases": "Critical Cases",
+  "@criticalCases": {
+    "description": "Critical cases navigation label"
+  },
+  "devices": "Devices",
+  "@devices": {
+    "description": "Devices navigation label"
+  },
+  "emergency": "Emergency",
+  "@emergency": {
+    "description": "Emergency navigation label"
+  },
+  "accountInformation": "Account Information",
+  "@accountInformation": {
+    "description": "Account information section"
+  },
+  "emailAddress": "Email Address",
+  "@emailAddress": {
+    "description": "Email address field"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Full name field"
+  },
+  "memberSince": "Member Since",
+  "@memberSince": {
+    "description": "Member since field"
+  },
+  "notAvailable": "Not available",
+  "@notAvailable": {
+    "description": "Not available text"
+  },
+  "unknownUser": "Unknown User",
+  "@unknownUser": {
+    "description": "Unknown user text"
+  },
+  "guestUser": "Guest User",
+  "@guestUser": {
+    "description": "Guest user text"
+  },
+  "medicalProfessional": "Medical Professional",
+  "@medicalProfessional": {
+    "description": "Medical professional text"
+  },
+  "accountType": "Account Type",
+  "@accountType": {
+    "description": "Account type field"
+  },
+  "guest": "Guest",
+  "@guest": {
+    "description": "Guest account type"
+  },
+  "full": "Full",
+  "@full": {
+    "description": "Full account type"
+  },
+  "pushNotifications": "Push Notifications",
+  "@pushNotifications": {
+    "description": "Push notifications feature"
+  },
+  "dataExport": "Data Export",
+  "@dataExport": {
+    "description": "Data export feature"
+  },
+  "deviceSharing": "Device Sharing",
+  "@deviceSharing": {
+    "description": "Device sharing feature"
+  },
+  "advancedAnalytics": "Advanced Analytics",
+  "@advancedAnalytics": {
+    "description": "Advanced analytics feature"
+  },
+  "addDevice": "Add Device",
+  "@addDevice": {
+    "description": "Add device button"
+  },
+  "addDeviceTooltip": "Add a new device",
+  "@addDeviceTooltip": {
+    "description": "Add device tooltip"
+  },
+  "unknown": "Unknown",
+  "@unknown": {
+    "description": "Unknown text"
+  },
+  "lastUpdated": "Last updated",
+  "@lastUpdated": {
+    "description": "Last updated text"
+  },
+  "notConnected": "Not Connected",
+  "@notConnected": {
+    "description": "Not connected status"
+  },
+  "addDeviceScreen": "Add Device",
+  "@addDeviceScreen": {
+    "description": "Add device screen title"
+  },
+  "deviceName": "Device Name",
+  "@deviceName": {
+    "description": "Device name field"
+  },
+  "enterDeviceName": "Enter device name",
+  "@enterDeviceName": {
+    "description": "Enter device name hint"
+  },
+  "deviceId": "Device ID",
+  "@deviceId": {
+    "description": "Device ID field"
+  },
+  "enterDeviceId": "Enter device ID",
+  "@enterDeviceId": {
+    "description": "Enter device ID hint"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button"
+  },
+  "deviceAddedSuccessfully": "Device added successfully",
+  "@deviceAddedSuccessfully": {
+    "description": "Device added success message"
+  },
+  "errorAddingDevice": "Error adding device",
+  "@errorAddingDevice": {
+    "description": "Error adding device message"
+  },
+  "pleaseEnterDeviceName": "Please enter device name",
+  "@pleaseEnterDeviceName": {
+    "description": "Please enter device name validation"
+  },
+  "pleaseEnterDeviceId": "Please enter device ID",
+  "@pleaseEnterDeviceId": {
+    "description": "Please enter device ID validation"
+  },
+  "deviceIdMinLength": "Device ID must be at least 3 characters",
+  "@deviceIdMinLength": {
+    "description": "Device ID minimum length validation"
+  },
+  "deviceNameMinLength": "Device name must be at least 2 characters",
+  "@deviceNameMinLength": {
+    "description": "Device name minimum length validation"
+  },
+  "deviceInfoMessage": "Make sure the device ID matches the physical device identifier. This will be used to receive real-time data.",
+  "@deviceInfoMessage": {
+    "description": "Device information message"
+  },
+  "errorSigningOut": "Error signing out",
+  "@errorSigningOut": {
+    "description": "Error signing out message"
+  },
+  "settingsComingSoon": "Settings - Coming Soon",
+  "@settingsComingSoon": {
+    "description": "Settings coming soon message"
+  },
+  "helpSupportComingSoon": "Help & Support - Coming Soon",
+  "@helpSupportComingSoon": {
+    "description": "Help and support coming soon message"
+  },
+  "lastUpdated": "Last updated",
+  "@lastUpdated": {
+    "description": "Last updated label"
+  },
+  "deviceConnected": "Device connected - Real-time data available",
+  "@deviceConnected": {
+    "description": "Device connected status"
+  },
+  "ecg": "ECG",
+  "@ecg": {
+    "description": "ECG label"
+  },
+  "spo2": "SpO2",
+  "@spo2": {
+    "description": "SpO2 label"
+  },
+  "addDevice": "Add Device",
+  "@addDevice": {
+    "description": "Add device button"
+  },
+  "noDevicesFound": "No devices found",
+  "@noDevicesFound": {
+    "description": "No devices found message"
+  },
+  "searchingForDevices": "Searching for devices...",
+  "@searchingForDevices": {
+    "description": "Searching for devices message"
+  },
+  "connectingToDevice": "Connecting to device...",
+  "@connectingToDevice": {
+    "description": "Connecting to device message"
+  },
+  "deviceConnectedSuccessfully": "Device connected successfully",
+  "@deviceConnectedSuccessfully": {
+    "description": "Device connected successfully message"
+  },
+  "failedToConnectToDevice": "Failed to connect to device",
+  "@failedToConnectToDevice": {
+    "description": "Failed to connect to device message"
+  },
+  "deviceDisconnected": "Device disconnected",
+  "@deviceDisconnected": {
+    "description": "Device disconnected message"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button"
+  },
+  "refresh": "Refresh",
+  "@refresh": {
+    "description": "Refresh button"
+  },
+  "searching": "Searching",
+  "@searching": {
+    "description": "Searching status"
+  },
+  "connecting": "Connecting",
+  "@connecting": {
+    "description": "Connecting status"
+  },
+  "connected": "Connected",
+  "@connected": {
+    "description": "Connected status"
+  },
+  "disconnected": "Disconnected",
+  "@disconnected": {
+    "description": "Disconnected status"
+  },
+  "success": "Success",
+  "@success": {
+    "description": "Success message"
+  },
+  "warning": "Warning",
+  "@warning": {
+    "description": "Warning message"
+  },
+  "info": "Information",
+  "@info": {
+    "description": "Information status"
+  },
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up button text"
+  },
+  "createAccount": "Create Account",
+  "@createAccount": {
+    "description": "Create account button text"
+  },
+  "alreadyHaveAccount": "Already have an account?",
+  "@alreadyHaveAccount": {
+    "description": "Already have an account text"
+  },
+  "dontHaveAccount": "Don't have an account?",
+  "@dontHaveAccount": {
+    "description": "Don't have an account text"
+  },
+  "welcomeUser": "Welcome, {userName}!",
+  "@welcomeUser": {
+    "description": "Welcome message with user name",
+    "placeholders": {
+      "userName": {
+        "type": "String"
+      }
+    }
+  },
+  "accountCreatedSuccessfully": "Your account has been created successfully",
+  "@accountCreatedSuccessfully": {
+    "description": "Account created success message"
+  },
+  "whatYouCanDoNow": "What you can do now:",
+  "@whatYouCanDoNow": {
+    "description": "Features section title"
+  },
+  "addMedicalDevices": "Add Medical Devices",
+  "@addMedicalDevices": {
+    "description": "Add medical devices feature"
+  },
+  "addMedicalDevicesDesc": "Connect and monitor your medical devices in real-time",
+  "@addMedicalDevicesDesc": {
+    "description": "Add medical devices description"
+  },
+  "viewLiveData": "View Live Data",
+  "@viewLiveData": {
+    "description": "View live data feature"
+  },
+  "viewLiveDataDesc": "Monitor vital signs and device readings continuously",
+  "@viewLiveDataDesc": {
+    "description": "View live data description"
+  },
+  "manageProfileDesc": "Update your information and view account statistics",
+  "@manageProfileDesc": {
+    "description": "Manage profile description"
+  },
+  "pleaseEnterName": "Please enter your full name",
+  "@pleaseEnterName": {
+    "description": "Name validation message"
+  },
+  "nameMinLength": "Name must be at least 2 characters",
+  "@nameMinLength": {
+    "description": "Name minimum length validation"
+  },
+  "pleaseEnterEmail": "Please enter your email",
+  "@pleaseEnterEmail": {
+    "description": "Email validation message"
+  },
+  "pleaseEnterValidEmail": "Please enter a valid email",
+  "@pleaseEnterValidEmail": {
+    "description": "Valid email validation message"
+  },
+  "pleaseEnterPassword": "Please enter your password",
+  "@pleaseEnterPassword": {
+    "description": "Password validation message"
+  },
+  "passwordMinLength": "Password must be at least 6 characters",
+  "@passwordMinLength": {
+    "description": "Password minimum length validation"
+  }
+}

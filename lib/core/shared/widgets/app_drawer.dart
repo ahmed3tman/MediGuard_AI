@@ -4,6 +4,8 @@ import 'package:spider_doctor/core/shared/widgets/floating_snackbar.dart';
 import 'package:spider_doctor/core/shared/widgets/loading_widgets.dart';
 import 'package:spider_doctor/features/auth/services/auth_service.dart';
 import 'package:spider_doctor/features/auth/view/screens/login_screen.dart';
+import 'package:spider_doctor/features/settings/view/screens/settings_screen.dart';
+import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
@@ -64,14 +66,14 @@ class _AppDrawerState extends State<AppDrawer> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.home),
-                  title: const Text('Dashboard'),
+                  title: Text(AppLocalizations.of(context).dashboard),
                   onTap: () {
                     Navigator.of(context).pop();
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.medical_services),
-                  title: const Text('My Devices'),
+                  title: Text(AppLocalizations.of(context).myDevices),
                   onTap: () {
                     Navigator.of(context).pop();
                   },
@@ -80,23 +82,24 @@ class _AppDrawerState extends State<AppDrawer> {
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.settings),
-                  title: const Text('Settings'),
+                  title: Text(AppLocalizations.of(context).settings),
                   onTap: () {
                     Navigator.of(context).pop();
-                    FloatingSnackBar.showWarning(
-                      context,
-                      message: 'Settings - Coming Soon',
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const SettingsScreen(),
+                      ),
                     );
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.help),
-                  title: const Text('Help & Support'),
+                  title: Text(AppLocalizations.of(context).helpSupport),
                   onTap: () {
                     Navigator.of(context).pop();
                     FloatingSnackBar.showWarning(
                       context,
-                      message: 'Help & Support - Coming Soon',
+                      message: AppLocalizations.of(context).comingSoon,
                     );
                   },
                 ),
@@ -108,7 +111,10 @@ class _AppDrawerState extends State<AppDrawer> {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Sign Out', style: TextStyle(color: Colors.red)),
+            title: Text(
+              AppLocalizations.of(context).signOut,
+              style: const TextStyle(color: Colors.red),
+            ),
             onTap: () {
               Navigator.of(context).pop();
               _showLogoutConfirmation();
@@ -123,10 +129,10 @@ class _AppDrawerState extends State<AppDrawer> {
   void _showLogoutConfirmation() async {
     final shouldSignOut = await ConfirmationDialog.show(
       context,
-      title: 'Sign Out',
-      content: 'Are you sure you want to sign out from your account?',
-      confirmText: 'Sign Out',
-      cancelText: 'Cancel',
+      title: AppLocalizations.of(context).signOut,
+      content: AppLocalizations.of(context).signOutConfirm,
+      confirmText: AppLocalizations.of(context).signOut,
+      cancelText: AppLocalizations.of(context).cancel,
       confirmColor: Colors.red,
     );
 
@@ -136,7 +142,8 @@ class _AppDrawerState extends State<AppDrawer> {
         showDialog(
           context: context,
           barrierDismissible: false,
-          builder: (context) => const LoadingDialog(message: 'Signing out...'),
+          builder: (context) =>
+              LoadingDialog(message: AppLocalizations.of(context).signingOut),
         );
 
         await AuthService.signOut();

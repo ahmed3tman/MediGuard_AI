@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../model/data_model.dart';
 import '../../cubit/device_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class DeviceCard extends StatelessWidget {
   final Device device;
@@ -123,32 +124,36 @@ class DeviceCard extends StatelessWidget {
                   children: [
                     _buildVitalSignTile(
                       icon: Icons.thermostat,
-                      title: 'Temperature',
+                      title: AppLocalizations.of(context).temperature,
                       value: '${device.temperature.toStringAsFixed(1)}°C',
                       isNormal: device.isTemperatureNormal,
                       color: Colors.grey,
+                      context: context,
                     ),
                     _buildVitalSignTile(
                       icon: Icons.favorite,
-                      title: 'ECG',
+                      title: AppLocalizations.of(context).ecg,
                       value: '${device.ecg.toStringAsFixed(0)} BPM',
                       isNormal: device.ecg >= 60 && device.ecg <= 100,
                       color: Colors.grey,
+                      context: context,
                     ),
                     _buildVitalSignTile(
                       icon: Icons.air,
-                      title: 'SpO2',
+                      title: AppLocalizations.of(context).spo2,
                       value: '${device.spo2.toStringAsFixed(0)}%',
                       isNormal: device.isSpo2Normal,
                       color: Colors.grey,
+                      context: context,
                     ),
                     _buildVitalSignTile(
                       icon: Icons.monitor_heart,
-                      title: 'Blood Pressure',
+                      title: AppLocalizations.of(context).bloodPressure,
                       value:
                           '${device.bloodPressure['systolic']}/${device.bloodPressure['diastolic']}',
                       isNormal: device.isBloodPressureNormal,
                       color: Colors.grey,
+                      context: context,
                     ),
                   ],
                 ),
@@ -156,7 +161,7 @@ class DeviceCard extends StatelessWidget {
                 // Status and last updated information
                 if (device.hasValidReadings && device.lastUpdated != null)
                   Text(
-                    'Last updated: ${_formatDateTime(device.lastUpdated!)}',
+                    '${AppLocalizations.of(context).lastUpdated}: ${_formatDateTime(device.lastUpdated!)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey[600],
                       fontSize: 11,
@@ -164,7 +169,7 @@ class DeviceCard extends StatelessWidget {
                   )
                 else if (device.hasValidReadings)
                   Text(
-                    'Device connected - Real-time data available',
+                    AppLocalizations.of(context).deviceConnected,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.green[600],
                       fontSize: 12,
@@ -204,6 +209,7 @@ class DeviceCard extends StatelessWidget {
     required String value,
     required bool isNormal,
     required Color color,
+    required BuildContext context,
   }) {
     // Check if this specific reading has valid data
     bool hasValidReading = false;

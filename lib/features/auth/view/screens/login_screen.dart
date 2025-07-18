@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/shared/widgets/widgets.dart';
 import '../../../../core/shared/theme/theme.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../../../core/localization/language_switcher.dart';
 import '../../services/auth_service.dart';
 import '../../../../navigation/main_navigation_screen.dart';
 import 'welcome_screen.dart';
@@ -31,6 +33,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: const LanguageSwitcher(),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -57,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    'Spider Doctor',
+                    AppLocalizations.of(context).appTitle,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.title.copyWith(
                       color: AppColors.primaryColor,
@@ -65,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Real Time Monitoring System',
+                    AppLocalizations.of(context).realTimeMonitoringSystem,
                     textAlign: TextAlign.center,
                     style: AppTextStyles.caption,
                   ),
@@ -74,16 +86,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Name field (only for sign up)
                   if (_isSignUp) ...[
                     CustomTextField(
-                      labelText: 'Full Name',
+                      labelText: AppLocalizations.of(context).fullName,
                       controller: _nameController,
                       keyboardType: TextInputType.name,
                       prefixIcon: Icons.person,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your full name';
+                          return AppLocalizations.of(context).pleaseEnterName;
                         }
                         if (value.trim().length < 2) {
-                          return 'Name must be at least 2 characters';
+                          return AppLocalizations.of(context).nameMinLength;
                         }
                         return null;
                       },
@@ -93,16 +105,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Email field
                   CustomTextField(
-                    labelText: 'Email',
+                    labelText: AppLocalizations.of(context).email,
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icons.email,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your email';
+                        return AppLocalizations.of(context).pleaseEnterEmail;
                       }
                       if (!value.contains('@')) {
-                        return 'Please enter a valid email';
+                        return AppLocalizations.of(
+                          context,
+                        ).pleaseEnterValidEmail;
                       }
                       return null;
                     },
@@ -111,16 +125,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Password field
                   CustomTextField(
-                    labelText: 'Password',
+                    labelText: AppLocalizations.of(context).password,
                     controller: _passwordController,
                     obscureText: true,
                     prefixIcon: Icons.lock,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your password';
+                        return AppLocalizations.of(context).pleaseEnterPassword;
                       }
                       if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                        return AppLocalizations.of(context).passwordMinLength;
                       }
                       return null;
                     },
@@ -129,7 +143,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Login/Sign up button
                   CustomButton(
-                    text: _isSignUp ? 'Create Account' : 'Login',
+                    text: _isSignUp
+                        ? AppLocalizations.of(context).createAccount
+                        : AppLocalizations.of(context).login,
                     onPressed: _handleAuth,
                     isLoading: _isLoading,
                     width: double.infinity,
@@ -142,8 +158,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Text(
                         _isSignUp
-                            ? 'Already have an account? '
-                            : 'Don\'t have an account? ',
+                            ? '${AppLocalizations.of(context).alreadyHaveAccount} '
+                            : '${AppLocalizations.of(context).dontHaveAccount} ',
                         style: AppTextStyles.body,
                       ),
                       TextButton(
@@ -158,7 +174,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: Text(
-                          _isSignUp ? 'Login' : 'Sign up',
+                          _isSignUp
+                              ? AppLocalizations.of(context).login
+                              : AppLocalizations.of(context).signUp,
                           style: AppTextStyles.body.copyWith(
                             color: AppColors.primaryColor,
                             fontWeight: FontWeight.w600,
