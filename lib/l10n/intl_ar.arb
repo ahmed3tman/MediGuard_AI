@@ -154,5 +154,16 @@
   "currentLanguage": "اللغة الحالية",
   "notSet": "غير محدد",
   "pressSaveArabic": "اضغط على \"حفظ العربية\"",
-  "checkLanguageStillAr": "تحقق إذا كانت اللغة لا تزال \"ar\""
+  "checkLanguageStillAr": "تحقق إذا كانت اللغة لا تزال \"ar\"",
+  "patientDetails": "تفاصيل المريض",
+  "doctorTab": "الطبيب",
+  "vitalSigns": "العلامات الحيوية",
+  "ecgMonitor": "مراقب تخطيط القلب",
+  "connected": "متصل",
+  "notConnected": "غير متصل",
+  "noEcgDataAvailable": "لا توجد بيانات تخطيط قلب متاحة",
+  "waitingForDeviceConnection": "في انتظار اتصال الجهاز...",
+  "monitoringControls": "أدوات التحكم في المراقبة",
+  "refreshData": "تحديث البيانات",
+  "cleanupData": "تنظيف البيانات"
 }

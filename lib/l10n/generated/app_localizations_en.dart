@@ -90,7 +90,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bloodPressure => 'Blood Pressure';
 
   @override
-  String get oxygenSaturation => 'Oxygen Saturation';
+  String get oxygenSaturation => 'SpO₂';
 
   @override
   String get normal => 'Normal';
@@ -99,7 +99,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get abnormal => 'Abnormal';
 
   @override
-  String get connected => 'Connected';
+  String get connected => 'CONNECTED';
 
   @override
   String get disconnected => 'Disconnected';
@@ -239,7 +239,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lastUpdated => 'Last updated';
 
   @override
-  String get notConnected => 'Not Connected';
+  String get notConnected => 'NOT CONNECTED';
 
   @override
   String get addDeviceScreen => 'Add Device';
@@ -460,4 +460,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get checkLanguageStillAr => 'Check if language is still \"ar\"';
+
+  @override
+  String get patientDetails => 'Patient Details';
+
+  @override
+  String get doctorTab => 'Doctor';
+
+  @override
+  String get vitalSigns => 'Vital Signs';
+
+  @override
+  String get ecgMonitor => 'ECG Monitor';
+
+  @override
+  String get noEcgDataAvailable => 'No ECG data available';
+
+  @override
+  String get waitingForDeviceConnection => 'Waiting for device connection...';
+
+  @override
+  String get monitoringControls => 'Monitoring Controls';
+
+  @override
+  String get refreshData => 'Refresh Data';
+
+  @override
+  String get cleanupData => 'Cleanup Data';
 }

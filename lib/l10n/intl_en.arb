@@ -629,5 +629,61 @@
   "checkLanguageStillAr": "Check if language is still \"ar\"",
   "@checkLanguageStillAr": {
     "description": "Instruction to check if language is still arabic"
+  },
+  "patientDetails": "Patient Details",
+  "@patientDetails": {
+    "description": "Patient details title"
+  },
+  "doctorTab": "Doctor",
+  "@doctorTab": {
+    "description": "Doctor tab title"
+  },
+  "vitalSigns": "Vital Signs",
+  "@vitalSigns": {
+    "description": "Vital signs section title"
+  },
+  "ecgMonitor": "ECG Monitor",
+  "@ecgMonitor": {
+    "description": "ECG monitor section title"
+  },
+  "connected": "CONNECTED",
+  "@connected": {
+    "description": "Connected status"
+  },
+  "notConnected": "NOT CONNECTED",
+  "@notConnected": {
+    "description": "Not connected status"
+  },
+  "noEcgDataAvailable": "No ECG data available",
+  "@noEcgDataAvailable": {
+    "description": "Message when no ECG data"
+  },
+  "waitingForDeviceConnection": "Waiting for device connection...",
+  "@waitingForDeviceConnection": {
+    "description": "Message waiting for device"
+  },
+  "heartRate": "Heart Rate",
+  "@heartRate": {
+    "description": "Heart rate label"
+  },
+  "bloodPressure": "Blood Pressure",
+  "@bloodPressure": {
+    "description": "Blood pressure label"
+  },
+  "oxygenSaturation": "SpO₂",
+  "@oxygenSaturation": {
+    "description": "Oxygen saturation label"
+  },
+  "monitoringControls": "Monitoring Controls",
+  "@monitoringControls": {
+    "description": "Monitoring controls section title"
+  },
+  "refreshData": "Refresh Data",
+  "@refreshData": {
+    "description": "Refresh data button"
+  },
+  "cleanupData": "Cleanup Data",
+  "@cleanupData": {
+    "description": "Cleanup data button"
   }
 }

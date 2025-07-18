@@ -263,7 +263,7 @@ abstract class AppLocalizations {
   /// Oxygen saturation label
   ///
   /// In en, this message translates to:
-  /// **'Oxygen Saturation'**
+  /// **'SpO₂'**
   String get oxygenSaturation;
 
   /// Normal status
@@ -281,7 +281,7 @@ abstract class AppLocalizations {
   /// Connected status
   ///
   /// In en, this message translates to:
-  /// **'Connected'**
+  /// **'CONNECTED'**
   String get connected;
 
   /// Disconnected status
@@ -554,10 +554,10 @@ abstract class AppLocalizations {
   /// **'Last updated'**
   String get lastUpdated;
 
-  /// Status when device is not connected
+  /// Not connected status
   ///
   /// In en, this message translates to:
-  /// **'Not Connected'**
+  /// **'NOT CONNECTED'**
   String get notConnected;
 
   /// Add device screen title
@@ -979,6 +979,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Check if language is still \"ar\"'**
   String get checkLanguageStillAr;
+
+  /// Patient details title
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Details'**
+  String get patientDetails;
+
+  /// Doctor tab title
+  ///
+  /// In en, this message translates to:
+  /// **'Doctor'**
+  String get doctorTab;
+
+  /// Vital signs section title
+  ///
+  /// In en, this message translates to:
+  /// **'Vital Signs'**
+  String get vitalSigns;
+
+  /// ECG monitor section title
+  ///
+  /// In en, this message translates to:
+  /// **'ECG Monitor'**
+  String get ecgMonitor;
+
+  /// Message when no ECG data
+  ///
+  /// In en, this message translates to:
+  /// **'No ECG data available'**
+  String get noEcgDataAvailable;
+
+  /// Message waiting for device
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for device connection...'**
+  String get waitingForDeviceConnection;
+
+  /// Monitoring controls section title
+  ///
+  /// In en, this message translates to:
+  /// **'Monitoring Controls'**
+  String get monitoringControls;
+
+  /// Refresh data button
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh Data'**
+  String get refreshData;
+
+  /// Cleanup data button
+  ///
+  /// In en, this message translates to:
+  /// **'Cleanup Data'**
+  String get cleanupData;
 }
 
 class _AppLocalizationsDelegate

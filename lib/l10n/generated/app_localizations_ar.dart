@@ -458,4 +458,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get checkLanguageStillAr => 'تحقق إذا كانت اللغة لا تزال \"ar\"';
+
+  @override
+  String get patientDetails => 'تفاصيل المريض';
+
+  @override
+  String get doctorTab => 'الطبيب';
+
+  @override
+  String get vitalSigns => 'العلامات الحيوية';
+
+  @override
+  String get ecgMonitor => 'مراقب تخطيط القلب';
+
+  @override
+  String get noEcgDataAvailable => 'لا توجد بيانات تخطيط قلب متاحة';
+
+  @override
+  String get waitingForDeviceConnection => 'في انتظار اتصال الجهاز...';
+
+  @override
+  String get monitoringControls => 'أدوات التحكم في المراقبة';
+
+  @override
+  String get refreshData => 'تحديث البيانات';
+
+  @override
+  String get cleanupData => 'تنظيف البيانات';
 }

@@ -4,6 +4,7 @@ import '../../model/data_model.dart';
 import '../../cubit/device_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../screens/patient_detail_screen.dart';
 
 enum VitalSignType { temperature, ecg, spo2, bloodPressure, unknown }
 
@@ -14,195 +15,206 @@ class DeviceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.9),
-            Colors.white.withOpacity(0.7),
+    return GestureDetector(
+      onTap: () => _navigateToPatientDetail(context),
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.9),
+              Colors.white.withOpacity(0.7),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header with device name and status
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        device.name,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[800],
-                            ),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        // WiFi status icon only
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: device.hasValidReadings
-                                ? Colors.green.withOpacity(0.1)
-                                : Colors.grey.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            device.hasValidReadings
-                                ? Icons.wifi
-                                : Icons.wifi_off,
-                            color: device.hasValidReadings
-                                ? Colors.green[600]
-                                : Colors.grey[500],
-                            size: 16,
-                          ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header with device name and status
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          device.name,
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[800],
+                              ),
                         ),
-                        const SizedBox(width: 8),
-                        // Delete button
-                        Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () => _showDeleteDialog(context),
-                            borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              child: Icon(
-                                Icons.delete_outline,
-                                color: Colors.red[400],
-                                size: 16,
+                      ),
+                      Row(
+                        children: [
+                          // WiFi status icon only
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: device.hasValidReadings
+                                  ? Colors.green.withOpacity(0.1)
+                                  : Colors.grey.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              device.hasValidReadings
+                                  ? Icons.wifi
+                                  : Icons.wifi_off,
+                              color: device.hasValidReadings
+                                  ? Colors.green[600]
+                                  : Colors.grey[500],
+                              size: 16,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // Delete button
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () => _showDeleteDialog(context),
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                child: Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.red[400],
+                                  size: 16,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'ID: ${device.deviceId}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                    fontSize: 11,
+                        ],
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: 8),
-
-                // Vital signs grid
-                GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  childAspectRatio: 4.0,
-                  crossAxisSpacing: 6,
-                  mainAxisSpacing: 6,
-                  children: [
-                    _buildVitalSignTile(
-                      icon: Icons.thermostat,
-                      title: AppLocalizations.of(context).temperature,
-                      value: '${device.temperature.toStringAsFixed(1)}°C',
-                      isNormal: device.isTemperatureNormal,
-                      color: Colors.orange,
-                      context: context,
-                    ),
-                    _buildVitalSignTile(
-                      icon: Icons.favorite,
-                      title: AppLocalizations.of(context).ecg,
-                      value: '${device.ecg.toStringAsFixed(0)} BPM',
-                      isNormal: device.ecg >= 60 && device.ecg <= 100,
-                      color: Colors.red,
-                      context: context,
-                    ),
-                    _buildVitalSignTile(
-                      icon: Icons.air,
-                      title: AppLocalizations.of(context).spo2,
-                      value: '${device.spo2.toStringAsFixed(0)}%',
-                      isNormal: device.isSpo2Normal,
-                      color: Colors.blue,
-                      context: context,
-                    ),
-                    _buildVitalSignTile(
-                      icon: Icons.monitor_heart,
-                      title: AppLocalizations.of(context).bloodPressure,
-                      value:
-                          '${device.bloodPressure['systolic']}/${device.bloodPressure['diastolic']}',
-                      isNormal: device.isBloodPressureNormal,
-                      color: Colors.purple,
-                      context: context,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 14),
-                // Status and last updated information
-                if (device.hasValidReadings && device.lastUpdated != null)
+                  const SizedBox(height: 8),
                   Text(
-                    '${AppLocalizations.of(context).lastUpdated}: ${_formatDateTime(device.lastUpdated!, context)}',
+                    'ID: ${device.deviceId}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey[600],
                       fontSize: 11,
                     ),
-                  )
-                else if (device.hasValidReadings)
-                  Text(
-                    AppLocalizations.of(context).deviceConnected,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.green[600],
-                      fontSize: 12,
-                    ),
-                  )
-                else
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.orange[50],
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.orange[200]!),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context).waitingForDeviceData,
-                      style: TextStyle(
-                        color: Colors.orange[700],
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
                   ),
-              ],
-            ),
-          ),
-        ),
+                  const SizedBox(height: 8),
+
+                  // Vital signs grid
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    childAspectRatio: 4.0,
+                    crossAxisSpacing: 6,
+                    mainAxisSpacing: 6,
+                    children: [
+                      _buildVitalSignTile(
+                        icon: Icons.thermostat,
+                        title: AppLocalizations.of(context).temperature,
+                        value: '${device.temperature.toStringAsFixed(1)}°C',
+                        isNormal: device.isTemperatureNormal,
+                        color: Colors.orange,
+                        context: context,
+                      ),
+                      _buildVitalSignTile(
+                        icon: Icons.favorite,
+                        title: AppLocalizations.of(context).ecg,
+                        value: '${device.ecg.toStringAsFixed(0)} BPM',
+                        isNormal: device.ecg >= 60 && device.ecg <= 100,
+                        color: Colors.red,
+                        context: context,
+                      ),
+                      _buildVitalSignTile(
+                        icon: Icons.air,
+                        title: AppLocalizations.of(context).spo2,
+                        value: '${device.spo2.toStringAsFixed(0)}%',
+                        isNormal: device.isSpo2Normal,
+                        color: Colors.blue,
+                        context: context,
+                      ),
+                      _buildVitalSignTile(
+                        icon: Icons.monitor_heart,
+                        title: AppLocalizations.of(context).bloodPressure,
+                        value:
+                            '${device.bloodPressure['systolic']}/${device.bloodPressure['diastolic']}',
+                        isNormal: device.isBloodPressureNormal,
+                        color: Colors.purple,
+                        context: context,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  // Status and last updated information
+                  _buildStatusWidget(context),
+                ],
+              ), // Column closing
+            ), // Padding closing
+          ), // BackdropFilter closing
+        ), // ClipRRect closing
+      ), // Container closing
+    ); // GestureDetector closing
+  }
+
+  void _navigateToPatientDetail(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => PatientDetailScreen(device: device),
       ),
     );
+  }
+
+  Widget _buildStatusWidget(BuildContext context) {
+    if (device.hasValidReadings && device.lastUpdated != null) {
+      return Text(
+        '${AppLocalizations.of(context).lastUpdated}: ${_formatDateTime(device.lastUpdated!, context)}',
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontSize: 11),
+      );
+    } else if (device.hasValidReadings) {
+      return Text(
+        AppLocalizations.of(context).deviceConnected,
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: Colors.green[600], fontSize: 12),
+      );
+    } else {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: Colors.orange[50],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.orange[200]!),
+        ),
+        child: Text(
+          AppLocalizations.of(context).waitingForDeviceData,
+          style: TextStyle(
+            color: Colors.orange[700],
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }
   }
 
   Widget _buildVitalSignTile({
