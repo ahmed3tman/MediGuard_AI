@@ -109,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // Profile Header
                     GradientContainer(
@@ -246,12 +246,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // Sign Out Button
                     SizedBox(
-                      width: double.infinity,
+                      width: MediaQuery.of(context).size.width * 0.9,
                       child: CustomButton(
                         text: 'Sign Out',
                         icon: Icons.logout,
                         onPressed: _handleSignOut,
-                        backgroundColor: Colors.red[600],
+                        backgroundColor: Colors.red[200],
                         foregroundColor: Colors.white,
                       ),
                     ),
