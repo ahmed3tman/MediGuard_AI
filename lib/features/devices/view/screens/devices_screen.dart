@@ -81,6 +81,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                 top: 8,
                 bottom: 80,
               ),
+              
               itemCount: state.devices.length,
               itemBuilder: (context, index) {
                 return DeviceCard(device: state.devices[index]);

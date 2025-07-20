@@ -32,12 +32,12 @@ class DeviceCard extends StatelessWidget {
           border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withOpacity(0.08),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.04),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -52,7 +52,7 @@ class DeviceCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header with device name and status
+                  // Header: Name + Status + Delete
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -68,13 +68,12 @@ class DeviceCard extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          // WiFi status icon only
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               color: device.hasValidReadings
-                                  ? Colors.green.withOpacity(0.1)
-                                  : Colors.grey.withOpacity(0.1),
+                                  ? Colors.green.withOpacity(0.08)
+                                  : Colors.grey.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
@@ -88,7 +87,6 @@ class DeviceCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Delete button
                           Material(
                             color: Colors.transparent,
                             child: InkWell(
@@ -98,7 +96,7 @@ class DeviceCard extends StatelessWidget {
                                 padding: const EdgeInsets.all(6),
                                 child: Icon(
                                   Icons.delete_outline,
-                                  color: Colors.red[400],
+                                  color: Colors.red[300],
                                   size: 16,
                                 ),
                               ),
@@ -123,7 +121,7 @@ class DeviceCard extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     crossAxisCount: 2,
-                    childAspectRatio: 4.0,
+                    childAspectRatio: 4,
                     crossAxisSpacing: 6,
                     mainAxisSpacing: 6,
                     children: [
@@ -132,7 +130,7 @@ class DeviceCard extends StatelessWidget {
                         title: AppLocalizations.of(context).temperature,
                         value: '${device.temperature.toStringAsFixed(1)}°C',
                         isNormal: device.isTemperatureNormal,
-                        color: Colors.orange,
+                        color: Colors.orange[300]!, // أهدى
                         context: context,
                       ),
                       _buildVitalSignTile(
@@ -140,7 +138,7 @@ class DeviceCard extends StatelessWidget {
                         title: AppLocalizations.of(context).ecg,
                         value: '${device.ecg.toStringAsFixed(0)} BPM',
                         isNormal: device.ecg >= 60 && device.ecg <= 100,
-                        color: Colors.red,
+                        color: Colors.red[300]!, // أهدى من الأحمر الصريح
                         context: context,
                       ),
                       _buildVitalSignTile(
@@ -148,7 +146,7 @@ class DeviceCard extends StatelessWidget {
                         title: AppLocalizations.of(context).spo2,
                         value: '${device.spo2.toStringAsFixed(0)}%',
                         isNormal: device.isSpo2Normal,
-                        color: Colors.blue,
+                        color: Colors.blueGrey[300]!, // أزرق مائل للرمادي
                         context: context,
                       ),
                       _buildVitalSignTile(
@@ -157,19 +155,20 @@ class DeviceCard extends StatelessWidget {
                         value:
                             '${device.bloodPressure['systolic']}/${device.bloodPressure['diastolic']}',
                         isNormal: device.isBloodPressureNormal,
-                        color: Colors.purple,
+                        color: Colors.deepPurple[200]!, // بنفسجي فاتح وهادئ
                         context: context,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 14),
-                  // Status and last updated information
+
+
+                  // Status and last updated
                   _buildStatusWidget(context),
                 ],
-              ), // Column closing
-            ), // Padding closing
-          ), // BackdropFilter closing
-        ), // ClipRRect closing
+              ),
+            ),
+          ),
+        ),
       ), // Container closing
     ); // GestureDetector closing
   }
@@ -199,7 +198,7 @@ class DeviceCard extends StatelessWidget {
       );
     } else {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         decoration: BoxDecoration(
           color: Colors.orange[50],
           borderRadius: BorderRadius.circular(8),
@@ -276,7 +275,7 @@ class DeviceCard extends StatelessWidget {
     final borderColor = hasValidReading && !isNormal
         ? Colors.red
         : displayColor.withOpacity(0.3);
-    final borderWidth = hasValidReading && !isNormal ? 1.5 : 1.0;
+    final borderWidth = hasValidReading && !isNormal ? 1.01 : 1.0;
 
     return Container(
       padding: const EdgeInsets.all(8),
