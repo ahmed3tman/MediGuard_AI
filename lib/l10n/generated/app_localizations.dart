@@ -293,7 +293,7 @@ abstract class AppLocalizations {
   /// Oxygen saturation label
   ///
   /// In en, this message translates to:
-  /// **'SpO₂'**
+  /// **'Oxygen Saturation'**
   String get oxygenSaturation;
 
   /// Normal status
@@ -311,7 +311,7 @@ abstract class AppLocalizations {
   /// Connected status
   ///
   /// In en, this message translates to:
-  /// **'CONNECTED'**
+  /// **'Connected'**
   String get connected;
 
   /// Disconnected status
@@ -512,7 +512,7 @@ abstract class AppLocalizations {
   /// **'Not available'**
   String get notAvailable;
 
-  /// Default text when user name is not available
+  /// Unknown user text
   ///
   /// In en, this message translates to:
   /// **'Unknown User'**
@@ -590,7 +590,7 @@ abstract class AppLocalizations {
   /// **'Unknown'**
   String get unknown;
 
-  /// Last updated label
+  /// Last updated text
   ///
   /// In en, this message translates to:
   /// **'Last updated'**
@@ -599,7 +599,7 @@ abstract class AppLocalizations {
   /// Not connected status
   ///
   /// In en, this message translates to:
-  /// **'NOT CONNECTED'**
+  /// **'Not Connected'**
   String get notConnected;
 
   /// Add device screen title

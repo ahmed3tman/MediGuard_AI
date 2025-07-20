@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spider_doctor/features/settings/cubit/settings_cubit.dart';
+import 'package:spider_doctor/features/settings/cubit/settings_state.dart';
 import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../../../core/shared/widgets/floating_snackbar.dart';
-import '../../cubit/cubit.dart';
 
 class AppSettingsSection extends StatelessWidget {
   const AppSettingsSection({super.key});

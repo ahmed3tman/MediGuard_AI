@@ -75,7 +75,12 @@ class _DevicesScreenState extends State<DevicesScreen> {
               context.read<DeviceCubit>().loadDevices();
             },
             child: ListView.builder(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.only(
+                left: 8,
+                right: 8,
+                top: 8,
+                bottom: 80,
+              ),
               itemCount: state.devices.length,
               itemBuilder: (context, index) {
                 return DeviceCard(device: state.devices[index]);

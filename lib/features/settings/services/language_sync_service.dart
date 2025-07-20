@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spider_doctor/features/settings/cubit/settings_cubit.dart';
+import 'package:spider_doctor/features/settings/cubit/settings_state.dart';
 import '../../../core/localization/locale_cubit.dart';
-import '../cubit/cubit.dart';
 
 /// خدمة لمزامنة اللغة بين LocaleCubit و SettingsCubit
 class LanguageSyncService {

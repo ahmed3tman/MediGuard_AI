@@ -61,7 +61,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                 ),
                 child: Row(
                   children: [
-                    const SizedBox(width: 16),
+                   // const SizedBox(width: 5),
                     Expanded(
                       child: TextField(
                         controller: _textController,

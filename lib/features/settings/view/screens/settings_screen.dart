@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spider_doctor/core/shared/widgets/custom_button.dart';
 import 'package:spider_doctor/core/shared/widgets/dialog_widgets.dart';
+import 'package:spider_doctor/features/settings/cubit/settings_cubit.dart';
+import 'package:spider_doctor/features/settings/cubit/settings_state.dart';
 import '../../../../core/localization/language_switcher.dart';
 import '../../../../core/localization/locale_cubit.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/shared/widgets/floating_snackbar.dart';
 import '../../../auth/view/screens/login_screen.dart';
-import '../../cubit/cubit.dart';
 import '../../repository/settings_repository.dart';
 import '../widgets/widgets.dart';
 

@@ -48,7 +48,6 @@ class SuggestedQuestionsWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(right: 8),
       child: Material(
-        color: Colors.transparent,
         child: InkWell(
           onTap: () => onQuestionTap(questionText),
           borderRadius: BorderRadius.circular(20),

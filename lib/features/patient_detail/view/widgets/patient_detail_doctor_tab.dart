@@ -65,15 +65,14 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
 
                 // Vital Signs Grid
                 _buildVitalSignsGrid(vitalSigns),
-                const SizedBox(height: 24),
 
                 // ECG Chart Section
                 _buildEcgSection(ecgReadings, vitalSigns),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
 
                 // Controls
                 _buildControlsSection(),
-                const SizedBox(height: 100), // Space for FAB
+                const SizedBox(height: 40), // Space for FAB
               ],
             ),
           ),
@@ -91,31 +90,23 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.blue[600]!, Colors.blue[400]!],
-        ),
+        color: Colors.white.withOpacity(0.85), // ⬅️ أبيض شفاف
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.blue.withOpacity(0.2), // ⬅️ بوردر ناعم أزرق شفاف
+          width: 1.2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.blue.withOpacity(0.08), // ⬅️ ظل خفيف
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.person, size: 32, color: Colors.blue[600]),
-          ),
-          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +114,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                 Text(
                   vitalSigns.patientName,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.black87, // ⬅️ غامق بديل للأبيض
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -131,37 +122,40 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                 const SizedBox(height: 4),
                 Text(
                   'Device ID: ${vitalSigns.deviceId}',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Last Updated: ${_formatTime(vitalSigns.timestamp)}',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 12),
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: isLive ? Colors.green[500] : Colors.red[400],
+              color: isLive ? Colors.green[100] : Colors.red[100],
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isLive ? Colors.green : Colors.red,
+                width: 1,
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.wifi, color: Colors.white, size: 16),
+                Icon(
+                  Icons.wifi,
+                  color: isLive ? Colors.green[800] : Colors.red[700],
+                  size: 16,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   isLive ? 'LIVE' : 'OFFLINE',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: isLive ? Colors.green[800] : Colors.red[700],
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -190,7 +184,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisCount: 2,
-          childAspectRatio: 1.2,
+          childAspectRatio: 1.8,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
           children: [
@@ -199,7 +193,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
               value: _getTemperatureDisplay(vitalSigns.temperature),
               unit: vitalSigns.temperature > 0 ? '°C' : '',
               icon: Icons.thermostat,
-              color: Colors.orange,
+              color: Colors.deepOrange.shade300,
               isConnected: vitalSigns.temperature > 0,
             ),
             _buildVitalSignCard(
@@ -207,7 +201,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
               value: _getHeartRateDisplay(vitalSigns.heartRate),
               unit: vitalSigns.heartRate > 0 ? 'BPM' : '',
               icon: Icons.favorite,
-              color: Colors.red,
+              color: Colors.red.shade300,
               isConnected: vitalSigns.heartRate > 0,
             ),
             _buildVitalSignCard(
@@ -217,7 +211,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                   ? 'mmHg'
                   : '',
               icon: Icons.monitor_heart,
-              color: Colors.purple,
+              color: Colors.indigo.shade300,
               isConnected: _isBloodPressureConnected(vitalSigns.bloodPressure),
             ),
             _buildVitalSignCard(
@@ -225,7 +219,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
               value: _getSpo2Display(vitalSigns.spo2),
               unit: vitalSigns.spo2 > 0 ? '%' : '',
               icon: Icons.air,
-              color: Colors.blue,
+              color: Colors.cyan.shade400,
               isConnected: vitalSigns.spo2 > 0,
             ),
           ],
@@ -243,69 +237,90 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     bool isConnected = true,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: isConnected ? color.withOpacity(0.3) : Colors.grey[300]!,
-          width: 1.5,
+          width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withOpacity(0.08),
             spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            blurRadius: 2,
+            offset: const Offset(0, 1),
           ),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min, // مهم علشان ياخد أقل ارتفاع ممكن
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                height: 32,
+                width: 32,
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: isConnected
-                      ? color.withOpacity(0.1)
+                      ? color.withOpacity(0.10)
                       : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(
                   icon,
-                  color: isConnected ? color : Colors.grey[500],
-                  size: 20,
+                  color: isConnected ? color : Colors.grey[400],
+                  size: 18,
                 ),
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: isConnected ? Colors.green[100] : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 5,
+                  vertical: 1.5,
                 ),
-                child: Icon(
-                  isConnected
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_off,
-                  size: 10,
-                  color: isConnected ? Colors.green[700] : Colors.grey[600],
+                decoration: BoxDecoration(
+                  color: isConnected ? Colors.green[100] : Colors.grey[200],
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      isConnected
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_off,
+                      size: 9,
+                      color: isConnected ? Colors.green[700] : Colors.grey[500],
+                    ),
+                    const SizedBox(width: 2),
+                    Text(
+                      isConnected ? 'Connected' : 'Offline',
+                      style: TextStyle(
+                        fontSize: 8,
+                        color: isConnected
+                            ? Colors.green[700]
+                            : Colors.grey[500],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 7),
           Text(
             title,
             style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+              fontSize: 10,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           if (isConnected) ...[
             RichText(
               text: TextSpan(
@@ -313,21 +328,20 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                   TextSpan(
                     text: value,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 14,
                       fontWeight: FontWeight.bold,
                       color: color,
                     ),
                   ),
-                  if (unit.isNotEmpty) ...[
+                  if (unit.isNotEmpty)
                     TextSpan(
                       text: ' $unit',
                       style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
+                        fontSize: 10,
+                        color: Colors.grey[700],
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ],
                 ],
               ),
             ),
@@ -335,9 +349,9 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
             Text(
               value,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w500,
-                color: Colors.orange[700],
+                color: Colors.grey,
               ),
             ),
           ],
@@ -623,6 +637,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
 
   Widget _buildControlsSection() {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey[50],
@@ -638,36 +653,36 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
               context,
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () =>
-                      context.read<PatientDetailCubit>().refreshData(),
-                  icon: const Icon(Icons.refresh),
-                  label: const Text('Refresh Data'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[600],
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () =>
-                      context.read<PatientDetailCubit>().cleanupOldData(),
-                  icon: const Icon(Icons.cleaning_services),
-                  label: const Text('Cleanup Data'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[600],
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          // const SizedBox(height: 12),
+          // Row(
+          //   children: [
+          //     Expanded(
+          //       child: ElevatedButton.icon(
+          //         onPressed: () =>
+          //             context.read<PatientDetailCubit>().refreshData(),
+          //         icon: const Icon(Icons.refresh),
+          //         label: const Text('Refresh Data'),
+          //         style: ElevatedButton.styleFrom(
+          //           backgroundColor: Colors.blue[600],
+          //           foregroundColor: Colors.white,
+          //         ),
+          //       ),
+          //     ),
+          //     const SizedBox(width: 12),
+          //     Expanded(
+          //       child: ElevatedButton.icon(
+          //         onPressed: () =>
+          //             context.read<PatientDetailCubit>().cleanupOldData(),
+          //         icon: const Icon(Icons.cleaning_services),
+          //         label: const Text('Cleanup Data'),
+          //         style: ElevatedButton.styleFrom(
+          //           backgroundColor: Colors.blue[600],
+          //           foregroundColor: Colors.white,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
           const SizedBox(height: 8),
           Text(
             '• Real-time data updates every 2 seconds\n'

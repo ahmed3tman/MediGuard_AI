@@ -252,14 +252,7 @@
   "@comingSoon": {
     "description": "Coming soon message"
   },
-  "criticalCases": "Critical Cases",
-  "@criticalCases": {
-    "description": "Critical cases navigation label"
-  },
-  "devices": "Devices",
-  "@devices": {
-    "description": "Devices navigation label"
-  },
+
   "emergency": "Emergency",
   "@emergency": {
     "description": "Emergency navigation label"
@@ -408,10 +401,7 @@
   "@helpSupportComingSoon": {
     "description": "Help and support coming soon message"
   },
-  "lastUpdated": "Last updated",
-  "@lastUpdated": {
-    "description": "Last updated label"
-  },
+
   "deviceConnected": "Device connected - Real-time data available",
   "@deviceConnected": {
     "description": "Device connected status"
@@ -424,10 +414,7 @@
   "@spo2": {
     "description": "SpO2 label"
   },
-  "addDevice": "Add Device",
-  "@addDevice": {
-    "description": "Add device button"
-  },
+
   "noDevicesFound": "No devices found",
   "@noDevicesFound": {
     "description": "No devices found message"
@@ -468,14 +455,7 @@
   "@connecting": {
     "description": "Connecting status"
   },
-  "connected": "Connected",
-  "@connected": {
-    "description": "Connected status"
-  },
-  "disconnected": "Disconnected",
-  "@disconnected": {
-    "description": "Disconnected status"
-  },
+
   "success": "Success",
   "@success": {
     "description": "Success message"
@@ -581,10 +561,7 @@
   "@loadingDevices": {
     "description": "Loading message when fetching devices"
   },
-  "notConnected": "Not Connected",
-  "@notConnected": {
-    "description": "Status when device is not connected"
-  },
+
   "justNow": "Just now",
   "@justNow": {
     "description": "Time indicator for recent updates"
@@ -614,10 +591,7 @@
   "@demo": {
     "description": "Demo label"
   },
-  "unknownUser": "Unknown User",
-  "@unknownUser": {
-    "description": "Default text when user name is not available"
-  },
+
   "noEmail": "No email",
   "@noEmail": {
     "description": "Default text when email is not available"
@@ -674,14 +648,8 @@
   "@ecgMonitor": {
     "description": "ECG monitor section title"
   },
-  "connected": "CONNECTED",
-  "@connected": {
-    "description": "Connected status"
-  },
-  "notConnected": "NOT CONNECTED",
-  "@notConnected": {
-    "description": "Not connected status"
-  },
+
+
   "noEcgDataAvailable": "No ECG data available",
   "@noEcgDataAvailable": {
     "description": "Message when no ECG data"
@@ -690,18 +658,8 @@
   "@waitingForDeviceConnection": {
     "description": "Message waiting for device"
   },
-  "heartRate": "Heart Rate",
-  "@heartRate": {
-    "description": "Heart rate label"
-  },
-  "bloodPressure": "Blood Pressure",
-  "@bloodPressure": {
-    "description": "Blood pressure label"
-  },
-  "oxygenSaturation": "SpO₂",
-  "@oxygenSaturation": {
-    "description": "Oxygen saturation label"
-  },
+
+
   "monitoringControls": "Monitoring Controls",
   "@monitoringControls": {
     "description": "Monitoring controls section title"

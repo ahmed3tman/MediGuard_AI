@@ -4,7 +4,7 @@ import 'package:spider_doctor/features/devices/model/data_model.dart';
 import '../../cubit/patient_detail_cubit.dart';
 import '../../cubit/patient_detail_state.dart';
 import '../widgets/patient_detail_doctor_tab.dart';
-import '../../../medical_assistant/view/medical_assistant_screen.dart';
+import '../../../medical_assistant/view/screens/medical_assistant_screen.dart';
 import '../../../medical_assistant/cubit/medical_assistant_cubit.dart';
 
 /// Main patient detail screen with tabbed interface

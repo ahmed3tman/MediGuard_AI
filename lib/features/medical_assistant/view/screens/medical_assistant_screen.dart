@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../cubit/medical_assistant_cubit.dart';
-import '../cubit/medical_assistant_state.dart';
-import 'widgets/chat_message_widget.dart';
-import 'widgets/suggested_questions_widget.dart';
-import 'widgets/message_input_widget.dart';
+import '../../cubit/medical_assistant_cubit.dart';
+import '../../cubit/medical_assistant_state.dart';
+import '../widgets/chat_message_widget.dart';
+import '../widgets/suggested_questions_widget.dart';
+import '../widgets/message_input_widget.dart';
 
 class MedicalAssistantScreen extends StatefulWidget {
   final Map<String, dynamic> patientData;

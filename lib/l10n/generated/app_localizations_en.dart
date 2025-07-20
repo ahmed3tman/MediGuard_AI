@@ -105,7 +105,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bloodPressure => 'Blood Pressure';
 
   @override
-  String get oxygenSaturation => 'SpO₂';
+  String get oxygenSaturation => 'Oxygen Saturation';
 
   @override
   String get normal => 'Normal';
@@ -114,7 +114,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get abnormal => 'Abnormal';
 
   @override
-  String get connected => 'CONNECTED';
+  String get connected => 'Connected';
 
   @override
   String get disconnected => 'Disconnected';
@@ -261,7 +261,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lastUpdated => 'Last updated';
 
   @override
-  String get notConnected => 'NOT CONNECTED';
+  String get notConnected => 'Not Connected';
 
   @override
   String get addDeviceScreen => 'Add Device';

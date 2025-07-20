@@ -117,7 +117,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get connected => 'متصل';
 
   @override
-  String get disconnected => 'غير متصل';
+  String get disconnected => 'منقطع';
 
   @override
   String get dashboard => 'لوحة التحكم';
