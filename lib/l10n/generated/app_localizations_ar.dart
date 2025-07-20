@@ -9,6 +9,21 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get aboutDeveloperName => 'أحمد عتمان';
+
+  @override
+  String get aboutDeveloperTitle => 'مهندس أجهزة طبية\nمطور تطبيقات موبايل';
+
+  @override
+  String get aboutDeveloperFaculty => 'كلية العلوم الطبية التطبيقية';
+
+  @override
+  String get aboutDeveloperDepartment => 'قسم الأجهزة الطبية الحيوية';
+
+  @override
+  String get aboutDeveloperUniversity => 'جامعة المنوفية';
+
+  @override
   String get appTitle => 'الطبيب العنكبوت';
 
   @override
@@ -158,6 +173,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get manageDevices => 'إدارة الأجهزة المتصلة';
+
+  @override
+  String get aboutDeveloper => 'عن المطور';
+
+  @override
+  String get aboutDeveloperBio =>
+      'الاسم: أحمد عتمان\nالوظيفة: مهندس أجهزة طبية ومطور تطبيقات موبايل\nالكلية: كلية العلوم الطبية التطبيقية\nالقسم: قسم الأجهزة الطبية الحيوية\nالجامعة: جامعة المنوفية\n\nالبريد الإلكتروني: <a href=\"mailto:ahmed.atman@example.com\">ahmed.atman@example.com</a>\nلينكدإن: <a href=\"https://linkedin.com/in/ahmed-atman\">linkedin.com/in/ahmed-atman</a>\nجيت هب: <a href=\"https://github.com/ahmed3tman\">github.com/ahmed3tman</a>';
 
   @override
   String get support => 'الدعم';

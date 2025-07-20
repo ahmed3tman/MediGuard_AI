@@ -1,4 +1,24 @@
 {
+  "aboutDeveloperName": "Ahmed Etman",
+  "@aboutDeveloperName": {
+    "description": "Developer's full name for About Developer dialog"
+  },
+  "aboutDeveloperTitle": "Biomedical Engineer\nMobile App Developer",
+  "@aboutDeveloperTitle": {
+    "description": "Developer's job title for About Developer dialog"
+  },
+  "aboutDeveloperFaculty": "Faculty of Applied Medical Sciences",
+  "@aboutDeveloperFaculty": {
+    "description": "Developer's faculty for About Developer dialog"
+  },
+  "aboutDeveloperDepartment": "Department of Biomedical Devices",
+  "@aboutDeveloperDepartment": {
+    "description": "Developer's department for About Developer dialog"
+  },
+  "aboutDeveloperUniversity": "Menoufia University",
+  "@aboutDeveloperUniversity": {
+    "description": "Developer's university for About Developer dialog"
+  },
   "@@locale": "en",
   "appTitle": "Spider Doctor",
   "@appTitle": {
@@ -197,6 +217,14 @@
     "description": "Bluetooth settings"
   },
   "manageDevices": "Manage connected devices",
+  "aboutDeveloper": "About Developer",
+  "@aboutDeveloper": {
+    "description": "About developer menu item"
+  },
+  "aboutDeveloperBio": "Name: Ahmed Atman\nRole: Biomedical Engineer & Mobile App Developer\nFaculty: Faculty of Applied Medical Sciences\nDepartment: Biomedical Devices\nUniversity: Menoufia University\n\nEmail: <a href=\"mailto:ahmed.atman@example.com\">ahmed.atman@example.com</a>\nLinkedIn: <a href=\"https://linkedin.com/in/ahmed-atman\">linkedin.com/in/ahmed-atman</a>\nGitHub: <a href=\"https://github.com/ahmed3tman\">github.com/ahmed3tman</a>",
+  "@aboutDeveloperBio": {
+    "description": "Bio and contact info for About Developer dialog"
+  },
   "@manageDevices": {
     "description": "Manage devices description"
   },

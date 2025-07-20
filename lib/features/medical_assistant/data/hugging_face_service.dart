@@ -542,16 +542,20 @@ class MedicalAssistantService {
 
     // إضافة معلومات عن الأجهزة غير المتصلة
     List<String> disconnectedDevices = [];
-    if (!tempConnected)
+    if (!tempConnected) {
       disconnectedDevices.add(isArabic ? 'جهاز الحرارة' : 'Temperature sensor');
-    if (!hrConnected)
+    }
+    if (!hrConnected) {
       disconnectedDevices.add(isArabic ? 'جهاز النبض' : 'Heart rate monitor');
-    if (!bpConnected)
+    }
+    if (!bpConnected) {
       disconnectedDevices.add(
         isArabic ? 'جهاز ضغط الدم' : 'Blood pressure monitor',
       );
-    if (!spo2Connected)
+    }
+    if (!spo2Connected) {
       disconnectedDevices.add(isArabic ? 'جهاز الأكسجين' : 'Oxygen monitor');
+    }
 
     if (disconnectedDevices.isNotEmpty) {
       recommendations += isArabic

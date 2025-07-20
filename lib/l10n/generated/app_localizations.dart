@@ -98,6 +98,36 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// Developer's full name for About Developer dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Ahmed Etman'**
+  String get aboutDeveloperName;
+
+  /// Developer's job title for About Developer dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Biomedical Engineer\nMobile App Developer'**
+  String get aboutDeveloperTitle;
+
+  /// Developer's faculty for About Developer dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Faculty of Applied Medical Sciences'**
+  String get aboutDeveloperFaculty;
+
+  /// Developer's department for About Developer dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Department of Biomedical Devices'**
+  String get aboutDeveloperDepartment;
+
+  /// Developer's university for About Developer dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Menoufia University'**
+  String get aboutDeveloperUniversity;
+
   /// Application title
   ///
   /// In en, this message translates to:
@@ -397,6 +427,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage connected devices'**
   String get manageDevices;
+
+  /// About developer menu item
+  ///
+  /// In en, this message translates to:
+  /// **'About Developer'**
+  String get aboutDeveloper;
+
+  /// Bio and contact info for About Developer dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Name: Ahmed Atman\nRole: Biomedical Engineer & Mobile App Developer\nFaculty: Faculty of Applied Medical Sciences\nDepartment: Biomedical Devices\nUniversity: Menoufia University\n\nEmail: <a href=\"mailto:ahmed.atman@example.com\">ahmed.atman@example.com</a>\nLinkedIn: <a href=\"https://linkedin.com/in/ahmed-atman\">linkedin.com/in/ahmed-atman</a>\nGitHub: <a href=\"https://github.com/ahmed3tman\">github.com/ahmed3tman</a>'**
+  String get aboutDeveloperBio;
 
   /// Support section
   ///

@@ -1,4 +1,24 @@
 {
+  "aboutDeveloperName": "أحمد عتمان",
+  "@aboutDeveloperName": {
+    "description": "اسم المطور الكامل لعرضه في نافذة عن المطور"
+  },
+  "aboutDeveloperTitle": "مهندس أجهزة طبية\nمطور تطبيقات موبايل",
+  "@aboutDeveloperTitle": {
+    "description": "المسمى الوظيفي للمطور لعرضه في نافذة عن المطور"
+  },
+  "aboutDeveloperFaculty": "كلية العلوم الطبية التطبيقية",
+  "@aboutDeveloperFaculty": {
+    "description": "كلية المطور لعرضها في نافذة عن المطور"
+  },
+  "aboutDeveloperDepartment": "قسم الأجهزة الطبية الحيوية",
+  "@aboutDeveloperDepartment": {
+    "description": "قسم المطور لعرضه في نافذة عن المطور"
+  },
+  "aboutDeveloperUniversity": "جامعة المنوفية",
+  "@aboutDeveloperUniversity": {
+    "description": "جامعة المطور لعرضها في نافذة عن المطور"
+  },
   "@@locale": "ar",
   "appTitle": "الطبيب العنكبوت",
   "realTimeMonitoring": "المراقبة في الوقت الفعلي",
@@ -50,6 +70,14 @@
   "manageConnections": "إدارة اتصالات الواي فاي",
   "bluetoothSettings": "إعدادات البلوتوث",
   "manageDevices": "إدارة الأجهزة المتصلة",
+  "aboutDeveloper": "عن المطور",
+  "@aboutDeveloper": {
+    "description": "عن المطور في القائمة الجانبية"
+  },
+  "aboutDeveloperBio": "الاسم: أحمد عتمان\nالوظيفة: مهندس أجهزة طبية ومطور تطبيقات موبايل\nالكلية: كلية العلوم الطبية التطبيقية\nالقسم: قسم الأجهزة الطبية الحيوية\nالجامعة: جامعة المنوفية\n\nالبريد الإلكتروني: <a href=\"mailto:ahmed.atman@example.com\">ahmed.atman@example.com</a>\nلينكدإن: <a href=\"https://linkedin.com/in/ahmed-atman\">linkedin.com/in/ahmed-atman</a>\nجيت هب: <a href=\"https://github.com/ahmed3tman\">github.com/ahmed3tman</a>",
+  "@aboutDeveloperBio": {
+    "description": "سيرة المطور ومعلومات التواصل لعرضها في نافذة عن المطور"
+  },
   "support": "الدعم",
   "getHelp": "الحصول على المساعدة والدعم",
   "about": "حول التطبيق",
