@@ -1,10 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:spider_doctor/features/patient_detail/view/screens/patient_detail_screen.dart';
 import '../../model/data_model.dart';
 import '../../cubit/device_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../screens/patient_detail_screen.dart';
 
 enum VitalSignType { temperature, ecg, spo2, bloodPressure, unknown }
 

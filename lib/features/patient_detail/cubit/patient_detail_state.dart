@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import '../model/patient_vital_signs.dart';
 
 /// States for patient detail screen

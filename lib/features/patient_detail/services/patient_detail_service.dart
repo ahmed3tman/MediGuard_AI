@@ -37,6 +37,21 @@ class PatientDetailService {
       final deviceData = Map<String, dynamic>.from(data as Map);
       print('Device data parsed: $deviceData');
 
+      // Check device connection status
+      final lastUpdated = deviceData['lastUpdated'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(deviceData['lastUpdated'])
+          : null;
+
+      final now = DateTime.now();
+      bool isConnected = false;
+
+      if (lastUpdated != null) {
+        final difference = now.difference(lastUpdated);
+        isConnected =
+            difference.inMinutes <
+            5; // Connected if data is less than 5 minutes old
+      }
+
       // Only use real data from Firebase, no simulation
       final vitalSigns = PatientVitalSigns(
         deviceId: deviceData['deviceId'] ?? deviceId,
@@ -52,14 +67,14 @@ class PatientDetailService {
                   .toInt(),
         },
         spo2: (deviceData['readings']?['spo2'] ?? 0.0).toDouble(),
-        timestamp: deviceData['lastUpdated'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(deviceData['lastUpdated'])
-            : DateTime.now(),
+        timestamp: lastUpdated ?? DateTime.now(),
         ecgReadings: [], // Will be populated from real ECG data
+        isDeviceConnected: isConnected,
+        lastDataReceived: lastUpdated,
       );
 
       print(
-        'Created vital signs: HR=${vitalSigns.heartRate}, Temp=${vitalSigns.temperature}',
+        'Created vital signs: HR=${vitalSigns.heartRate}, Temp=${vitalSigns.temperature}, Connected=${vitalSigns.isDeviceConnected}',
       );
       return vitalSigns;
     });

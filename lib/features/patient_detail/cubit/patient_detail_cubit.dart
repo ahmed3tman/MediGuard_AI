@@ -30,6 +30,8 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
               print('Vital signs received: $vitalSigns');
               if (vitalSigns != null) {
                 print('Heart rate from vital signs: ${vitalSigns.heartRate}');
+                print('Device connected: ${vitalSigns.isDeviceConnected}');
+                print('Connection status: ${vitalSigns.connectionStatus}');
                 _currentVitalSigns = vitalSigns;
                 _updateState();
               }
@@ -66,6 +68,9 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
   void _updateState() {
     if (_currentVitalSigns != null) {
       print('Updating state - ECG readings: ${_currentEcgReadings.length}');
+      print(
+        'Device connection status: ${_currentVitalSigns!.connectionStatus}',
+      );
       emit(
         PatientDetailLoaded(
           vitalSigns: _currentVitalSigns!,
@@ -89,6 +94,12 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
       print('Error cleaning up old data: $e');
     }
   }
+
+  /// Get current vital signs
+  PatientVitalSigns? get currentVitalSigns => _currentVitalSigns;
+
+  /// Get current ECG readings
+  List<EcgReading> get currentEcgReadings => _currentEcgReadings;
 
   @override
   Future<void> close() {

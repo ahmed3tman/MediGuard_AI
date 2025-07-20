@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'data_model.dart';
+import '../../devices/model/data_model.dart';
 
 /// Model for ECG data points
 class EcgReading extends Equatable {
@@ -23,7 +23,7 @@ class EcgReading extends Equatable {
   List<Object?> get props => [value, timestamp];
 }
 
-/// Model for patient vital signs with extended ECG data
+/// Model for patient vital signs with extended ECG data and device connection status
 class PatientVitalSigns extends Equatable {
   final String deviceId;
   final String patientName;
@@ -33,6 +33,8 @@ class PatientVitalSigns extends Equatable {
   final double spo2;
   final DateTime timestamp;
   final List<EcgReading> ecgReadings;
+  final bool isDeviceConnected;
+  final DateTime? lastDataReceived;
 
   const PatientVitalSigns({
     required this.deviceId,
@@ -43,6 +45,8 @@ class PatientVitalSigns extends Equatable {
     required this.spo2,
     required this.timestamp,
     required this.ecgReadings,
+    this.isDeviceConnected = false,
+    this.lastDataReceived,
   });
 
   factory PatientVitalSigns.fromDevice(Device device) {
@@ -55,6 +59,8 @@ class PatientVitalSigns extends Equatable {
       spo2: device.spo2,
       timestamp: device.lastUpdated ?? DateTime.now(),
       ecgReadings: const [], // Will be populated from Firebase
+      isDeviceConnected: device.hasRecentData,
+      lastDataReceived: device.lastUpdated,
     );
   }
 
@@ -75,6 +81,10 @@ class PatientVitalSigns extends Equatable {
               ?.map((e) => EcgReading.fromJson(e))
               .toList() ??
           [],
+      isDeviceConnected: json['isDeviceConnected'] ?? false,
+      lastDataReceived: json['lastDataReceived'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(json['lastDataReceived'])
+          : null,
     );
   }
 
@@ -88,6 +98,8 @@ class PatientVitalSigns extends Equatable {
       'spo2': spo2,
       'timestamp': timestamp.millisecondsSinceEpoch,
       'ecgReadings': ecgReadings.map((e) => e.toJson()).toList(),
+      'isDeviceConnected': isDeviceConnected,
+      'lastDataReceived': lastDataReceived?.millisecondsSinceEpoch,
     };
   }
 
@@ -102,6 +114,36 @@ class PatientVitalSigns extends Equatable {
         bloodPressure['diastolic']! <= 80;
   }
 
+  // Device connection status helpers
+  bool get hasValidTemperature => temperature > 0;
+  bool get hasValidHeartRate => heartRate > 0;
+  bool get hasValidSpo2 => spo2 > 0;
+  bool get hasValidBloodPressure =>
+      bloodPressure['systolic']! > 0 && bloodPressure['diastolic']! > 0;
+
+  // يعتبر الجهاز متصل فقط إذا كانت هناك بيانات حديثة وواحدة على الأقل من القيم الحيوية ليست صفر
+  bool get isActuallyConnected {
+    if (lastDataReceived == null) return false;
+    final now = DateTime.now();
+    final difference = now.difference(lastDataReceived!);
+    final hasAnyData =
+        hasValidTemperature ||
+        hasValidHeartRate ||
+        hasValidSpo2 ||
+        hasValidBloodPressure;
+    return (difference.inMinutes < 2) && hasAnyData;
+  }
+
+  String get connectionStatus {
+    if (!isActuallyConnected) return 'غير متصل';
+    return 'متصل';
+  }
+
+  String get connectionStatusEnglish {
+    if (!isActuallyConnected) return 'Disconnected';
+    return 'Connected';
+  }
+
   @override
   List<Object?> get props => [
     deviceId,
@@ -112,5 +154,7 @@ class PatientVitalSigns extends Equatable {
     spo2,
     timestamp,
     ecgReadings,
+    isDeviceConnected,
+    lastDataReceived,
   ];
 }

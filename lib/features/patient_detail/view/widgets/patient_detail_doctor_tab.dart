@@ -83,6 +83,11 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
   }
 
   Widget _buildPatientHeader(PatientVitalSigns vitalSigns) {
+    final isLive =
+        vitalSigns.heartRate > 0 ||
+        vitalSigns.temperature > 0 ||
+        vitalSigns.spo2 > 0 ||
+        _isBloodPressureConnected(vitalSigns.bloodPressure);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -145,17 +150,17 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.green[500],
+              color: isLive ? Colors.green[500] : Colors.red[400],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.wifi, color: Colors.white, size: 16),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
-                  'LIVE',
-                  style: TextStyle(
+                  isLive ? 'LIVE' : 'OFFLINE',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -191,44 +196,34 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
           children: [
             _buildVitalSignCard(
               title: 'Temperature',
-              value: vitalSigns.temperature > 0
-                  ? vitalSigns.temperature.toStringAsFixed(1)
-                  : '--',
-              unit: '°C',
+              value: _getTemperatureDisplay(vitalSigns.temperature),
+              unit: vitalSigns.temperature > 0 ? '°C' : '',
               icon: Icons.thermostat,
               color: Colors.orange,
               isConnected: vitalSigns.temperature > 0,
             ),
             _buildVitalSignCard(
               title: 'Heart Rate',
-              value: vitalSigns.heartRate > 0
-                  ? vitalSigns.heartRate.toStringAsFixed(0)
-                  : '--',
-              unit: 'BPM',
+              value: _getHeartRateDisplay(vitalSigns.heartRate),
+              unit: vitalSigns.heartRate > 0 ? 'BPM' : '',
               icon: Icons.favorite,
               color: Colors.red,
               isConnected: vitalSigns.heartRate > 0,
             ),
             _buildVitalSignCard(
               title: 'Blood Pressure',
-              value:
-                  (vitalSigns.bloodPressure['systolic'] ?? 0) > 0 &&
-                      (vitalSigns.bloodPressure['diastolic'] ?? 0) > 0
-                  ? '${vitalSigns.bloodPressure['systolic']}/${vitalSigns.bloodPressure['diastolic']}'
-                  : '--/--',
-              unit: 'mmHg',
+              value: _getBloodPressureDisplay(vitalSigns.bloodPressure),
+              unit: _isBloodPressureConnected(vitalSigns.bloodPressure)
+                  ? 'mmHg'
+                  : '',
               icon: Icons.monitor_heart,
               color: Colors.purple,
-              isConnected:
-                  (vitalSigns.bloodPressure['systolic'] ?? 0) > 0 &&
-                  (vitalSigns.bloodPressure['diastolic'] ?? 0) > 0,
+              isConnected: _isBloodPressureConnected(vitalSigns.bloodPressure),
             ),
             _buildVitalSignCard(
               title: 'SpO₂',
-              value: vitalSigns.spo2 > 0
-                  ? vitalSigns.spo2.toStringAsFixed(0)
-                  : '--',
-              unit: '%',
+              value: _getSpo2Display(vitalSigns.spo2),
+              unit: vitalSigns.spo2 > 0 ? '%' : '',
               icon: Icons.air,
               color: Colors.blue,
               isConnected: vitalSigns.spo2 > 0,
@@ -323,24 +318,26 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                       color: color,
                     ),
                   ),
-                  TextSpan(
-                    text: ' $unit',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
+                  if (unit.isNotEmpty) ...[
+                    TextSpan(
+                      text: ' $unit',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
           ] else ...[
             Text(
-              'Not Connected',
+              value,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[500],
+                color: Colors.orange[700],
               ),
             ),
           ],
@@ -423,13 +420,18 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'No ECG data available (${ecgReadings.length} readings)',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                        'ECG Device Not Connected',
+                        style: TextStyle(
+                          color: Colors.orange[700],
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'ECG requires active heart rate monitoring',
+                        'Please check device connection and heart rate sensor',
                         style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
@@ -692,5 +694,43 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     } else {
       return '${dateTime.day}/${dateTime.month} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
     }
+  }
+
+  // Helper methods for accurate data display
+  String _getTemperatureDisplay(double temperature) {
+    if (temperature <= 0) {
+      return 'Device Not Connected';
+    }
+    return temperature.toStringAsFixed(1);
+  }
+
+  String _getHeartRateDisplay(double heartRate) {
+    if (heartRate <= 0) {
+      return 'Device Not Connected';
+    }
+    return heartRate.toStringAsFixed(0);
+  }
+
+  String _getBloodPressureDisplay(Map<String, dynamic> bloodPressure) {
+    final systolic = bloodPressure['systolic'] ?? 0;
+    final diastolic = bloodPressure['diastolic'] ?? 0;
+
+    if (systolic <= 0 || diastolic <= 0) {
+      return 'Device Not Connected';
+    }
+    return '$systolic/$diastolic';
+  }
+
+  bool _isBloodPressureConnected(Map<String, dynamic> bloodPressure) {
+    final systolic = bloodPressure['systolic'] ?? 0;
+    final diastolic = bloodPressure['diastolic'] ?? 0;
+    return systolic > 0 && diastolic > 0;
+  }
+
+  String _getSpo2Display(double spo2) {
+    if (spo2 <= 0) {
+      return 'Device Not Connected';
+    }
+    return spo2.toStringAsFixed(0);
   }
 }

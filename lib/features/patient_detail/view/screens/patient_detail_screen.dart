@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spider_doctor/features/devices/model/data_model.dart';
 import '../../cubit/patient_detail_cubit.dart';
 import '../../cubit/patient_detail_state.dart';
-import '../../model/data_model.dart';
 import '../widgets/patient_detail_doctor_tab.dart';
+import '../../../medical_assistant/view/medical_assistant_screen.dart';
+import '../../../medical_assistant/cubit/medical_assistant_cubit.dart';
 
 /// Main patient detail screen with tabbed interface
 class PatientDetailScreen extends StatefulWidget {
@@ -106,87 +108,39 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 // Doctor Tab - Main medical monitoring view
                 const PatientDetailDoctorTab(),
 
-                // AI Tab - AI assistant
-                _buildComingSoonTab(
-                  icon: Icons.smart_toy,
-                  title: 'AI Assistant',
-                  description: 'AI-powered medical insights and assistance',
+                // AI Assistant Tab - New Smart Medical Assistant
+                BlocProvider(
+                  create: (context) => MedicalAssistantCubit(),
+                  child: Builder(
+                    builder: (context) {
+                      // جمع بيانات المريض من الحالة
+                      Map<String, dynamic> patientData = {};
+
+                      if (state is PatientDetailLoaded) {
+                        patientData = {
+                          'patientName': widget.device.name,
+                          'deviceId': widget.device.deviceId,
+                          'temperature': state.vitalSigns.temperature,
+                          'heartRate': state.vitalSigns.heartRate,
+                          'bloodPressure': {
+                            'systolic':
+                                state.vitalSigns.bloodPressure['systolic'],
+                            'diastolic':
+                                state.vitalSigns.bloodPressure['diastolic'],
+                          },
+                          'spo2': state.vitalSigns.spo2,
+                          'age': 30, // يمكن إضافة عمر المريض من قاعدة البيانات
+                          'lastUpdated': state.vitalSigns.timestamp,
+                        };
+                      }
+
+                      return MedicalAssistantScreen(patientData: patientData);
+                    },
+                  ),
                 ),
               ],
             );
           },
-        ),
-        floatingActionButton:
-            BlocBuilder<PatientDetailCubit, PatientDetailState>(
-              builder: (context, state) {
-                if (state is PatientDetailLoaded) {
-                  return FloatingActionButton(
-                    onPressed: () =>
-                        context.read<PatientDetailCubit>().refreshData(),
-                    backgroundColor: Colors.blue[600],
-                    foregroundColor: Colors.white,
-                    child: const Icon(Icons.refresh),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-      ),
-    );
-  }
-
-  Widget _buildComingSoonTab({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 48, color: Colors.grey[400]),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              description,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(color: Colors.grey[500]),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.amber[100],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                'Coming Soon',
-                style: TextStyle(
-                  color: Colors.amber[800],
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
         ),
       ),
     );
