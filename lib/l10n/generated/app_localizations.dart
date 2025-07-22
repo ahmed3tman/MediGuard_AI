@@ -152,12 +152,6 @@ abstract class AppLocalizations {
   /// **'Waiting for device data...'**
   String get waitingForDeviceData;
 
-  /// Temperature label
-  ///
-  /// In en, this message translates to:
-  /// **'Temperature'**
-  String get temperature;
-
   /// Placeholder text for question input
   ///
   /// In en, this message translates to:
@@ -277,18 +271,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Device Status'**
   String get deviceStatus;
-
-  /// Heart rate label
-  ///
-  /// In en, this message translates to:
-  /// **'Heart Rate'**
-  String get heartRate;
-
-  /// Blood pressure label
-  ///
-  /// In en, this message translates to:
-  /// **'Blood Pressure'**
-  String get bloodPressure;
 
   /// Oxygen saturation label
   ///
@@ -701,20 +683,20 @@ abstract class AppLocalizations {
   /// Device connected status
   ///
   /// In en, this message translates to:
-  /// **'Device connected - Real-time data available'**
+  /// **'Real-time data available'**
   String get deviceConnected;
+
+  /// Add to emergency message
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Emergency'**
+  String get addToEmergency;
 
   /// ECG label
   ///
   /// In en, this message translates to:
   /// **'ECG'**
   String get ecg;
-
-  /// SpO2 label
-  ///
-  /// In en, this message translates to:
-  /// **'SpO2'**
-  String get spo2;
 
   /// No devices found message
   ///
@@ -941,7 +923,7 @@ abstract class AppLocalizations {
   /// Delete device confirmation message
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to delete \"{deviceName}\"?'**
+  /// **'Are you sure you want to delete {deviceName}?'**
   String deleteDeviceConfirm(String deviceName);
 
   /// Delete button text
@@ -1075,6 +1057,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cleanup Data'**
   String get cleanupData;
+
+  /// AI assistant tab
+  ///
+  /// In en, this message translates to:
+  /// **'AI'**
+  String get aiTab;
+
+  /// Message shown while loading patient data
+  ///
+  /// In en, this message translates to:
+  /// **'Loading patient data...'**
+  String get loadingPatientData;
+
+  /// Prefix for error messages
+  ///
+  /// In en, this message translates to:
+  /// **'Error: '**
+  String get errorPrefix;
+
+  /// Retry button text
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retryButton;
+
+  /// Message when initializing patient monitoring
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing patient monitoring...'**
+  String get initializingPatientMonitoring;
+
+  /// Label for displaying device ID in the UI
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID: '**
+  String get deviceIdLabel;
+
+  /// Label for displaying last updated time in the UI
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated: '**
+  String get lastUpdatedLabel;
+
+  /// Live status indicator
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get liveStatus;
+
+  /// Offline status indicator
+  ///
+  /// In en, this message translates to:
+  /// **'OFFLINE'**
+  String get offlineStatus;
+
+  /// Title for vital signs section
+  ///
+  /// In en, this message translates to:
+  /// **'Vital Signs'**
+  String get vitalSignsTitle;
+
+  /// Temperature label
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature'**
+  String get temperature;
+
+  /// Heart rate label
+  ///
+  /// In en, this message translates to:
+  /// **'Heart Rate'**
+  String get heartRate;
+
+  /// Blood pressure label
+  ///
+  /// In en, this message translates to:
+  /// **'Blood Pressure'**
+  String get bloodPressure;
+
+  /// SpO2 label
+  ///
+  /// In en, this message translates to:
+  /// **'SpO₂'**
+  String get spo2;
+
+  /// Connected status indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get connectedStatus;
+
+  /// Offline status indicator (small)
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get offlineStatusSmall;
+
+  /// Title for ECG monitor section
+  ///
+  /// In en, this message translates to:
+  /// **'ECG Monitor'**
+  String get ecgMonitorTitle;
+
+  /// ECG device connected status
+  ///
+  /// In en, this message translates to:
+  /// **'CONNECTED'**
+  String get ecgConnectedStatus;
+
+  /// ECG device not connected status
+  ///
+  /// In en, this message translates to:
+  /// **'NOT CONNECTED'**
+  String get ecgNotConnectedStatus;
+
+  /// Error message when ECG device is not connected
+  ///
+  /// In en, this message translates to:
+  /// **'ECG Device Not Connected'**
+  String get ecgDeviceNotConnectedError;
+
+  /// Hint when ECG device is not connected
+  ///
+  /// In en, this message translates to:
+  /// **'Please check device connection and heart rate sensor'**
+  String get ecgDeviceNotConnectedHint;
+
+  /// Title for ECG chart with readings count and heart rate
+  ///
+  /// In en, this message translates to:
+  /// **'ECG Chart - {count} readings (HR: {hr} BPM)'**
+  String ecgChartTitle(Object count, Object hr);
+
+  /// Message when no ECG data is available
+  ///
+  /// In en, this message translates to:
+  /// **'No ECG data available'**
+  String get noEcgData;
+
+  /// Tooltip for ECG chart with value and time
+  ///
+  /// In en, this message translates to:
+  /// **'ECG: {value} mV\n{time}'**
+  String ecgTooltip(Object value, Object time);
+
+  /// Title for monitoring controls section
+  ///
+  /// In en, this message translates to:
+  /// **'Monitoring Controls'**
+  String get monitoringControlsTitle;
+
+  /// Description for monitoring controls section
+  ///
+  /// In en, this message translates to:
+  /// **'• Real-time data updates every 2 seconds\n• ECG shows last 50 readings\n• All vital signs are monitored continuously\n• Abnormal values are highlighted in red'**
+  String get monitoringControlsDescription;
+
+  /// Text for current time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get timeJustNow;
+
+  /// Text for minutes ago indicator
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m ago'**
+  String timeMinutesAgo(Object count);
+
+  /// Text for hours ago indicator
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String timeHoursAgo(Object count);
+
+  /// Message when device is not connected
+  ///
+  /// In en, this message translates to:
+  /// **'Device Not Connected'**
+  String get deviceNotConnected;
+
+  /// Message when all patients are stable
+  ///
+  /// In en, this message translates to:
+  /// **'All Patients Stable'**
+  String get allPatientsStable;
+
+  /// Message when there are no critical cases
+  ///
+  /// In en, this message translates to:
+  /// **'There are currently no critical cases'**
+  String get noCriticalCases;
+
+  /// Message when added to critical cases
+  ///
+  /// In en, this message translates to:
+  /// **'Added to critical cases'**
+  String get addedToCriticalCases;
+
+  /// Message when an item or case is added
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get added;
 }
 
 class _AppLocalizationsDelegate

@@ -14,5 +14,6 @@
     "**/.dart_tool": true,
     "**/build": true,
     ".yoyo": true
-  }
+  },
+  "cmake.sourceDirectory": "/Users/os/Desktop/G Project/Flutter app/spider_doctor/linux"
 }

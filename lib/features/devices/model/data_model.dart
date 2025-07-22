@@ -99,13 +99,12 @@ class Device extends Equatable {
   }
 
   // Check if readings are valid (not zero values)
-  bool get hasValidReadings {
-    return temperature > 0 ||
-        ecg > 0 ||
-        spo2 > 0 ||
-        bloodPressure['systolic']! > 0 ||
-        bloodPressure['diastolic']! > 0;
-  }
+  bool get hasValidReadings =>
+      temperature > 0 ||
+      ecg > 0 ||
+      spo2 > 0 ||
+      bloodPressure['systolic']! > 0 ||
+      bloodPressure['diastolic']! > 0;
 
   // Copy with method for state management
   Device copyWith({

@@ -24,19 +24,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get aboutDeveloperUniversity => 'جامعة المنوفية';
 
   @override
-  String get appTitle => 'الطبيب العنكبوت';
+  String get appTitle => 'طبيب العنكبوت';
 
   @override
-  String get realTimeMonitoring => 'المراقبة في الوقت الفعلي';
+  String get realTimeMonitoring => 'المراقبة المباشرة';
 
   @override
   String get realTimeMonitoringSystem => 'نظام المراقبة في الوقت الفعلي';
 
   @override
   String get waitingForDeviceData => 'في انتظار بيانات الجهاز...';
-
-  @override
-  String get temperature => 'درجة الحرارة';
 
   @override
   String get tellMeYourQuestion => 'أخبرني بسؤالك...';
@@ -97,12 +94,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deviceStatus => 'حالة الجهاز';
-
-  @override
-  String get heartRate => 'نبضات القلب';
-
-  @override
-  String get bloodPressure => 'ضغط الدم';
 
   @override
   String get oxygenSaturation => 'تشبع الأكسجين';
@@ -188,7 +179,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get getHelp => 'الحصول على المساعدة والدعم';
 
   @override
-  String get about => 'حول التطبيق';
+  String get about => 'حول';
 
   @override
   String get appVersion => 'إصدار التطبيق والمعلومات';
@@ -313,13 +304,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpSupportComingSoon => 'المساعدة والدعم - قريباً';
 
   @override
-  String get deviceConnected => 'الجهاز متصل - البيانات متاحة في الوقت الفعلي';
+  String get deviceConnected => 'البيانات متاحة في الوقت الفعلي';
+
+  @override
+  String get addToEmergency => 'إضافة للطوارئ';
 
   @override
   String get ecg => 'تخطيط القلب';
-
-  @override
-  String get spo2 => 'نسبة الأكسجين';
 
   @override
   String get noDevicesFound => 'لم يتم العثور على أجهزة';
@@ -439,7 +430,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String deleteDeviceConfirm(String deviceName) {
-    return 'هل أنت متأكد من أنك تريد حذف \"$deviceName\"؟';
+    return 'هل أنت متأكد أنك تريد حذف $deviceName؟';
   }
 
   @override
@@ -507,4 +498,116 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cleanupData => 'تنظيف البيانات';
+
+  @override
+  String get aiTab => 'المساعد الذكي';
+
+  @override
+  String get loadingPatientData => 'جاري تحميل بيانات المريض...';
+
+  @override
+  String get errorPrefix => 'خطأ: ';
+
+  @override
+  String get retryButton => 'إعادة المحاولة';
+
+  @override
+  String get initializingPatientMonitoring => 'جاري تهيئة مراقبة المريض...';
+
+  @override
+  String get deviceIdLabel => 'معرف الجهاز: ';
+
+  @override
+  String get lastUpdatedLabel => 'آخر تحديث: ';
+
+  @override
+  String get liveStatus => 'مباشر';
+
+  @override
+  String get offlineStatus => 'غير متصل';
+
+  @override
+  String get vitalSignsTitle => 'العلامات الحيوية';
+
+  @override
+  String get temperature => 'الحرارة';
+
+  @override
+  String get heartRate => 'نبضات القلب';
+
+  @override
+  String get bloodPressure => 'ضغط الدم';
+
+  @override
+  String get spo2 => 'الأكسجين';
+
+  @override
+  String get connectedStatus => 'متصل';
+
+  @override
+  String get offlineStatusSmall => 'غير متصل';
+
+  @override
+  String get ecgMonitorTitle => 'مراقب القلب';
+
+  @override
+  String get ecgConnectedStatus => 'متصل';
+
+  @override
+  String get ecgNotConnectedStatus => 'غير متصل';
+
+  @override
+  String get ecgDeviceNotConnectedError => 'جهاز القلب غير متصل';
+
+  @override
+  String get ecgDeviceNotConnectedHint =>
+      'يرجى التحقق من اتصال الجهاز ومستشعر نبضات القلب';
+
+  @override
+  String ecgChartTitle(Object count, Object hr) {
+    return 'مخطط القلب - $count قراءة (نبض: $hr ن/د)';
+  }
+
+  @override
+  String get noEcgData => 'لا توجد بيانات لمخطط القلب';
+
+  @override
+  String ecgTooltip(Object value, Object time) {
+    return 'القلب: $value mV\n$time';
+  }
+
+  @override
+  String get monitoringControlsTitle => 'أدوات المراقبة';
+
+  @override
+  String get monitoringControlsDescription =>
+      '• تحديث البيانات كل ثانيتين\n• مخطط القلب يعرض آخر 50 قراءة\n• يتم مراقبة جميع العلامات الحيوية باستمرار\n• يتم تمييز القيم غير الطبيعية باللون الأحمر';
+
+  @override
+  String get timeJustNow => 'الآن';
+
+  @override
+  String timeMinutesAgo(Object count) {
+    return 'منذ $count دقيقة';
+  }
+
+  @override
+  String timeHoursAgo(Object count) {
+    return 'منذ $count ساعة';
+  }
+
+  @override
+  String get deviceNotConnected => 'الجهاز غير متصل';
+
+  @override
+  String get allPatientsStable => 'جميع المرضى في حالة مستقرة';
+
+  @override
+  String get noCriticalCases => 'لا توجد حاليًا حالات حرجة';
+
+  @override
+  String get addedToCriticalCases => 'تمت الإضافة إلى الحالات الحرجة';
+
+  @override
+  String get added => 'تمت الإضافة';
 }

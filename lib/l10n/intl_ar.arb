@@ -20,11 +20,14 @@
     "description": "جامعة المطور لعرضها في نافذة عن المطور"
   },
   "@@locale": "ar",
-  "appTitle": "الطبيب العنكبوت",
-  "realTimeMonitoring": "المراقبة في الوقت الفعلي",
+  "appTitle": "طبيب العنكبوت",
+  "@appTitle": {
+    "description": "عنوان التطبيق"
+  },
+  "realTimeMonitoring": "المراقبة المباشرة",
   "realTimeMonitoringSystem": "نظام المراقبة في الوقت الفعلي",
   "waitingForDeviceData": "في انتظار بيانات الجهاز...",
-  "temperature": "درجة الحرارة",
+  "temperature": "الحرارة",
   "tellMeYourQuestion": "أخبرني بسؤالك...",
   "home": "الرئيسية",
   "profile": "الملف الشخصي",
@@ -77,7 +80,7 @@
   },
   "support": "الدعم",
   "getHelp": "الحصول على المساعدة والدعم",
-  "about": "حول التطبيق",
+  "about": "حول",
   "appVersion": "إصدار التطبيق والمعلومات",
   "appDescription": "نظام مراقبة طبية شامل لتتبع الصحة في الوقت الفعلي وإدارة الأجهزة.",
   "comingSoon": "قريباً",
@@ -119,9 +122,9 @@
   "errorSigningOut": "خطأ في تسجيل الخروج",
   "settingsComingSoon": "الإعدادات - قريباً",
   "helpSupportComingSoon": "المساعدة والدعم - قريباً",
-  "deviceConnected": "الجهاز متصل - البيانات متاحة في الوقت الفعلي",
+  "deviceConnected": "البيانات متاحة في الوقت الفعلي",
   "ecg": "تخطيط القلب",
-  "spo2": "نسبة الأكسجين",
+  "spo2": "الأكسجين",
   "noDevicesFound": "لم يتم العثور على أجهزة",
   "searchingForDevices": "البحث عن الأجهزة...",
   "connectingToDevice": "الاتصال بالجهاز...",
@@ -130,6 +133,7 @@
   "deviceDisconnected": "انقطع الاتصال بالجهاز",
   "retry": "إعادة المحاولة",
   "refresh": "تحديث",
+  "addToEmergency": "إضافة للطوارئ",
   "searching": "البحث",
   "connecting": "الاتصال",
   "success": "نجح",
@@ -159,7 +163,7 @@
   "loadingDevices": "جاري تحميل الأجهزة...",
   "justNow": "الآن",
   "deleteDevice": "حذف الجهاز",
-  "deleteDeviceConfirm": "هل أنت متأكد من أنك تريد حذف \"{deviceName}\"؟",
+  "deleteDeviceConfirm": "هل أنت متأكد أنك تريد حذف {deviceName}؟",
   "delete": "حذف",
   "confirm": "تأكيد",
   "demo": "تجريبي",
@@ -183,5 +187,124 @@
   "waitingForDeviceConnection": "في انتظار اتصال الجهاز...",
   "monitoringControls": "أدوات التحكم في المراقبة",
   "refreshData": "تحديث البيانات",
-  "cleanupData": "تنظيف البيانات"
+  "cleanupData": "تنظيف البيانات",
+  "aiTab": "المساعد الذكي",
+  "loadingPatientData": "جاري تحميل بيانات المريض...",
+  "errorPrefix": "خطأ: ",
+  "retryButton": "إعادة المحاولة",
+  "initializingPatientMonitoring": "جاري تهيئة مراقبة المريض...",
+  "deviceIdLabel": "معرف الجهاز: ",
+  "@deviceIdLabel": {
+    "description": "نص لعرض معرف الجهاز في واجهة المستخدم"
+  },
+  "lastUpdatedLabel": "آخر تحديث: ",
+  "@lastUpdatedLabel": {
+    "description": "نص لعرض آخر تحديث في واجهة المستخدم"
+  },
+  "liveStatus": "مباشر",
+  "@liveStatus": {
+    "description": "حالة البث المباشر للبيانات"
+  },
+  "offlineStatus": "غير متصل",
+  "@offlineStatus": {
+    "description": "حالة عدم الاتصال"
+  },
+  "vitalSignsTitle": "العلامات الحيوية",
+  "@vitalSignsTitle": {
+    "description": "عنوان قسم العلامات الحيوية"
+  },
+  "connectedStatus": "متصل",
+  "@connectedStatus": {
+    "description": "حالة الاتصال"
+  },
+  "offlineStatusSmall": "غير متصل",
+  "@offlineStatusSmall": {
+    "description": "حالة عدم الاتصال بحجم صغير"
+  },
+  "ecgMonitorTitle": "مراقب القلب",
+  "@ecgMonitorTitle": {
+    "description": "عنوان قسم مراقب القلب"
+  },
+  "ecgConnectedStatus": "متصل",
+  "@ecgConnectedStatus": {
+    "description": "حالة اتصال جهاز القلب"
+  },
+  "ecgNotConnectedStatus": "غير متصل",
+  "@ecgNotConnectedStatus": {
+    "description": "حالة عدم اتصال جهاز القلب"
+  },
+  "ecgDeviceNotConnectedError": "جهاز القلب غير متصل",
+  "@ecgDeviceNotConnectedError": {
+    "description": "رسالة خطأ عند عدم اتصال جهاز القلب"
+  },
+  "ecgDeviceNotConnectedHint": "يرجى التحقق من اتصال الجهاز ومستشعر نبضات القلب",
+  "@ecgDeviceNotConnectedHint": {
+    "description": "تلميح عند عدم اتصال جهاز القلب"
+  },
+  "ecgChartTitle": "مخطط القلب - {count} قراءة (نبض: {hr} ن/د)",
+  "@ecgChartTitle": {
+    "description": "عنوان مخطط القلب مع عدد القراءات ونبض القلب",
+    "placeholders": {
+      "count": {},
+      "hr": {}
+    }
+  },
+  "noEcgData": "لا توجد بيانات لمخطط القلب",
+  "@noEcgData": {
+    "description": "رسالة عند عدم توفر بيانات لمخطط القلب"
+  },
+  "ecgTooltip": "القلب: {value} mV\n{time}",
+  "@ecgTooltip": {
+    "description": "تولتيب مخطط القلب مع القيمة والوقت",
+    "placeholders": {
+      "value": {},
+      "time": {}
+    }
+  },
+  "monitoringControlsTitle": "أدوات المراقبة",
+  "@monitoringControlsTitle": {
+    "description": "عنوان قسم أدوات المراقبة"
+  },
+  "monitoringControlsDescription": "• تحديث البيانات كل ثانيتين\n• مخطط القلب يعرض آخر 50 قراءة\n• يتم مراقبة جميع العلامات الحيوية باستمرار\n• يتم تمييز القيم غير الطبيعية باللون الأحمر",
+  "@monitoringControlsDescription": {
+    "description": "وصف أدوات المراقبة"
+  },
+  "timeJustNow": "الآن",
+  "@timeJustNow": {
+    "description": "نص يعبر عن الوقت الحالي"
+  },
+  "deviceNotConnected": "الجهاز غير متصل",
+  "@deviceNotConnected": {
+    "description": "رسالة عند عدم اتصال الجهاز"
+  },
+  "allPatientsStable": "جميع المرضى في حالة مستقرة",
+  "@allPatientsStable": {
+    "description": "رسالة عند استقرار جميع المرضى"
+  },
+  "noCriticalCases": "لا توجد حاليًا حالات حرجة",
+  "@noCriticalCases": {
+    "description": "رسالة عند عدم وجود حالات حرجة"
+  },
+  "addedToCriticalCases": "تمت الإضافة إلى الحالات الحرجة",
+  "@addedToCriticalCases": {
+    "description": "رسالة عند إضافة حالة حرجة"
+  },
+  "added": "تمت الإضافة",
+  "@added": {
+    "description": "رسالة عند إضافة عنصر أو حالة"
+  },
+  "timeMinutesAgo": "منذ {count} دقيقة",
+  "@timeMinutesAgo": {
+    "description": "نص يعبر عن الوقت منذ عدد دقائق",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "timeHoursAgo": "منذ {count} ساعة",
+  "@timeHoursAgo": {
+    "description": "نص يعبر عن الوقت منذ عدد ساعات",
+    "placeholders": {
+      "count": {}
+    }
+  }
 }

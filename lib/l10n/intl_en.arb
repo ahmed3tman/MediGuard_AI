@@ -36,7 +36,6 @@
   "@waitingForDeviceData": {
     "description": "Message shown when waiting for device data"
   },
-  "temperature": "Temperature",
   "@temperature": {
     "description": "Temperature label"
   },
@@ -120,11 +119,9 @@
   "@deviceStatus": {
     "description": "Device status label"
   },
-  "heartRate": "Heart Rate",
   "@heartRate": {
     "description": "Heart rate label"
   },
-  "bloodPressure": "Blood Pressure",
   "@bloodPressure": {
     "description": "Blood pressure label"
   },
@@ -132,6 +129,7 @@
   "@oxygenSaturation": {
     "description": "Oxygen saturation label"
   },
+
   "normal": "Normal",
   "@normal": {
     "description": "Normal status"
@@ -140,6 +138,7 @@
   "@abnormal": {
     "description": "Abnormal status"
   },
+
   "connected": "Connected",
   "@connected": {
     "description": "Connected status"
@@ -147,6 +146,9 @@
   "disconnected": "Disconnected",
   "@disconnected": {
     "description": "Disconnected status"
+  },
+  "@spo2": {
+    "description": "SpO2 label"
   },
   "dashboard": "Dashboard",
   "@dashboard": {
@@ -252,7 +254,6 @@
   "@comingSoon": {
     "description": "Coming soon message"
   },
-
   "emergency": "Emergency",
   "@emergency": {
     "description": "Emergency navigation label"
@@ -401,18 +402,17 @@
   "@helpSupportComingSoon": {
     "description": "Help and support coming soon message"
   },
-
-  "deviceConnected": "Device connected - Real-time data available",
+  "deviceConnected": "Real-time data available",
   "@deviceConnected": {
     "description": "Device connected status"
+  },
+  "addToEmergency": "Add to Emergency",
+  "@addToEmergency": {
+    "description": "Add to emergency message"
   },
   "ecg": "ECG",
   "@ecg": {
     "description": "ECG label"
-  },
-  "spo2": "SpO2",
-  "@spo2": {
-    "description": "SpO2 label"
   },
 
   "noDevicesFound": "No devices found",
@@ -455,7 +455,6 @@
   "@connecting": {
     "description": "Connecting status"
   },
-
   "success": "Success",
   "@success": {
     "description": "Success message"
@@ -561,7 +560,6 @@
   "@loadingDevices": {
     "description": "Loading message when fetching devices"
   },
-
   "justNow": "Just now",
   "@justNow": {
     "description": "Time indicator for recent updates"
@@ -570,7 +568,7 @@
   "@deleteDevice": {
     "description": "Delete device dialog title"
   },
-  "deleteDeviceConfirm": "Are you sure you want to delete \"{deviceName}\"?",
+  "deleteDeviceConfirm": "Are you sure you want to delete {deviceName}?",
   "@deleteDeviceConfirm": {
     "description": "Delete device confirmation message",
     "placeholders": {
@@ -591,7 +589,6 @@
   "@demo": {
     "description": "Demo label"
   },
-
   "noEmail": "No email",
   "@noEmail": {
     "description": "Default text when email is not available"
@@ -648,8 +645,6 @@
   "@ecgMonitor": {
     "description": "ECG monitor section title"
   },
-
-
   "noEcgDataAvailable": "No ECG data available",
   "@noEcgDataAvailable": {
     "description": "Message when no ECG data"
@@ -658,8 +653,6 @@
   "@waitingForDeviceConnection": {
     "description": "Message waiting for device"
   },
-
-
   "monitoringControls": "Monitoring Controls",
   "@monitoringControls": {
     "description": "Monitoring controls section title"
@@ -671,5 +664,143 @@
   "cleanupData": "Cleanup Data",
   "@cleanupData": {
     "description": "Cleanup data button"
+  },
+  "aiTab": "AI",
+  "@aiTab": {
+    "description": "AI assistant tab"
+  },
+  "loadingPatientData": "Loading patient data...",
+  "@loadingPatientData": {
+    "description": "Message shown while loading patient data"
+  },
+  "errorPrefix": "Error: ",
+  "@errorPrefix": {
+    "description": "Prefix for error messages"
+  },
+  "retryButton": "Retry",
+  "@retryButton": {
+    "description": "Retry button text"
+  },
+  "initializingPatientMonitoring": "Initializing patient monitoring...",
+  "@initializingPatientMonitoring": {
+    "description": "Message when initializing patient monitoring"
+  },
+  "deviceIdLabel": "Device ID: ",
+  "@deviceIdLabel": {
+    "description": "Label for displaying device ID in the UI"
+  },
+  "lastUpdatedLabel": "Last Updated: ",
+  "@lastUpdatedLabel": {
+    "description": "Label for displaying last updated time in the UI"
+  },
+  "liveStatus": "LIVE",
+  "@liveStatus": {
+    "description": "Live status indicator"
+  },
+  "offlineStatus": "OFFLINE",
+  "@offlineStatus": {
+    "description": "Offline status indicator"
+  },
+  "vitalSignsTitle": "Vital Signs",
+  "@vitalSignsTitle": {
+    "description": "Title for vital signs section"
+  },
+  "temperature": "Temperature",
+  "heartRate": "Heart Rate",
+  "bloodPressure": "Blood Pressure",
+  "spo2": "SpO₂",
+  "connectedStatus": "Connected",
+  "@connectedStatus": {
+    "description": "Connected status indicator"
+  },
+  "offlineStatusSmall": "Offline",
+  "@offlineStatusSmall": {
+    "description": "Offline status indicator (small)"
+  },
+  "ecgMonitorTitle": "ECG Monitor",
+  "@ecgMonitorTitle": {
+    "description": "Title for ECG monitor section"
+  },
+  "ecgConnectedStatus": "CONNECTED",
+  "@ecgConnectedStatus": {
+    "description": "ECG device connected status"
+  },
+  "ecgNotConnectedStatus": "NOT CONNECTED",
+  "@ecgNotConnectedStatus": {
+    "description": "ECG device not connected status"
+  },
+  "ecgDeviceNotConnectedError": "ECG Device Not Connected",
+  "@ecgDeviceNotConnectedError": {
+    "description": "Error message when ECG device is not connected"
+  },
+  "ecgDeviceNotConnectedHint": "Please check device connection and heart rate sensor",
+  "@ecgDeviceNotConnectedHint": {
+    "description": "Hint when ECG device is not connected"
+  },
+  "ecgChartTitle": "ECG Chart - {count} readings (HR: {hr} BPM)",
+  "@ecgChartTitle": {
+    "description": "Title for ECG chart with readings count and heart rate",
+    "placeholders": {
+      "count": {},
+      "hr": {}
+    }
+  },
+  "noEcgData": "No ECG data available",
+  "@noEcgData": {
+    "description": "Message when no ECG data is available"
+  },
+  "ecgTooltip": "ECG: {value} mV\n{time}",
+  "@ecgTooltip": {
+    "description": "Tooltip for ECG chart with value and time",
+    "placeholders": {
+      "value": {},
+      "time": {}
+    }
+  },
+  "monitoringControlsTitle": "Monitoring Controls",
+  "@monitoringControlsTitle": {
+    "description": "Title for monitoring controls section"
+  },
+  "monitoringControlsDescription": "• Real-time data updates every 2 seconds\n• ECG shows last 50 readings\n• All vital signs are monitored continuously\n• Abnormal values are highlighted in red",
+  "@monitoringControlsDescription": {
+    "description": "Description for monitoring controls section"
+  },
+  "timeJustNow": "Just now",
+  "@timeJustNow": {
+    "description": "Text for current time indicator"
+  },
+  "timeMinutesAgo": "{count}m ago",
+  "@timeMinutesAgo": {
+    "description": "Text for minutes ago indicator",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "timeHoursAgo": "{count}h ago",
+  "@timeHoursAgo": {
+    "description": "Text for hours ago indicator",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "deviceNotConnected": "Device Not Connected",
+  "@deviceNotConnected": {
+    "description": "Message when device is not connected"
+  },
+  "allPatientsStable": "All Patients Stable",
+  "@allPatientsStable": {
+    "description": "Message when all patients are stable"
+  },
+  "noCriticalCases": "There are currently no critical cases",
+  "@noCriticalCases": {
+    "description": "Message when there are no critical cases"
+  },
+  "addedToCriticalCases": "Added to critical cases",
+  "@addedToCriticalCases": {
+    "description": "Message when added to critical cases"
+  },
+  "added": "Added",
+  "@added": {
+    "description": "Message when an item or case is added"
   }
 }

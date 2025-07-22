@@ -1,20 +1,40 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spider_doctor/features/critical_cases/cubit/critical_cases_cubit.dart';
 import 'package:spider_doctor/features/patient_detail/view/screens/patient_detail_screen.dart';
 import '../../model/data_model.dart';
 import '../../cubit/device_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 enum VitalSignType { temperature, ecg, spo2, bloodPressure, unknown }
 
-class DeviceCard extends StatelessWidget {
+enum ButtonState { idle, loading, done }
+
+class DeviceCard extends StatefulWidget {
   final Device device;
 
   const DeviceCard({super.key, required this.device});
 
   @override
+  _DeviceCardState createState() => _DeviceCardState();
+}
+
+class _DeviceCardState extends State<DeviceCard> {
+  ButtonState _buttonState = ButtonState.idle;
+
+  @override
   Widget build(BuildContext context) {
+    final isAlreadyCritical = context
+        .watch<CriticalCasesCubit>()
+        .isDeviceCritical(widget.device.deviceId);
+    if (isAlreadyCritical && _buttonState != ButtonState.done) {
+      _buttonState = ButtonState.done;
+    } else if (!isAlreadyCritical && _buttonState == ButtonState.done) {
+      _buttonState = ButtonState.idle;
+    }
+
     return GestureDetector(
       onTap: () => _navigateToPatientDetail(context),
       child: Container(
@@ -52,13 +72,12 @@ class DeviceCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header: Name + Status + Delete
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
-                          device.name,
+                          widget.device.name,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
@@ -71,16 +90,16 @@ class DeviceCard extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: device.hasValidReadings
+                              color: widget.device.hasValidReadings
                                   ? Colors.green.withOpacity(0.08)
                                   : Colors.grey.withOpacity(0.08),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
-                              device.hasValidReadings
+                              widget.device.hasValidReadings
                                   ? Icons.wifi
                                   : Icons.wifi_off,
-                              color: device.hasValidReadings
+                              color: widget.device.hasValidReadings
                                   ? Colors.green[600]
                                   : Colors.grey[500],
                               size: 16,
@@ -108,15 +127,13 @@ class DeviceCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'ID: ${device.deviceId}',
+                    'ID: ${widget.device.deviceId}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey[600],
                       fontSize: 11,
                     ),
                   ),
                   const SizedBox(height: 8),
-
-                  // Vital signs grid
                   GridView.count(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -128,68 +145,148 @@ class DeviceCard extends StatelessWidget {
                       _buildVitalSignTile(
                         icon: Icons.thermostat,
                         title: AppLocalizations.of(context).temperature,
-                        value: '${device.temperature.toStringAsFixed(1)}°C',
-                        isNormal: device.isTemperatureNormal,
-                        color: Colors.orange[300]!, // أهدى
+                        value:
+                            '${widget.device.temperature.toStringAsFixed(1)}°C',
+                        isNormal: widget.device.isTemperatureNormal,
+                        color: Colors.orange[300]!,
                         context: context,
                       ),
                       _buildVitalSignTile(
                         icon: Icons.favorite,
                         title: AppLocalizations.of(context).ecg,
-                        value: '${device.ecg.toStringAsFixed(0)} BPM',
-                        isNormal: device.ecg >= 60 && device.ecg <= 100,
-                        color: Colors.red[300]!, // أهدى من الأحمر الصريح
+                        value: '${widget.device.ecg.toStringAsFixed(0)} BPM',
+                        isNormal:
+                            widget.device.ecg >= 60 && widget.device.ecg <= 100,
+                        color: Colors.red[300]!,
                         context: context,
                       ),
                       _buildVitalSignTile(
                         icon: Icons.air,
                         title: AppLocalizations.of(context).spo2,
-                        value: '${device.spo2.toStringAsFixed(0)}%',
-                        isNormal: device.isSpo2Normal,
-                        color: Colors.blueGrey[300]!, // أزرق مائل للرمادي
+                        value: '${widget.device.spo2.toStringAsFixed(0)}%',
+                        isNormal: widget.device.isSpo2Normal,
+                        color: Colors.blueGrey[300]!,
                         context: context,
                       ),
                       _buildVitalSignTile(
                         icon: Icons.monitor_heart,
                         title: AppLocalizations.of(context).bloodPressure,
                         value:
-                            '${device.bloodPressure['systolic']}/${device.bloodPressure['diastolic']}',
-                        isNormal: device.isBloodPressureNormal,
-                        color: Colors.deepPurple[200]!, // بنفسجي فاتح وهادئ
+                            '${widget.device.bloodPressure['systolic']}/${widget.device.bloodPressure['diastolic']}',
+                        isNormal: widget.device.isBloodPressureNormal,
+                        color: Colors.deepPurple[200]!,
                         context: context,
                       ),
                     ],
                   ),
-
-
-                  // Status and last updated
-                  _buildStatusWidget(context),
+                  Row(
+                    children: [
+                      _buildStatusWidget(context),
+                      Spacer(),
+                      SizedBox(
+                        width: 110,
+                        height: 35,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _buttonState == ButtonState.done
+                                ? Colors.green[400]
+                                : const Color.fromARGB(255, 237, 99, 97),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 0,
+                            ),
+                            textStyle: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(13),
+                            ),
+                          ),
+                          onPressed:
+                              _buttonState == ButtonState.idle &&
+                                  !isAlreadyCritical
+                              ? _addToEmergency
+                              : null,
+                          child: _buildButtonChild(),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
           ),
         ),
-      ), // Container closing
-    ); // GestureDetector closing
+      ),
+    );
+  }
+
+  Widget _buildButtonChild() {
+    switch (_buttonState) {
+      case ButtonState.loading:
+        return const SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.5,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        );
+      case ButtonState.done:
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.check, size: 16),
+            const SizedBox(width: 4),
+            Text(
+              AppLocalizations.of(context).added,
+              style: const TextStyle(fontSize: 10),
+            ),
+          ],
+        );
+      case ButtonState.idle:
+      return Text(
+          AppLocalizations.of(context).addToEmergency,
+          style: const TextStyle(fontSize: 10),
+        );
+    }
+  }
+
+  void _addToEmergency() {
+    setState(() {
+      _buttonState = ButtonState.loading;
+    });
+    context.read<CriticalCasesCubit>().addCriticalCase(widget.device);
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _buttonState = ButtonState.done;
+        });
+      }
+    });
   }
 
   void _navigateToPatientDetail(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => PatientDetailScreen(device: device),
+        builder: (context) => PatientDetailScreen(device: widget.device),
       ),
     );
   }
 
   Widget _buildStatusWidget(BuildContext context) {
-    if (device.hasValidReadings && device.lastUpdated != null) {
+    if (widget.device.hasValidReadings && widget.device.lastUpdated != null) {
       return Text(
-        '${AppLocalizations.of(context).lastUpdated}: ${_formatDateTime(device.lastUpdated!, context)}',
+        '${AppLocalizations.of(context).lastUpdated}: ${_formatDateTime(widget.device.lastUpdated!, context)}',
         style: Theme.of(
           context,
         ).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontSize: 11),
       );
-    } else if (device.hasValidReadings) {
+    } else if (widget.device.hasValidReadings) {
       return Text(
         AppLocalizations.of(context).deviceConnected,
         style: Theme.of(
@@ -224,41 +321,38 @@ class DeviceCard extends StatelessWidget {
     required Color color,
     required BuildContext context,
   }) {
-    // Check if this specific reading has valid data
     bool hasValidReading = false;
     String displayValue = AppLocalizations.of(context).notConnected;
 
-    // Check reading validity using helper method
     VitalSignType signType = _getVitalSignType(title, context);
 
     switch (signType) {
       case VitalSignType.temperature:
-        if (device.temperature > 0) {
+        if (widget.device.temperature > 0) {
           hasValidReading = true;
           displayValue = value;
         }
         break;
       case VitalSignType.ecg:
-        if (device.ecg > 0) {
+        if (widget.device.ecg > 0) {
           hasValidReading = true;
           displayValue = value;
         }
         break;
       case VitalSignType.spo2:
-        if (device.spo2 > 0) {
+        if (widget.device.spo2 > 0) {
           hasValidReading = true;
           displayValue = value;
         }
         break;
       case VitalSignType.bloodPressure:
-        if (device.bloodPressure['systolic']! > 0 ||
-            device.bloodPressure['diastolic']! > 0) {
+        if (widget.device.bloodPressure['systolic']! > 0 ||
+            widget.device.bloodPressure['diastolic']! > 0) {
           hasValidReading = true;
           displayValue = value;
         }
         break;
       case VitalSignType.unknown:
-        // Keep default values
         break;
     }
 
@@ -266,71 +360,100 @@ class DeviceCard extends StatelessWidget {
         ? (isNormal ? Colors.green : Colors.red)
         : Colors.grey;
 
-    // Use grey color for background when no data is available
     final backgroundColors = hasValidReading
         ? [color.withOpacity(0.1), color.withOpacity(0.05)]
         : [Colors.grey.withOpacity(0.1), Colors.grey.withOpacity(0.05)];
 
-    // Add red stroke for dangerous readings
-    final borderColor = hasValidReading && !isNormal
-        ? Colors.red
-        : displayColor.withOpacity(0.3);
-    final borderWidth = hasValidReading && !isNormal ? 1.01 : 1.0;
+    final borderColor = hasValidReading
+        ? color.withOpacity(0.3)
+        : Colors.grey.withOpacity(0.3);
+    const borderWidth = 1.0;
 
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: backgroundColors,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: borderColor, width: borderWidth),
-      ),
-      child: Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              color: hasValidReading
-                  ? color.withOpacity(0.2)
-                  : Colors.grey.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(6),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: backgroundColors,
             ),
-            child: Icon(
-              hasValidReading ? icon : Icons.signal_wifi_off,
-              color: hasValidReading ? color : Colors.grey[500],
-              size: 12,
-            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: borderColor, width: borderWidth),
           ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: hasValidReading ? Colors.grey[800] : Colors.grey[500],
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: hasValidReading
+                      ? color.withOpacity(0.2)
+                      : Colors.grey.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Icon(
+                  hasValidReading ? icon : Icons.signal_wifi_off,
+                  color: hasValidReading ? color : Colors.grey[500],
+                  size: 12,
+                ),
               ),
-              overflow: TextOverflow.ellipsis,
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: hasValidReading
+                        ? Colors.grey[800]
+                        : Colors.grey[500],
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                displayValue,
+                style: TextStyle(
+                  fontSize: hasValidReading ? 10 : 9,
+                  fontWeight: FontWeight.w700,
+                  color: displayColor,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+        if (hasValidReading && !isNormal)
+          Positioned(
+            top: -6,
+            right: -4,
+            child: Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+              ),
+              child: const Center(
+                child: Text(
+                  '!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    height: 1.2,
+                  ),
+                ),
+              ),
             ),
           ),
-          const SizedBox(width: 4),
-          Text(
-            displayValue,
-            style: TextStyle(
-              fontSize: hasValidReading ? 10 : 9,
-              fontWeight: FontWeight.w700,
-              color: displayColor,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -371,7 +494,7 @@ class DeviceCard extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context).deleteDevice),
         content: Text(
-          AppLocalizations.of(context).deleteDeviceConfirm(device.name),
+          AppLocalizations.of(context).deleteDeviceConfirm(widget.device.name),
         ),
         actions: [
           TextButton(
@@ -380,7 +503,7 @@ class DeviceCard extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              deviceCubit.deleteDevice(device.deviceId);
+              deviceCubit.deleteDevice(widget.device.deviceId);
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),

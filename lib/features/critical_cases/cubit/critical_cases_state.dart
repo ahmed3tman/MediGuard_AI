@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
+import 'package:spider_doctor/features/critical_cases/model/critical_case_model.dart';
 
 abstract class CriticalCasesState extends Equatable {
   const CriticalCasesState();
 
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
 
 class CriticalCasesInitial extends CriticalCasesState {}
@@ -12,12 +13,12 @@ class CriticalCasesInitial extends CriticalCasesState {}
 class CriticalCasesLoading extends CriticalCasesState {}
 
 class CriticalCasesLoaded extends CriticalCasesState {
-  final List<Map<String, dynamic>> criticalCases;
+  final List<CriticalCase> criticalCases;
 
   const CriticalCasesLoaded(this.criticalCases);
 
   @override
-  List<Object?> get props => [criticalCases];
+  List<Object> get props => [criticalCases];
 }
 
 class CriticalCasesError extends CriticalCasesState {
@@ -26,5 +27,5 @@ class CriticalCasesError extends CriticalCasesState {
   const CriticalCasesError(this.message);
 
   @override
-  List<Object?> get props => [message];
+  List<Object> get props => [message];
 }

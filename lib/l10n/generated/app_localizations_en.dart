@@ -36,9 +36,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get waitingForDeviceData => 'Waiting for device data...';
 
   @override
-  String get temperature => 'Temperature';
-
-  @override
   String get tellMeYourQuestion => 'Tell me your question...';
 
   @override
@@ -97,12 +94,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deviceStatus => 'Device Status';
-
-  @override
-  String get heartRate => 'Heart Rate';
-
-  @override
-  String get bloodPressure => 'Blood Pressure';
 
   @override
   String get oxygenSaturation => 'Oxygen Saturation';
@@ -313,13 +304,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpSupportComingSoon => 'Help & Support - Coming Soon';
 
   @override
-  String get deviceConnected => 'Device connected - Real-time data available';
+  String get deviceConnected => 'Real-time data available';
+
+  @override
+  String get addToEmergency => 'Add to Emergency';
 
   @override
   String get ecg => 'ECG';
-
-  @override
-  String get spo2 => 'SpO2';
 
   @override
   String get noDevicesFound => 'No devices found';
@@ -441,7 +432,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String deleteDeviceConfirm(String deviceName) {
-    return 'Are you sure you want to delete \"$deviceName\"?';
+    return 'Are you sure you want to delete $deviceName?';
   }
 
   @override
@@ -509,4 +500,117 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cleanupData => 'Cleanup Data';
+
+  @override
+  String get aiTab => 'AI';
+
+  @override
+  String get loadingPatientData => 'Loading patient data...';
+
+  @override
+  String get errorPrefix => 'Error: ';
+
+  @override
+  String get retryButton => 'Retry';
+
+  @override
+  String get initializingPatientMonitoring =>
+      'Initializing patient monitoring...';
+
+  @override
+  String get deviceIdLabel => 'Device ID: ';
+
+  @override
+  String get lastUpdatedLabel => 'Last Updated: ';
+
+  @override
+  String get liveStatus => 'LIVE';
+
+  @override
+  String get offlineStatus => 'OFFLINE';
+
+  @override
+  String get vitalSignsTitle => 'Vital Signs';
+
+  @override
+  String get temperature => 'Temperature';
+
+  @override
+  String get heartRate => 'Heart Rate';
+
+  @override
+  String get bloodPressure => 'Blood Pressure';
+
+  @override
+  String get spo2 => 'SpO₂';
+
+  @override
+  String get connectedStatus => 'Connected';
+
+  @override
+  String get offlineStatusSmall => 'Offline';
+
+  @override
+  String get ecgMonitorTitle => 'ECG Monitor';
+
+  @override
+  String get ecgConnectedStatus => 'CONNECTED';
+
+  @override
+  String get ecgNotConnectedStatus => 'NOT CONNECTED';
+
+  @override
+  String get ecgDeviceNotConnectedError => 'ECG Device Not Connected';
+
+  @override
+  String get ecgDeviceNotConnectedHint =>
+      'Please check device connection and heart rate sensor';
+
+  @override
+  String ecgChartTitle(Object count, Object hr) {
+    return 'ECG Chart - $count readings (HR: $hr BPM)';
+  }
+
+  @override
+  String get noEcgData => 'No ECG data available';
+
+  @override
+  String ecgTooltip(Object value, Object time) {
+    return 'ECG: $value mV\n$time';
+  }
+
+  @override
+  String get monitoringControlsTitle => 'Monitoring Controls';
+
+  @override
+  String get monitoringControlsDescription =>
+      '• Real-time data updates every 2 seconds\n• ECG shows last 50 readings\n• All vital signs are monitored continuously\n• Abnormal values are highlighted in red';
+
+  @override
+  String get timeJustNow => 'Just now';
+
+  @override
+  String timeMinutesAgo(Object count) {
+    return '${count}m ago';
+  }
+
+  @override
+  String timeHoursAgo(Object count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String get deviceNotConnected => 'Device Not Connected';
+
+  @override
+  String get allPatientsStable => 'All Patients Stable';
+
+  @override
+  String get noCriticalCases => 'There are currently no critical cases';
+
+  @override
+  String get addedToCriticalCases => 'Added to critical cases';
+
+  @override
+  String get added => 'Added';
 }

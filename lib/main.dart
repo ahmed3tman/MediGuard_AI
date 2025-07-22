@@ -6,6 +6,7 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
 
   // Initialize dotenv for environment variables
   try {

@@ -1,43 +1,71 @@
+import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spider_doctor/features/critical_cases/model/critical_case_model.dart';
+import 'package:spider_doctor/features/devices/model/data_model.dart';
 import 'critical_cases_state.dart';
 
 class CriticalCasesCubit extends Cubit<CriticalCasesState> {
-  CriticalCasesCubit() : super(CriticalCasesInitial());
+  static const String _storageKey = 'critical_cases_list';
+  CriticalCasesCubit() : super(const CriticalCasesLoaded([])) {
+    loadCriticalCases();
+  }
 
-  // Load critical cases
-  Future<void> loadCriticalCases() async {
+  final List<CriticalCase> _criticalCases = [];
+
+  Future<void> addCriticalCase(Device device) async {
     emit(CriticalCasesLoading());
     try {
-      // Simulate loading critical cases
-      await Future.delayed(const Duration(seconds: 1));
-
-      final criticalCases = <Map<String, dynamic>>[];
-
-      emit(CriticalCasesLoaded(criticalCases));
-    } catch (e) {
-      emit(
-        CriticalCasesError('Failed to load critical cases: ${e.toString()}'),
+      final criticalCase = CriticalCase(
+        deviceId: device.deviceId,
+        name: device.name,
+        temperature: device.temperature,
+        ecg: device.ecg,
+        spo2: device.spo2,
+        bloodPressure: device.bloodPressure,
+        lastUpdated: device.lastUpdated ?? DateTime.now(),
       );
+      if (!_criticalCases.any((c) => c.deviceId == device.deviceId)) {
+        _criticalCases.add(criticalCase);
+        await _saveToStorage();
+      }
+      emit(CriticalCasesLoaded(List.from(_criticalCases)));
+    } catch (e) {
+      emit(CriticalCasesError('Failed to add critical case: ${e.toString()}'));
     }
   }
 
-  // Refresh critical cases
-  Future<void> refreshCriticalCases() async {
-    await loadCriticalCases();
-  }
-
-  // Handle emergency alert
-  Future<void> handleEmergencyAlert(String deviceId, String alertType) async {
+  Future<void> removeCriticalCase(String deviceId) async {
+    emit(CriticalCasesLoading());
     try {
-      // Handle emergency alert logic here
-      // This would typically involve notifying emergency services, etc.
-
-      // Reload critical cases after handling alert
-      await loadCriticalCases();
+      _criticalCases.removeWhere((c) => c.deviceId == deviceId);
+      await _saveToStorage();
+      emit(CriticalCasesLoaded(List.from(_criticalCases)));
     } catch (e) {
       emit(
-        CriticalCasesError('Failed to handle emergency alert: ${e.toString()}'),
+        CriticalCasesError('Failed to remove critical case: ${e.toString()}'),
       );
     }
+  }
+
+  Future<void> loadCriticalCases() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(_storageKey);
+    if (jsonString != null) {
+      final List<dynamic> jsonList = json.decode(jsonString);
+      _criticalCases.clear();
+      _criticalCases.addAll(jsonList.map((e) => CriticalCase.fromJson(e)));
+    }
+    emit(CriticalCasesLoaded(List.from(_criticalCases)));
+  }
+
+  Future<void> _saveToStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = _criticalCases.map((e) => e.toJson()).toList();
+    await prefs.setString(_storageKey, json.encode(jsonList));
+  }
+
+  bool isDeviceCritical(String deviceId) {
+    return _criticalCases.any((c) => c.deviceId == deviceId);
   }
 }

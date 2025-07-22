@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 import '../../cubit/patient_detail_cubit.dart';
 // ...existing imports...
 import '../../cubit/patient_detail_state.dart';
@@ -17,16 +18,17 @@ class PatientDetailDoctorTab extends StatefulWidget {
 class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocBuilder<PatientDetailCubit, PatientDetailState>(
       builder: (context, state) {
         if (state is! PatientDetailLoaded) {
-          return const Center(
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Initializing patient monitoring...'),
+                const CircularProgressIndicator(),
+                const SizedBox(height: 16),
+                Text(l10n.initializingPatientMonitoring),
               ],
             ),
           );
@@ -60,18 +62,18 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Patient Info Header
-                _buildPatientHeader(vitalSigns),
+                _buildPatientHeader(vitalSigns, l10n),
                 const SizedBox(height: 20),
 
                 // Vital Signs Grid
-                _buildVitalSignsGrid(vitalSigns),
+                _buildVitalSignsGrid(vitalSigns, l10n),
 
                 // ECG Chart Section
-                _buildEcgSection(ecgReadings, vitalSigns),
+                _buildEcgSection(ecgReadings, vitalSigns, l10n),
                 const SizedBox(height: 30),
 
                 // Controls
-                _buildControlsSection(),
+                _buildControlsSection(l10n),
                 const SizedBox(height: 40), // Space for FAB
               ],
             ),
@@ -81,7 +83,10 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     );
   }
 
-  Widget _buildPatientHeader(PatientVitalSigns vitalSigns) {
+  Widget _buildPatientHeader(
+    PatientVitalSigns vitalSigns,
+    AppLocalizations l10n,
+  ) {
     final isLive =
         vitalSigns.heartRate > 0 ||
         vitalSigns.temperature > 0 ||
@@ -121,12 +126,12 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Device ID: ${vitalSigns.deviceId}',
+                  '${l10n.deviceIdLabel}${vitalSigns.deviceId}',
                   style: TextStyle(color: Colors.grey[700], fontSize: 14),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Last Updated: ${_formatTime(vitalSigns.timestamp)}',
+                  '${l10n.lastUpdatedLabel}${_formatTime(vitalSigns.timestamp, l10n)}',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],
@@ -153,7 +158,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  isLive ? 'LIVE' : 'OFFLINE',
+                  isLive ? l10n.liveStatus : l10n.offlineStatus,
                   style: TextStyle(
                     color: isLive ? Colors.green[800] : Colors.red[700],
                     fontSize: 12,
@@ -168,12 +173,15 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     );
   }
 
-  Widget _buildVitalSignsGrid(PatientVitalSigns vitalSigns) {
+  Widget _buildVitalSignsGrid(
+    PatientVitalSigns vitalSigns,
+    AppLocalizations l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Vital Signs',
+          l10n.vitalSignsTitle,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: Colors.grey[800],
@@ -189,24 +197,24 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
           mainAxisSpacing: 12,
           children: [
             _buildVitalSignCard(
-              title: 'Temperature',
-              value: _getTemperatureDisplay(vitalSigns.temperature),
+              title: l10n.temperature,
+              value: _getTemperatureDisplay(vitalSigns.temperature, l10n),
               unit: vitalSigns.temperature > 0 ? '°C' : '',
               icon: Icons.thermostat,
               color: Colors.deepOrange.shade300,
               isConnected: vitalSigns.temperature > 0,
             ),
             _buildVitalSignCard(
-              title: 'Heart Rate',
-              value: _getHeartRateDisplay(vitalSigns.heartRate),
+              title: l10n.heartRate,
+              value: _getHeartRateDisplay(vitalSigns.heartRate, l10n),
               unit: vitalSigns.heartRate > 0 ? 'BPM' : '',
               icon: Icons.favorite,
               color: Colors.red.shade300,
               isConnected: vitalSigns.heartRate > 0,
             ),
             _buildVitalSignCard(
-              title: 'Blood Pressure',
-              value: _getBloodPressureDisplay(vitalSigns.bloodPressure),
+              title: l10n.bloodPressure,
+              value: _getBloodPressureDisplay(vitalSigns.bloodPressure, l10n),
               unit: _isBloodPressureConnected(vitalSigns.bloodPressure)
                   ? 'mmHg'
                   : '',
@@ -215,8 +223,8 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
               isConnected: _isBloodPressureConnected(vitalSigns.bloodPressure),
             ),
             _buildVitalSignCard(
-              title: 'SpO₂',
-              value: _getSpo2Display(vitalSigns.spo2),
+              title: l10n.spo2,
+              value: _getSpo2Display(vitalSigns.spo2, l10n),
               unit: vitalSigns.spo2 > 0 ? '%' : '',
               icon: Icons.air,
               color: Colors.cyan.shade400,
@@ -236,6 +244,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     required Color color,
     bool isConnected = true,
   }) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -297,7 +306,9 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                     ),
                     const SizedBox(width: 2),
                     Text(
-                      isConnected ? 'Connected' : 'Offline',
+                      isConnected
+                          ? l10n.connectedStatus
+                          : l10n.offlineStatusSmall,
                       style: TextStyle(
                         fontSize: 8,
                         color: isConnected
@@ -363,6 +374,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
   Widget _buildEcgSection(
     List<EcgReading> ecgReadings,
     PatientVitalSigns vitalSigns,
+    AppLocalizations l10n,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -370,7 +382,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
         Row(
           children: [
             Text(
-              'ECG Monitor',
+              l10n.ecgMonitorTitle,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.grey[800],
@@ -399,7 +411,9 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    ecgReadings.isNotEmpty ? 'CONNECTED' : 'NOT CONNECTED',
+                    ecgReadings.isNotEmpty
+                        ? l10n.ecgConnectedStatus
+                        : l10n.ecgNotConnectedStatus,
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -434,7 +448,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'ECG Device Not Connected',
+                        l10n.ecgDeviceNotConnectedError,
                         style: TextStyle(
                           color: Colors.orange[700],
                           fontSize: 16,
@@ -443,7 +457,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Please check device connection and heart rate sensor',
+                        l10n.ecgDeviceNotConnectedHint,
                         style: TextStyle(color: Colors.grey[500], fontSize: 12),
                         textAlign: TextAlign.center,
                       ),
@@ -453,7 +467,10 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
               : Column(
                   children: [
                     Text(
-                      'ECG Chart - ${ecgReadings.length} readings (HR: ${vitalSigns.heartRate.toInt()} BPM)',
+                      l10n.ecgChartTitle(
+                        ecgReadings.length.toString(),
+                        vitalSigns.heartRate.toInt().toString(),
+                      ),
                       style: TextStyle(
                         color: Colors.blue[700],
                         fontSize: 12,
@@ -461,7 +478,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Expanded(child: _buildEcgChart(ecgReadings)),
+                    Expanded(child: _buildEcgChart(ecgReadings, l10n)),
                   ],
                 ),
         ),
@@ -469,7 +486,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     );
   }
 
-  Widget _buildEcgChart(List<EcgReading> readings) {
+  Widget _buildEcgChart(List<EcgReading> readings, AppLocalizations l10n) {
     // Debug print to check if we have data
     print('ECG Readings count: ${readings.length}');
     if (readings.isNotEmpty) {
@@ -481,7 +498,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     if (readings.isEmpty) {
       return Center(
         child: Text(
-          'No ECG data available',
+          l10n.noEcgData,
           style: TextStyle(color: Colors.grey[600], fontSize: 14),
         ),
       );
@@ -614,7 +631,10 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                   final reading = readings[flSpot.x.toInt()];
                   final time = reading.timestamp;
                   return LineTooltipItem(
-                    'ECG: ${flSpot.y.toStringAsFixed(2)} mV\n${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}',
+                    l10n.ecgTooltip(
+                      flSpot.y.toStringAsFixed(2),
+                      '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}',
+                    ),
                     TextStyle(
                       color: Colors.red[700],
                       fontWeight: FontWeight.bold,
@@ -635,7 +655,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     );
   }
 
-  Widget _buildControlsSection() {
+  Widget _buildControlsSection(AppLocalizations l10n) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -648,7 +668,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Monitoring Controls',
+            l10n.monitoringControlsTitle,
             style: Theme.of(
               context,
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -685,10 +705,7 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
           // ),
           const SizedBox(height: 8),
           Text(
-            '• Real-time data updates every 2 seconds\n'
-            '• ECG shows last 50 readings\n'
-            '• All vital signs are monitored continuously\n'
-            '• Abnormal values are highlighted in red',
+            l10n.monitoringControlsDescription,
             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
         ],
@@ -696,42 +713,45 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     );
   }
 
-  String _formatTime(DateTime dateTime) {
+  String _formatTime(DateTime dateTime, AppLocalizations l10n) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
     if (difference.inSeconds < 60) {
-      return 'Just now';
+      return l10n.timeJustNow;
     } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
+      return l10n.timeMinutesAgo(difference.inMinutes.toString());
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
+      return l10n.timeHoursAgo(difference.inHours.toString());
     } else {
       return '${dateTime.day}/${dateTime.month} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
     }
   }
 
   // Helper methods for accurate data display
-  String _getTemperatureDisplay(double temperature) {
+  String _getTemperatureDisplay(double temperature, AppLocalizations l10n) {
     if (temperature <= 0) {
-      return 'Device Not Connected';
+      return l10n.deviceNotConnected;
     }
     return temperature.toStringAsFixed(1);
   }
 
-  String _getHeartRateDisplay(double heartRate) {
+  String _getHeartRateDisplay(double heartRate, AppLocalizations l10n) {
     if (heartRate <= 0) {
-      return 'Device Not Connected';
+      return l10n.deviceNotConnected;
     }
     return heartRate.toStringAsFixed(0);
   }
 
-  String _getBloodPressureDisplay(Map<String, dynamic> bloodPressure) {
+  String _getBloodPressureDisplay(
+    Map<String, dynamic> bloodPressure,
+    AppLocalizations l10n,
+  ) {
     final systolic = bloodPressure['systolic'] ?? 0;
     final diastolic = bloodPressure['diastolic'] ?? 0;
 
     if (systolic <= 0 || diastolic <= 0) {
-      return 'Device Not Connected';
+      return l10n.deviceNotConnected;
     }
     return '$systolic/$diastolic';
   }
@@ -742,9 +762,9 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
     return systolic > 0 && diastolic > 0;
   }
 
-  String _getSpo2Display(double spo2) {
+  String _getSpo2Display(double spo2, AppLocalizations l10n) {
     if (spo2 <= 0) {
-      return 'Device Not Connected';
+      return l10n.deviceNotConnected;
     }
     return spo2.toStringAsFixed(0);
   }
