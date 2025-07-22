@@ -24,7 +24,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get aboutDeveloperUniversity => 'جامعة المنوفية';
 
   @override
-  String get appTitle => 'طبيب العنكبوت';
+  String get appTitle => 'الطبيب العنكبوت';
 
   @override
   String get realTimeMonitoring => 'المراقبة المباشرة';

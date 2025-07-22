@@ -53,28 +53,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 10),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [const LanguageSwitcher()],
                   ),
-                  const SizedBox(height: 40),
                   // Logo and title
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.medical_services,
-                      size: 60,
-                      color: AppColors.primaryColor,
+                  Center(
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: 180,
+                      height: 180,
+                      fit: BoxFit.contain,
                     ),
                   ),
-                  const SizedBox(height: 32),
                   Text(
                     AppLocalizations.of(context).appTitle,
                     textAlign: TextAlign.center,
@@ -82,7 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       color: AppColors.primaryColor,
                     ),
                   ),
-                  const SizedBox(height: 8),
                   Text(
                     AppLocalizations.of(context).realTimeMonitoringSystem,
                     textAlign: TextAlign.center,

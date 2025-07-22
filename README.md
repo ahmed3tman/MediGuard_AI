@@ -1,4 +1,4 @@
-# Spider Doctor
+<!-- # Spider Doctor
 
 Spider Doctor is a comprehensive Flutter-based mobile application designed for remote patient monitoring. It allows doctors to track vital signs, manage patient data, and receive critical alerts, all in real-time. The app also features a smart medical assistant to provide quick insights and answer medical queries.
 
@@ -74,4 +74,4 @@ Each feature directory is typically structured into:
 5.  **Run the app:**
     ```bash
     flutter run
-    ```
+    ``` -->
