@@ -138,6 +138,8 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                         onPressed: _addDevice,
                         isLoading: isLoading,
                         width: double.infinity,
+                        fontFamily: 'NeoSansArabic',
+                        fontWeight: FontWeight.bold,
                       );
                     },
                   ),

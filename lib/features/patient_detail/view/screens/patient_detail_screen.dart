@@ -49,7 +49,15 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
           return Scaffold(
             backgroundColor: Colors.grey[50],
             appBar: AppBar(
-              title: Text(widget.device.name),
+              title: Text(
+                widget.device.name,
+                style: const TextStyle(
+                  fontFamily: 'NeoSansArabic',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
               backgroundColor: Colors.blue[600],
               foregroundColor: Colors.white,
               iconTheme: const IconThemeData(color: Colors.white),
@@ -60,14 +68,38 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 unselectedLabelColor: Colors.white70,
                 indicatorColor: Colors.white,
                 indicatorWeight: 3,
+                labelStyle: const TextStyle(
+                  fontFamily: 'NeoSansArabic',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+                unselectedLabelStyle: const TextStyle(
+                  fontFamily: 'NeoSansArabic',
+                  fontWeight: FontWeight.normal,
+                  fontSize: 13,
+                ),
                 tabs: [
                   Tab(
                     icon: const Icon(Icons.local_hospital),
-                    text: l10n.doctorTab, // Primary medical view
+                    child: Text(
+                      l10n.doctorTab,
+                      style: const TextStyle(
+                        fontFamily: 'NeoSansArabic',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
                   ),
                   Tab(
                     icon: const Icon(Icons.smart_toy),
-                    text: l10n.aiTab, // AI assistant tab
+                    child: Text(
+                      l10n.aiTab,
+                      style: const TextStyle(
+                        fontFamily: 'NeoSansArabic',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -53,7 +53,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [const LanguageSwitcher()],
@@ -147,6 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: _handleAuth,
                     isLoading: _isLoading,
                     width: double.infinity,
+                    fontFamily: 'NeoSansArabic',
+                    fontWeight: FontWeight.bold,
                   ),
                   const SizedBox(height: 16),
 

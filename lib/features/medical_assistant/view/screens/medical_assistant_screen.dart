@@ -172,11 +172,18 @@ class _MedicalAssistantScreenState extends State<MedicalAssistantScreen> {
               isArabic
                   ? 'مرحباً بك في المساعد الطبي الذكي'
                   : 'Welcome to Smart Medical Assistant',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
-              ),
+              style: isArabic
+                  ? const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                      fontFamily: 'NeoSansArabic',
+                    )
+                  : TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[800],
+                    ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -184,7 +191,14 @@ class _MedicalAssistantScreenState extends State<MedicalAssistantScreen> {
               isArabic
                   ? 'سأقوم بتحليل حالة المريض وتقديم النصائح الطبية المناسبة'
                   : 'I will analyze the patient\'s condition and provide appropriate medical advice',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              style: isArabic
+                  ? const TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.normal,
+                      fontFamily: 'NeoSansArabic',
+                    )
+                  : TextStyle(fontSize: 16, color: Colors.grey[600]),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -196,7 +210,16 @@ class _MedicalAssistantScreenState extends State<MedicalAssistantScreen> {
                 );
               },
               icon: const Icon(Icons.chat_bubble_outline),
-              label: Text(isArabic ? 'بدء المحادثة' : 'Start Conversation'),
+              label: Text(
+                isArabic ? 'بدء المحادثة' : 'Start Conversation',
+                style: isArabic
+                    ? const TextStyle(
+                        fontFamily: 'NeoSansArabic',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      )
+                    : null,
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
                 foregroundColor: Colors.white,
@@ -244,11 +267,18 @@ class _MedicalAssistantScreenState extends State<MedicalAssistantScreen> {
                   isArabic
                       ? 'جاري تحليل حالة المريض...'
                       : 'Analyzing patient condition...',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[700],
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: isArabic
+                      ? const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.normal,
+                          fontFamily: 'NeoSansArabic',
+                        )
+                      : TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.w500,
+                        ),
                 ),
               ],
             ),
@@ -274,7 +304,13 @@ class _MedicalAssistantScreenState extends State<MedicalAssistantScreen> {
               children: [
                 Text(
                   isArabic ? 'يكتب...' : 'Typing...',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  style: isArabic
+                      ? const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontFamily: 'NeoSansArabic',
+                        )
+                      : TextStyle(color: Colors.grey[600], fontSize: 14),
                 ),
                 const SizedBox(width: 8),
                 SizedBox(

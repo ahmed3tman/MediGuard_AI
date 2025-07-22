@@ -97,25 +97,39 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
     switch (_currentIndex) {
       case 0: // صفحة الهوم
         return AppBar(
-          title: Text(AppLocalizations.of(context).home),
+          title: Text(
+            AppLocalizations.of(context).home,
+            style: const TextStyle(
+              fontFamily: 'NeoSansArabic',
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
           centerTitle: true,
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
-          // actions: [LanguageSwitcher()],
         );
       case 1: // صفحة الأجهزة
         return AppBar(
-          title: Text(AppLocalizations.of(context).realTimeMonitoring),
+          title: Text(
+            AppLocalizations.of(context).realTimeMonitoring,
+            style: const TextStyle(
+              fontFamily: 'NeoSansArabic',
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
           actions: [
-            // زر إضافة جهاز جديد
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {
-                print('Add Device button pressed'); // طباعة للتتبع
+                print('Add Device button pressed');
                 final deviceCubit = context.read<DeviceCubit>();
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -132,21 +146,45 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
         );
       case 2: // صفحة الحالات الحرجة
         return AppBar(
-          title: Text(AppLocalizations.of(context).criticalCases),
+          title: Text(
+            AppLocalizations.of(context).criticalCases,
+            style: const TextStyle(
+              fontFamily: 'NeoSansArabic',
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
         );
       case 3: // صفحة الملف الشخصي
         return AppBar(
-          title: Text(AppLocalizations.of(context).profile),
+          title: Text(
+            AppLocalizations.of(context).profile,
+            style: const TextStyle(
+              fontFamily: 'NeoSansArabic',
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
         );
-      default: // الآب بار الافتراضي
+      default:
         return AppBar(
-          title: Text(AppLocalizations.of(context).appTitle),
+          title: Text(
+            AppLocalizations.of(context).appTitle,
+            style: const TextStyle(
+              fontFamily: 'NeoSansArabic',
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
@@ -286,21 +324,25 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                       overlayColor: WidgetStateProperty.all(Colors.transparent),
                       dividerColor: Colors.transparent,
                       labelStyle: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
+                        fontFamily: 'NeoSansArabic',
+                        color: Colors.white,
                       ),
                       unselectedLabelStyle: const TextStyle(
-                        fontSize: 11,
+                        fontSize: 9,
                         fontWeight: FontWeight.w500,
+                        fontFamily: 'NeoSansArabic',
+                        color: Colors.white70,
                       ),
                       // تابات البوتوم بار
                       tabs: [
                         Tab(
-                          icon: const Icon(Icons.home_outlined, size: 24),
+                          icon: const Icon(Icons.home_outlined, size: 20),
                           text: AppLocalizations.of(context).home,
                         ),
                         Tab(
-                          icon: const Icon(Icons.devices, size: 24),
+                          icon: const Icon(Icons.devices, size: 20),
                           text: AppLocalizations.of(context).devices,
                         ),
                         // استخدام BlocBuilder للاستماع لتغيرات عدد الحالات الحرجة
@@ -321,7 +363,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                                 isLabelVisible: criticalCasesCount > 0,
                                 child: const Icon(
                                   Icons.warning_outlined,
-                                  size: 24,
+                                  size: 20,
                                 ),
                               ),
                               text: AppLocalizations.of(context).criticalCases,
@@ -329,7 +371,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                           },
                         ),
                         Tab(
-                          icon: const Icon(Icons.person_outline, size: 24),
+                          icon: const Icon(Icons.person_outline, size: 20),
                           text: AppLocalizations.of(context).profile,
                         ),
                       ],

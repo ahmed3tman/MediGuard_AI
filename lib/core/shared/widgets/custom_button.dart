@@ -13,6 +13,7 @@ class CustomButton extends StatelessWidget {
   final double? width;
   final double fontSize;
   final FontWeight fontWeight;
+  final String? fontFamily;
 
   const CustomButton({
     super.key,
@@ -28,6 +29,7 @@ class CustomButton extends StatelessWidget {
     this.width,
     this.fontSize = 16,
     this.fontWeight = FontWeight.bold,
+    this.fontFamily,
   });
 
   @override
@@ -68,7 +70,11 @@ class CustomButton extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   text,
-                  style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
+                    fontFamily: fontFamily,
+                  ),
                 ),
               ],
             )
@@ -80,14 +86,22 @@ class CustomButton extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   text,
-                  style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: fontWeight,
+                    fontFamily: fontFamily,
+                  ),
                 ),
               ],
             )
           : Center(
               child: Text(
                 text,
-                style: TextStyle(fontSize: fontSize, fontWeight: fontWeight),
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: fontWeight,
+                  fontFamily: fontFamily,
+                ),
               ),
             ),
     );

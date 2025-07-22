@@ -15,6 +15,17 @@ class CriticalCaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    bool isNotConnected = false;
+    // Check for missing or invalid data
+    if (criticalCase.temperature.isNaN ||
+        criticalCase.ecg.isNaN ||
+        criticalCase.spo2.isNaN ||
+        criticalCase.bloodPressure['systolic'] == null ||
+        criticalCase.bloodPressure['diastolic'] == null) {
+      isNotConnected = true;
+    }
+
     return InkWell(
       onTap: () {
         final device = Device(
@@ -79,6 +90,28 @@ class CriticalCaseCard extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 12),
+                  if (isNotConnected)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red[200]!),
+                      ),
+                      child: Text(
+                        l10n.notConnected,
+                        style: const TextStyle(
+                          fontFamily: 'NeoSansArabic',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
                   _VitalSignsDisplay(criticalCase: criticalCase),
                   const SizedBox(height: 16),
                   _CriticalCaseFooter(lastUpdated: criticalCase.lastUpdated),
@@ -111,6 +144,7 @@ class _CriticalCaseHeader extends StatelessWidget {
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
             color: Colors.grey[800],
+            fontFamily: 'NeoSansArabic',
           ),
         ),
         Material(

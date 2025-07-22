@@ -68,7 +68,14 @@ class EmptyStateWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(buttonText!),
+                child: Text(
+                  buttonText!,
+                  style: const TextStyle(
+                    fontFamily: 'NeoSansArabic',
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
               ),
           ],
         ),

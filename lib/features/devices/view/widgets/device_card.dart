@@ -80,8 +80,9 @@ class _DeviceCardState extends State<DeviceCard> {
                           widget.device.name,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.grey[800],
+                                fontFamily: 'NeoSansArabic',
                               ),
                         ),
                       ),
@@ -199,6 +200,7 @@ class _DeviceCardState extends State<DeviceCard> {
                             textStyle: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
+                              fontFamily: 'NeoSansArabic',
                             ),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
@@ -248,7 +250,7 @@ class _DeviceCardState extends State<DeviceCard> {
           ],
         );
       case ButtonState.idle:
-      return Text(
+        return Text(
           AppLocalizations.of(context).addToEmergency,
           style: const TextStyle(fontSize: 10),
         );

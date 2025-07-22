@@ -72,7 +72,15 @@ class _SettingsView extends StatelessWidget {
       ],
       child: Scaffold(
         appBar: AppBar(
-          title: Text(AppLocalizations.of(context).settings),
+          title: Text(
+            AppLocalizations.of(context).settings,
+            style: const TextStyle(
+              fontFamily: 'NeoSansArabic',
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+              color: Colors.white,
+            ),
+          ),
           backgroundColor: Colors.blue[600],
           foregroundColor: Colors.white,
           iconTheme: const IconThemeData(color: Colors.white),
@@ -149,6 +157,8 @@ class _SettingsView extends StatelessWidget {
                     onPressed: () => _handleSignOut(context),
                     backgroundColor: Colors.red[600],
                     foregroundColor: Colors.white,
+                    fontFamily: 'NeoSansArabic',
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 32),

@@ -119,20 +119,29 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
                 Text(
                   vitalSigns.patientName,
                   style: const TextStyle(
-                    color: Colors.black87, // ⬅️ غامق بديل للأبيض
-                    fontSize: 20,
+                    color: Colors.black87,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    fontFamily: 'NeoSansArabic',
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '${l10n.deviceIdLabel}${vitalSigns.deviceId}',
+                  style: const TextStyle(
+                    color: Color(0xFF757575),
+                    fontSize: 14,
+                    fontFamily: 'NeoSansArabic',
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${l10n.deviceIdLabel}${vitalSigns.deviceId}',
-                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
-                ),
-                const SizedBox(height: 4),
-                Text(
                   '${l10n.lastUpdatedLabel}${_formatTime(vitalSigns.timestamp, l10n)}',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  style: const TextStyle(
+                    color: Color(0xFFBDBDBD),
+                    fontSize: 12,
+                    fontFamily: 'NeoSansArabic',
+                  ),
                 ),
               ],
             ),
@@ -669,9 +678,10 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
         children: [
           Text(
             l10n.monitoringControlsTitle,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontFamily: 'NeoSansArabic',
+            ),
           ),
           // const SizedBox(height: 12),
           // Row(
