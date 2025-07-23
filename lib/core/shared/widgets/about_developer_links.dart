@@ -23,7 +23,7 @@ class AboutDeveloperLinks {
     ),
     AboutLink(
       name: 'YouTube',
-      url: 'https://youtube.com/i3tman',
+      url: 'https://youtube.com/@i3tman',
       icon: 'youtube',
     ),
   ];

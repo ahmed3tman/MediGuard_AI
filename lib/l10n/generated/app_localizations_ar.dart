@@ -610,4 +610,38 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get added => 'تمت الإضافة';
+
+  @override
+  String get buyDeviceTitle => 'شراء الجهاز';
+
+  @override
+  String get buyDeviceDesc => 'يرجى إدخال بياناتك لإتمام طلب الشراء:';
+
+  @override
+  String get buyDeviceSuccess =>
+      'تم إرسال طلب الشراء بنجاح! سيتم التواصل معك قريباً.';
+
+  @override
+  String get buyDeviceError => 'حدث خطأ أثناء إرسال الطلب';
+
+  @override
+  String get fullNameRequired => 'الاسم الكامل مطلوب';
+
+  @override
+  String get phoneNumber => 'رقم الجوال';
+
+  @override
+  String get phoneNumberRequired => 'رقم الجوال مطلوب';
+
+  @override
+  String get address => 'العنوان';
+
+  @override
+  String get addressRequired => 'العنوان مطلوب';
+
+  @override
+  String get sendOrder => 'إرسال الطلب';
+
+  @override
+  String get buyYourDevice => 'إشتري جهازك';
 }

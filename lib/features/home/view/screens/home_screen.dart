@@ -13,7 +13,6 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(Icons.home, size: 80, color: Colors.grey),
-            const SizedBox(height: 20),
             Text(
               AppLocalizations.of(context).home,
               style: const TextStyle(
@@ -22,8 +21,7 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.grey,
               ),
             ),
-            const SizedBox(height: 30),
-
+            const SizedBox(height: 100),
           ],
         ),
       ),

@@ -1261,6 +1261,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Added'**
   String get added;
+
+  /// Title for the buy device dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Device'**
+  String get buyDeviceTitle;
+
+  /// Description for the buy device dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your information to complete the purchase request:'**
+  String get buyDeviceDesc;
+
+  /// Success message after sending a purchase request
+  ///
+  /// In en, this message translates to:
+  /// **'Your purchase request has been sent successfully! We will contact you soon.'**
+  String get buyDeviceSuccess;
+
+  /// Error message when sending a purchase request fails
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while sending the request'**
+  String get buyDeviceError;
+
+  /// Validation message when full name is missing
+  ///
+  /// In en, this message translates to:
+  /// **'Full name is required'**
+  String get fullNameRequired;
+
+  /// Label for phone number input
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// Validation message when phone number is missing
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required'**
+  String get phoneNumberRequired;
+
+  /// Label for address input
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// Validation message when address is missing
+  ///
+  /// In en, this message translates to:
+  /// **'Address is required'**
+  String get addressRequired;
+
+  /// Button text to send the purchase order
+  ///
+  /// In en, this message translates to:
+  /// **'Send Order'**
+  String get sendOrder;
+
+  /// Button text to buy a device
+  ///
+  /// In en, this message translates to:
+  /// **'Buy Your Device'**
+  String get buyYourDevice;
 }
 
 class _AppLocalizationsDelegate

@@ -613,4 +613,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get added => 'Added';
+
+  @override
+  String get buyDeviceTitle => 'Buy Device';
+
+  @override
+  String get buyDeviceDesc =>
+      'Please enter your information to complete the purchase request:';
+
+  @override
+  String get buyDeviceSuccess =>
+      'Your purchase request has been sent successfully! We will contact you soon.';
+
+  @override
+  String get buyDeviceError => 'An error occurred while sending the request';
+
+  @override
+  String get fullNameRequired => 'Full name is required';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get phoneNumberRequired => 'Phone number is required';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get addressRequired => 'Address is required';
+
+  @override
+  String get sendOrder => 'Send Order';
+
+  @override
+  String get buyYourDevice => 'Buy Your Device';
 }

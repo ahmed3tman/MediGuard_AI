@@ -16,36 +16,44 @@ class CriticalCaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    bool isNotConnected = false;
-    // Check for missing or invalid data
-    if (criticalCase.temperature.isNaN ||
-        criticalCase.ecg.isNaN ||
-        criticalCase.spo2.isNaN ||
-        criticalCase.bloodPressure['systolic'] == null ||
-        criticalCase.bloodPressure['diastolic'] == null) {
+    // اعتبر الداتا غير متصلة إذا كانت القيم صفر أو null أو قديمة
+    bool isNotConnected =
+        criticalCase.temperature == 0.0 &&
+        criticalCase.ecg == 0.0 &&
+        criticalCase.spo2 == 0.0 &&
+        (criticalCase.bloodPressure['systolic'] == 0 ||
+            criticalCase.bloodPressure['systolic'] == null) &&
+        (criticalCase.bloodPressure['diastolic'] == 0 ||
+            criticalCase.bloodPressure['diastolic'] == null);
+
+    // أو لو الداتا قديمة (أكثر من 10 دقائق)
+    final now = DateTime.now();
+    if (now.difference(criticalCase.lastUpdated).inMinutes > 10) {
       isNotConnected = true;
     }
 
     return InkWell(
-      onTap: () {
-        final device = Device(
-          deviceId: criticalCase.deviceId,
-          name: criticalCase.name,
-          lastUpdated: criticalCase.lastUpdated,
-          readings: {
-            'temperature': criticalCase.temperature,
-            'ecg': criticalCase.ecg,
-            'spo2': criticalCase.spo2,
-            'bloodPressure': criticalCase.bloodPressure,
-          },
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PatientDetailScreen(device: device),
-          ),
-        );
-      },
+      onTap: isNotConnected
+          ? null
+          : () {
+              final device = Device(
+                deviceId: criticalCase.deviceId,
+                name: criticalCase.name,
+                lastUpdated: criticalCase.lastUpdated,
+                readings: {
+                  'temperature': criticalCase.temperature,
+                  'ecg': criticalCase.ecg,
+                  'spo2': criticalCase.spo2,
+                  'bloodPressure': criticalCase.bloodPressure,
+                },
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PatientDetailScreen(device: device),
+                ),
+              );
+            },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
@@ -58,7 +66,12 @@ class CriticalCaseCard extends StatelessWidget {
             ],
           ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1.5),
+          border: Border.all(
+            color: isNotConnected
+                ? Colors.grey[400]!
+                : Colors.white.withOpacity(0.3),
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
@@ -76,47 +89,72 @@ class CriticalCaseCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Padding(
-              padding: const EdgeInsets.all(14.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _CriticalCaseHeader(
-                    patientName: criticalCase.name,
-                    onRemove: () {
-                      context.read<CriticalCasesCubit>().removeCriticalCase(
-                        criticalCase.deviceId,
-                      );
-                    },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isNotConnected
+                        ? Colors.grey[200]
+                        : Colors.green[100],
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(16),
+                      topRight: Radius.circular(16),
+                    ),
                   ),
-                  const SizedBox(height: 12),
-                  if (isNotConnected)
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        isNotConnected ? Icons.wifi_off : Icons.wifi,
+                        color: isNotConnected
+                            ? Colors.grey[500]
+                            : Colors.green[700],
+                        size: 18,
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.red[50],
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.red[200]!),
-                      ),
-                      child: Text(
-                        l10n.notConnected,
-                        style: const TextStyle(
-                          fontFamily: 'NeoSansArabic',
+                      const SizedBox(width: 6),
+                      Text(
+                        isNotConnected ? l10n.notConnected : l10n.connected,
+                        style: TextStyle(
+                          color: isNotConnected
+                              ? Colors.grey
+                              : Colors.green[700],
                           fontWeight: FontWeight.bold,
-                          color: Colors.red,
+                          fontFamily: 'NeoSansArabic',
                           fontSize: 14,
                         ),
                       ),
-                    ),
-                  _VitalSignsDisplay(criticalCase: criticalCase),
-                  const SizedBox(height: 16),
-                  _CriticalCaseFooter(lastUpdated: criticalCase.lastUpdated),
-                ],
-              ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _CriticalCaseHeader(
+                        patientName: criticalCase.name,
+                        onRemove: () {
+                          context.read<CriticalCasesCubit>().removeCriticalCase(
+                            criticalCase.deviceId,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _VitalSignsDisplay(
+                        criticalCase: criticalCase,
+                        isNotConnected: isNotConnected,
+                      ),
+                      const SizedBox(height: 16),
+                      _CriticalCaseFooter(
+                        lastUpdated: criticalCase.lastUpdated,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -143,6 +181,7 @@ class _CriticalCaseHeader extends StatelessWidget {
           patientName,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
+            fontSize: 18,
             color: Colors.grey[800],
             fontFamily: 'NeoSansArabic',
           ),
@@ -154,7 +193,7 @@ class _CriticalCaseHeader extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             child: Container(
               padding: const EdgeInsets.all(6),
-              child: Icon(Icons.close, color: Colors.red[300], size: 16),
+              child: Icon(Icons.close, color: Colors.red[300], size: 20),
             ),
           ),
         ),
@@ -165,11 +204,24 @@ class _CriticalCaseHeader extends StatelessWidget {
 
 class _VitalSignsDisplay extends StatelessWidget {
   final CriticalCase criticalCase;
-  const _VitalSignsDisplay({required this.criticalCase});
+  final bool isNotConnected;
+  const _VitalSignsDisplay({
+    required this.criticalCase,
+    required this.isNotConnected,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    Color getColor(Color mainColor, bool hasData) =>
+        hasData ? mainColor : Colors.grey[400]!;
+    bool hasTemp = criticalCase.temperature != 0.0;
+    bool hasEcg = criticalCase.ecg != 0.0;
+    bool hasSpo2 = criticalCase.spo2 != 0.0;
+    bool hasBP =
+        (criticalCase.bloodPressure['systolic'] ?? 0) != 0 &&
+        (criticalCase.bloodPressure['diastolic'] ?? 0) != 0;
+
     return Column(
       children: [
         Row(
@@ -178,9 +230,11 @@ class _VitalSignsDisplay extends StatelessWidget {
               child: _VitalSignChip(
                 icon: Icons.thermostat,
                 label: l10n.temperature,
-                value: '${criticalCase.temperature.toStringAsFixed(1)}°C',
+                value: hasTemp
+                    ? '${criticalCase.temperature.toStringAsFixed(1)}°C'
+                    : '--',
                 isNormal: criticalCase.isTemperatureNormal,
-                color: Colors.orange,
+                color: getColor(Colors.orange, hasTemp),
               ),
             ),
             const SizedBox(width: 10),
@@ -188,9 +242,9 @@ class _VitalSignsDisplay extends StatelessWidget {
               child: _VitalSignChip(
                 icon: Icons.favorite_border,
                 label: l10n.ecg,
-                value: '${criticalCase.ecg.toInt()} BPM',
+                value: hasEcg ? '${criticalCase.ecg.toInt()} BPM' : '--',
                 isNormal: criticalCase.isEcgNormal,
-                color: Colors.red,
+                color: getColor(Colors.pink, hasEcg),
               ),
             ),
           ],
@@ -202,9 +256,9 @@ class _VitalSignsDisplay extends StatelessWidget {
               child: _VitalSignChip(
                 icon: Icons.air,
                 label: l10n.spo2,
-                value: '${criticalCase.spo2.toInt()}%',
+                value: hasSpo2 ? '${criticalCase.spo2.toInt()}%' : '--',
                 isNormal: criticalCase.isSpo2Normal,
-                color: Colors.blue,
+                color: getColor(Colors.blue, hasSpo2),
               ),
             ),
             const SizedBox(width: 10),
@@ -212,10 +266,11 @@ class _VitalSignsDisplay extends StatelessWidget {
               child: _VitalSignChip(
                 icon: Icons.monitor_heart_outlined,
                 label: l10n.bloodPressure,
-                value:
-                    '${criticalCase.bloodPressure['systolic']}/${criticalCase.bloodPressure['diastolic']}',
+                value: hasBP
+                    ? '${criticalCase.bloodPressure['systolic']}/${criticalCase.bloodPressure['diastolic']}'
+                    : '--',
                 isNormal: criticalCase.isBloodPressureNormal,
-                color: Colors.purple,
+                color: getColor(Colors.deepPurple, hasBP),
               ),
             ),
           ],
@@ -242,41 +297,73 @@ class _VitalSignChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    // Determine if the color is faded (i.e., no data)
+    final bool isFaded = color == Colors.grey[400];
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: color.withOpacity(0.2)),
+          ),
+          child: Row(
             children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: isNormal ? Colors.green[600] : Colors.red[600],
-                ),
+              Icon(icon, color: color, size: 20),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: isNormal ? Colors.green[600] : Colors.red[600],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        ),
+        // Show the red warning only if there is data (not faded) and not normal
+        if (!isNormal && !isFaded)
+          Positioned(
+            top: -8,
+            right: -8,
+            child: Container(
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.red.withOpacity(0.3),
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Icon(Icons.error_outline, color: Colors.white, size: 16),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

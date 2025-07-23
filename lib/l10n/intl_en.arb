@@ -802,5 +802,51 @@
   "added": "Added",
   "@added": {
     "description": "Message when an item or case is added"
+  },
+  "buyDeviceTitle": "Buy Device",
+  "@buyDeviceTitle": {
+    "description": "Title for the buy device dialog"
+  },
+  "buyDeviceDesc": "Please enter your information to complete the purchase request:",
+  "@buyDeviceDesc": {
+    "description": "Description for the buy device dialog"
+  },
+  "buyDeviceSuccess": "Your purchase request has been sent successfully! We will contact you soon.",
+  "@buyDeviceSuccess": {
+    "description": "Success message after sending a purchase request"
+  },
+  "buyDeviceError": "An error occurred while sending the request",
+  "@buyDeviceError": {
+    "description": "Error message when sending a purchase request fails"
+  },
+  "fullNameRequired": "Full name is required",
+  "@fullNameRequired": {
+    "description": "Validation message when full name is missing"
+  },
+  "phoneNumber": "Phone Number",
+  "@phoneNumber": {
+    "description": "Label for phone number input"
+  },
+  "phoneNumberRequired": "Phone number is required",
+  "@phoneNumberRequired": {
+    "description": "Validation message when phone number is missing"
+  },
+  "address": "Address",
+  "@address": {
+    "description": "Label for address input"
+  },
+  "addressRequired": "Address is required",
+  "@addressRequired": {
+    "description": "Validation message when address is missing"
+  },
+  "sendOrder": "Send Order",
+  "@sendOrder": {
+    "description": "Button text to send the purchase order"
+  },
+
+  "buyYourDevice": "Buy Your Device",
+  "@buyYourDevice": {
+    "description": "Button text to buy a device"
   }
+
 }

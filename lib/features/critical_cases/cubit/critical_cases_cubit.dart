@@ -1,12 +1,17 @@
 import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:spider_doctor/features/auth/services/auth_service.dart';
 import 'package:spider_doctor/features/critical_cases/model/critical_case_model.dart';
 import 'package:spider_doctor/features/devices/model/data_model.dart';
 import 'critical_cases_state.dart';
 
 class CriticalCasesCubit extends Cubit<CriticalCasesState> {
-  static const String _storageKey = 'critical_cases_list';
+  String get _storageKey {
+    final userId = AuthService.currentUser?.uid;
+    return 'critical_cases_list_${userId ?? "guest"}';
+  }
+
   CriticalCasesCubit() : super(const CriticalCasesLoaded([])) {
     loadCriticalCases();
   }
@@ -31,7 +36,7 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
       }
       emit(CriticalCasesLoaded(List.from(_criticalCases)));
     } catch (e) {
-      emit(CriticalCasesError('Failed to add critical case: ${e.toString()}'));
+      emit(CriticalCasesError('Failed to add critical case: e.toString()}'));
     }
   }
 
@@ -43,7 +48,7 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
       emit(CriticalCasesLoaded(List.from(_criticalCases)));
     } catch (e) {
       emit(
-        CriticalCasesError('Failed to remove critical case: ${e.toString()}'),
+        CriticalCasesError('Failed to remove critical case: e.toString()}'),
       );
     }
   }
@@ -51,9 +56,9 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
   Future<void> loadCriticalCases() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = prefs.getString(_storageKey);
+    _criticalCases.clear();
     if (jsonString != null) {
       final List<dynamic> jsonList = json.decode(jsonString);
-      _criticalCases.clear();
       _criticalCases.addAll(jsonList.map((e) => CriticalCase.fromJson(e)));
     }
     emit(CriticalCasesLoaded(List.from(_criticalCases)));
