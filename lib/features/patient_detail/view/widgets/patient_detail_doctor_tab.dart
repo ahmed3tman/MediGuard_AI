@@ -342,27 +342,29 @@ class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
           ),
           const SizedBox(height: 2),
           if (isConnected) ...[
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: value,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
-                  ),
-                  if (unit.isNotEmpty)
+            Expanded(
+              child: RichText(
+                text: TextSpan(
+                  children: [
                     TextSpan(
-                      text: ' $unit',
+                      text: value,
                       style: TextStyle(
-                        fontSize: 10,
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: color,
                       ),
                     ),
-                ],
+                    if (unit.isNotEmpty)
+                      TextSpan(
+                        text: ' $unit',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ] else ...[

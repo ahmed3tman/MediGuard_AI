@@ -20,7 +20,7 @@ class BuyDeviceCardState extends State<BuyDeviceCard> {
   @override
   Widget build(BuildContext context) {
     final l10n = widget.l10n;
-    return Center(
+    return SingleChildScrollView(
       child: Card(
         elevation: 6,
         margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -33,12 +33,21 @@ class BuyDeviceCardState extends State<BuyDeviceCard> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.shopping_cart,
-                  size: 80,
-                  color: Color(0xFF7DCCC4),
+                Container(
+                  height: 120,
+                  width: 160,
+      
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/device.png'),
+                      fit: BoxFit.cover,
+                    ),
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.grey.shade200,
+                  ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 5),
                 Text(
                   l10n.buyDeviceTitle,
                   style: const TextStyle(
@@ -97,7 +106,7 @@ class BuyDeviceCardState extends State<BuyDeviceCard> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7DCCC4),
+                      backgroundColor: const Color(0xFFEAD3B6),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -105,8 +114,12 @@ class BuyDeviceCardState extends State<BuyDeviceCard> {
                     ),
                     child: Text(
                       l10n.sendOrder,
-                      style: const TextStyle(fontSize: 18, color: Colors.white,
-                          fontWeight: FontWeight.bold, fontFamily: 'NeoSansArabic'),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'NeoSansArabic',
+                      ),
                     ),
                   ),
                 ),

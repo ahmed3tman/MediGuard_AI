@@ -25,7 +25,7 @@ class CriticalCasesScreen extends StatelessWidget {
               left: 8,
               right: 8,
               top: 8,
-              bottom: 8,
+              bottom: 100,
             ),
             itemCount: state.criticalCases.length,
             itemBuilder: (context, index) {

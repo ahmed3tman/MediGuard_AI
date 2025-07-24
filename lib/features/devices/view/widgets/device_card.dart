@@ -491,6 +491,7 @@ class _DeviceCardState extends State<DeviceCard> {
 
   void _showDeleteDialog(BuildContext context) {
     final deviceCubit = context.read<DeviceCubit>();
+    final criticalCasesCubit = context.read<CriticalCasesCubit>();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -506,6 +507,8 @@ class _DeviceCardState extends State<DeviceCard> {
           TextButton(
             onPressed: () {
               deviceCubit.deleteDevice(widget.device.deviceId);
+              // Remove from critical cases if exists
+              criticalCasesCubit.removeCriticalCase(widget.device.deviceId);
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),

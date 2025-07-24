@@ -33,27 +33,25 @@ class CriticalCaseCard extends StatelessWidget {
     }
 
     return InkWell(
-      onTap: isNotConnected
-          ? null
-          : () {
-              final device = Device(
-                deviceId: criticalCase.deviceId,
-                name: criticalCase.name,
-                lastUpdated: criticalCase.lastUpdated,
-                readings: {
-                  'temperature': criticalCase.temperature,
-                  'ecg': criticalCase.ecg,
-                  'spo2': criticalCase.spo2,
-                  'bloodPressure': criticalCase.bloodPressure,
-                },
-              );
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => PatientDetailScreen(device: device),
-                ),
-              );
-            },
+      onTap: () {
+        final device = Device(
+          deviceId: criticalCase.deviceId,
+          name: criticalCase.name,
+          lastUpdated: criticalCase.lastUpdated,
+          readings: {
+            'temperature': criticalCase.temperature,
+            'ecg': criticalCase.ecg,
+            'spo2': criticalCase.spo2,
+            'bloodPressure': criticalCase.bloodPressure,
+          },
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PatientDetailScreen(device: device),
+          ),
+        );
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(

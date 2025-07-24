@@ -79,7 +79,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                 left: 8,
                 right: 8,
                 top: 8,
-                bottom: 80,
+                bottom: 100,
               ),
               
               itemCount: state.devices.length,
