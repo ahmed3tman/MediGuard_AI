@@ -16,21 +16,16 @@ class CriticalCaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    // اعتبر الداتا غير متصلة إذا كانت القيم صفر أو null أو قديمة
-    bool isNotConnected =
-        criticalCase.temperature == 0.0 &&
-        criticalCase.ecg == 0.0 &&
-        criticalCase.spo2 == 0.0 &&
-        (criticalCase.bloodPressure['systolic'] == 0 ||
-            criticalCase.bloodPressure['systolic'] == null) &&
-        (criticalCase.bloodPressure['diastolic'] == 0 ||
-            criticalCase.bloodPressure['diastolic'] == null);
-
-    // أو لو الداتا قديمة (أكثر من 10 دقائق)
+    // اعتبر الداتا غير متصلة إذا كانت قديمة (أكثر من 10 دقائق) أو لا توجد بيانات حقيقية
     final now = DateTime.now();
-    if (now.difference(criticalCase.lastUpdated).inMinutes > 10) {
-      isNotConnected = true;
-    }
+    bool noData =
+        (criticalCase.temperature == 0.0) &&
+        (criticalCase.heartRate == 0.0) &&
+        (criticalCase.spo2 == 0.0) &&
+        ((criticalCase.bloodPressure['systolic'] ?? 0) == 0) &&
+        ((criticalCase.bloodPressure['diastolic'] ?? 0) == 0);
+    bool isNotConnected =
+        now.difference(criticalCase.lastUpdated).inMinutes > 10 || noData;
 
     return InkWell(
       onTap: () {
@@ -40,7 +35,8 @@ class CriticalCaseCard extends StatelessWidget {
           lastUpdated: criticalCase.lastUpdated,
           readings: {
             'temperature': criticalCase.temperature,
-            'ecg': criticalCase.ecg,
+            'heartRate': criticalCase.heartRate,
+            'ecgData': criticalCase.ecgData,
             'spo2': criticalCase.spo2,
             'bloodPressure': criticalCase.bloodPressure,
           },
@@ -214,7 +210,7 @@ class _VitalSignsDisplay extends StatelessWidget {
     Color getColor(Color mainColor, bool hasData) =>
         hasData ? mainColor : Colors.grey[400]!;
     bool hasTemp = criticalCase.temperature != 0.0;
-    bool hasEcg = criticalCase.ecg != 0.0;
+    bool hasHeartRate = criticalCase.heartRate != 0.0;
     bool hasSpo2 = criticalCase.spo2 != 0.0;
     bool hasBP =
         (criticalCase.bloodPressure['systolic'] ?? 0) != 0 &&
@@ -239,10 +235,12 @@ class _VitalSignsDisplay extends StatelessWidget {
             Expanded(
               child: _VitalSignChip(
                 icon: Icons.favorite_border,
-                label: l10n.ecg,
-                value: hasEcg ? '${criticalCase.ecg.toInt()} BPM' : '--',
-                isNormal: criticalCase.isEcgNormal,
-                color: getColor(Colors.pink, hasEcg),
+                label: l10n.heartRate,
+                value: hasHeartRate
+                    ? '${criticalCase.heartRate.toInt()} BPM'
+                    : '--',
+                isNormal: criticalCase.isHeartRateNormal,
+                color: getColor(Colors.pink, hasHeartRate),
               ),
             ),
           ],

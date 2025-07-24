@@ -15,15 +15,19 @@ class DeviceService {
 
     final deviceRef = _database.ref('users/$currentUserId/devices/$deviceId');
 
+    // readings مع قسم ECG كرقم وليس ecgData كمصفوفة
+    final readings = {
+      'temperature': 0.0,
+      'heartRate': 0.0,
+      'spo2': 0.0,
+      'bloodPressure': {'systolic': 0, 'diastolic': 0},
+      'ecg': 0.0,
+    };
+
     final device = Device(
       deviceId: deviceId,
       name: deviceName,
-      readings: {
-        'temperature': 0.0,
-        'ecg': 0.0,
-        'spo2': 0.0,
-        'bloodPressure': {'systolic': 0, 'diastolic': 0},
-      },
+      readings: readings,
       lastUpdated: null, // Set to null so it shows as "Not Connected"
     );
 
@@ -127,7 +131,11 @@ class DeviceService {
 
     final simulatedReadings = {
       'temperature': 36.5 + (random % 20) / 10, // 36.5 - 38.5°C
-      'ecg': 60 + (random % 40), // 60-100 BPM
+      'heartRate': 60 + (random % 40), // 60-100 BPM
+      'ecgData': List.generate(
+        100,
+        (i) => (0.5 * (i % 10)),
+      ), // Dummy ECG waveform
       'spo2': 95 + (random % 6), // 95-100%
       'bloodPressure': {
         'systolic': 110 + (random % 30), // 110-140 mmHg

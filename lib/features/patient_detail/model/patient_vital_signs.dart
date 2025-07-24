@@ -54,7 +54,7 @@ class PatientVitalSigns extends Equatable {
       deviceId: device.deviceId,
       patientName: device.name,
       temperature: device.temperature,
-      heartRate: device.ecg,
+      heartRate: device.heartRate,
       bloodPressure: device.bloodPressure,
       spo2: device.spo2,
       timestamp: device.lastUpdated ?? DateTime.now(),

@@ -8,7 +8,7 @@ import '../../model/data_model.dart';
 import '../../cubit/device_cubit.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
-enum VitalSignType { temperature, ecg, spo2, bloodPressure, unknown }
+enum VitalSignType { temperature, heartRate, spo2, bloodPressure, unknown }
 
 enum ButtonState { idle, loading, done }
 
@@ -154,10 +154,12 @@ class _DeviceCardState extends State<DeviceCard> {
                       ),
                       _buildVitalSignTile(
                         icon: Icons.favorite,
-                        title: AppLocalizations.of(context).ecg,
-                        value: '${widget.device.ecg.toStringAsFixed(0)} BPM',
+                        title: AppLocalizations.of(context).heartRate,
+                        value:
+                            '${widget.device.heartRate.toStringAsFixed(0)} BPM',
                         isNormal:
-                            widget.device.ecg >= 60 && widget.device.ecg <= 100,
+                            widget.device.heartRate >= 60 &&
+                            widget.device.heartRate <= 100,
                         color: Colors.red[300]!,
                         context: context,
                       ),
@@ -335,8 +337,8 @@ class _DeviceCardState extends State<DeviceCard> {
           displayValue = value;
         }
         break;
-      case VitalSignType.ecg:
-        if (widget.device.ecg > 0) {
+      case VitalSignType.heartRate:
+        if (widget.device.heartRate > 0) {
           hasValidReading = true;
           displayValue = value;
         }
@@ -478,8 +480,9 @@ class _DeviceCardState extends State<DeviceCard> {
     if (title == AppLocalizations.of(context).temperature ||
         title == 'Temperature') {
       return VitalSignType.temperature;
-    } else if (title == AppLocalizations.of(context).ecg || title == 'ECG') {
-      return VitalSignType.ecg;
+    } else if (title == AppLocalizations.of(context).heartRate ||
+        title == 'Heart Rate') {
+      return VitalSignType.heartRate;
     } else if (title == AppLocalizations.of(context).spo2 || title == 'SpO2') {
       return VitalSignType.spo2;
     } else if (title == AppLocalizations.of(context).bloodPressure ||

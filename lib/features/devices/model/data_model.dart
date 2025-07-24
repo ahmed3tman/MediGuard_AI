@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class Device extends Equatable {
   final String deviceId;
   final String name;
-  // Readings map containing temperature, ECG, SPO2, and blood pressure
+  // Readings map containing temperature, heart rate, ECG data, SPO2, and blood pressure
   final Map<String, dynamic> readings;
   final DateTime? lastUpdated;
 
@@ -23,7 +23,8 @@ class Device extends Equatable {
         json['readings'] ??
             {
               'temperature': 0.0, // Temperature in Celsius
-              'ecg': 0.0, // ECG reading
+              'heartRate': 0.0, // Heart Rate (BPM)
+              'ecgData': 0.0, // ECG waveform data
               'spo2': 0.0, // Oxygen saturation percentage
               'bloodPressure': {
                 // Blood pressure values
@@ -50,7 +51,15 @@ class Device extends Equatable {
 
   // Helper getters for easier access to readings
   double get temperature => (readings['temperature'] ?? 0.0).toDouble();
-  double get ecg => (readings['ecg'] ?? 0.0).toDouble();
+  double get heartRate => (readings['heartRate'] ?? 0.0).toDouble();
+  double get ecgData {
+    final value = readings['ecgData'];
+    if (value == null) return 0.0;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    return 0.0;
+  }
+
   double get spo2 => (readings['spo2'] ?? 0.0).toDouble();
 
   Map<String, int> get bloodPressure {
@@ -101,7 +110,7 @@ class Device extends Equatable {
   // Check if readings are valid (not zero values)
   bool get hasValidReadings =>
       temperature > 0 ||
-      ecg > 0 ||
+      heartRate > 0 ||
       spo2 > 0 ||
       bloodPressure['systolic']! > 0 ||
       bloodPressure['diastolic']! > 0;

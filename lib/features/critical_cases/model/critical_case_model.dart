@@ -1,10 +1,33 @@
 import 'package:equatable/equatable.dart';
 
 class CriticalCase extends Equatable {
+  CriticalCase copyWith({
+    String? deviceId,
+    String? name,
+    double? temperature,
+    double? heartRate,
+    List<double>? ecgData,
+    double? spo2,
+    Map<String, int>? bloodPressure,
+    DateTime? lastUpdated,
+  }) {
+    return CriticalCase(
+      deviceId: deviceId ?? this.deviceId,
+      name: name ?? this.name,
+      temperature: temperature ?? this.temperature,
+      heartRate: heartRate ?? this.heartRate,
+      ecgData: ecgData ?? this.ecgData,
+      spo2: spo2 ?? this.spo2,
+      bloodPressure: bloodPressure ?? this.bloodPressure,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+    );
+  }
+
   final String deviceId;
   final String name;
   final double temperature;
-  final double ecg;
+  final double heartRate;
+  final List<double> ecgData;
   final double spo2;
   final Map<String, int> bloodPressure;
   final DateTime lastUpdated;
@@ -13,7 +36,8 @@ class CriticalCase extends Equatable {
     required this.deviceId,
     required this.name,
     required this.temperature,
-    required this.ecg,
+    required this.heartRate,
+    required this.ecgData,
     required this.spo2,
     required this.bloodPressure,
     required this.lastUpdated,
@@ -23,11 +47,23 @@ class CriticalCase extends Equatable {
     return CriticalCase(
       deviceId: json['deviceId'] as String,
       name: json['name'] as String,
-      temperature: (json['temperature'] as num).toDouble(),
-      ecg: (json['ecg'] as num).toDouble(),
-      spo2: (json['spo2'] as num).toDouble(),
-      bloodPressure: Map<String, int>.from(json['bloodPressure'] as Map),
-      lastUpdated: DateTime.parse(json['lastUpdated'] as String),
+      temperature: (json['temperature'] is num ? json['temperature'] : 0.0)
+          .toDouble(),
+      heartRate: (json['heartRate'] is num ? json['heartRate'] : 0.0)
+          .toDouble(),
+      ecgData:
+          (json['ecgData'] as List?)
+              ?.where((e) => e != null)
+              .map((e) => (e as num).toDouble())
+              .toList() ??
+          <double>[],
+      spo2: (json['spo2'] is num ? json['spo2'] : 0.0).toDouble(),
+      bloodPressure: Map<String, int>.from(
+        json['bloodPressure'] as Map? ?? {'systolic': 0, 'diastolic': 0},
+      ),
+      lastUpdated:
+          DateTime.tryParse(json['lastUpdated'] as String? ?? '') ??
+          DateTime.now(),
     );
   }
 
@@ -35,14 +71,15 @@ class CriticalCase extends Equatable {
     'deviceId': deviceId,
     'name': name,
     'temperature': temperature,
-    'ecg': ecg,
+    'heartRate': heartRate,
+    'ecgData': ecgData,
     'spo2': spo2,
     'bloodPressure': bloodPressure,
     'lastUpdated': lastUpdated.toIso8601String(),
   };
 
   bool get isTemperatureNormal => temperature >= 36.5 && temperature <= 37.5;
-  bool get isEcgNormal => ecg >= 60 && ecg <= 100;
+  bool get isHeartRateNormal => heartRate >= 60 && heartRate <= 100;
   bool get isSpo2Normal => spo2 >= 95;
   bool get isBloodPressureNormal {
     final systolic = bloodPressure['systolic']!;
@@ -58,7 +95,8 @@ class CriticalCase extends Equatable {
     deviceId,
     name,
     temperature,
-    ecg,
+    heartRate,
+    ecgData,
     spo2,
     bloodPressure,
     lastUpdated,

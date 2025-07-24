@@ -7,6 +7,38 @@ import 'package:spider_doctor/features/devices/model/data_model.dart';
 import 'critical_cases_state.dart';
 
 class CriticalCasesCubit extends Cubit<CriticalCasesState> {
+  /// تحديث بيانات الحالات الحرجة من قائمة الأجهزة
+  void updateCriticalCasesFromDevices(List<Device> devices) async {
+    bool updated = false;
+    for (final device in devices) {
+      final idx = _criticalCases.indexWhere(
+        (c) => c.deviceId == device.deviceId,
+      );
+      if (idx != -1) {
+        final old = _criticalCases[idx];
+        // إذا تغيرت البيانات فعلاً (بدون ecgData)
+        if (old.temperature != device.temperature ||
+            old.heartRate != device.heartRate ||
+            old.spo2 != device.spo2 ||
+            old.bloodPressure.toString() != device.bloodPressure.toString() ||
+            old.lastUpdated != device.lastUpdated) {
+          _criticalCases[idx] = old.copyWith(
+            temperature: device.temperature,
+            heartRate: device.heartRate,
+            spo2: device.spo2,
+            bloodPressure: device.bloodPressure,
+            lastUpdated: device.lastUpdated ?? DateTime.now(),
+          );
+          updated = true;
+        }
+      }
+    }
+    if (updated) {
+      await _saveToStorage();
+      emit(CriticalCasesLoaded(List.from(_criticalCases)));
+    }
+  }
+
   String get _storageKey {
     final userId = AuthService.currentUser?.uid;
     return 'critical_cases_list_${userId ?? "guest"}';
@@ -25,7 +57,8 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
         deviceId: device.deviceId,
         name: device.name,
         temperature: device.temperature,
-        ecg: device.ecg,
+        heartRate: device.heartRate,
+        ecgData: const [], // تمرير قيمة افتراضية فارغة
         spo2: device.spo2,
         bloodPressure: device.bloodPressure,
         lastUpdated: device.lastUpdated ?? DateTime.now(),
@@ -36,7 +69,7 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
       }
       emit(CriticalCasesLoaded(List.from(_criticalCases)));
     } catch (e) {
-      emit(CriticalCasesError('Failed to add critical case: e.toString()}'));
+      emit(CriticalCasesError('Failed to add critical case: ${e.toString()}'));
     }
   }
 

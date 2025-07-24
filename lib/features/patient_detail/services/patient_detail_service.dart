@@ -53,11 +53,18 @@ class PatientDetailService {
       }
 
       // Only use real data from Firebase, no simulation
+      // Read ECG waveform data from readings if available
+      final List<double> ecgData =
+          (deviceData['readings']?['ecgData'] as List?)
+              ?.where((e) => e != null)
+              .map((e) => (e as num).toDouble())
+              .toList() ??
+          <double>[];
       final vitalSigns = PatientVitalSigns(
         deviceId: deviceData['deviceId'] ?? deviceId,
         patientName: deviceData['name'] ?? 'Unknown Patient',
         temperature: (deviceData['readings']?['temperature'] ?? 0.0).toDouble(),
-        heartRate: (deviceData['readings']?['ecg'] ?? 0.0).toDouble(),
+        heartRate: (deviceData['readings']?['heartRate'] ?? 0.0).toDouble(),
         bloodPressure: {
           'systolic':
               (deviceData['readings']?['bloodPressure']?['systolic'] ?? 0)
@@ -68,7 +75,11 @@ class PatientDetailService {
         },
         spo2: (deviceData['readings']?['spo2'] ?? 0.0).toDouble(),
         timestamp: lastUpdated ?? DateTime.now(),
-        ecgReadings: [], // Will be populated from real ECG data
+        ecgReadings: ecgData.isNotEmpty
+            ? ecgData
+                  .map((v) => EcgReading(value: v, timestamp: DateTime.now()))
+                  .toList()
+            : [],
         isDeviceConnected: isConnected,
         lastDataReceived: lastUpdated,
       );
