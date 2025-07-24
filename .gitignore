@@ -1,3 +1,5 @@
+build/
+ios/build/
 # Miscellaneous
 *.class
 *.log
