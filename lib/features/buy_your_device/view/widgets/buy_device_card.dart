@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spider_doctor/core/shared/theme/theme.dart';
 import 'package:spider_doctor/features/buy_your_device/cubit/buy_device_cubit.dart';
 import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 
@@ -40,6 +41,7 @@ class BuyDeviceCardState extends State<BuyDeviceCard> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/device.png'),
+                      colorFilter: ColorFilter.mode(AppColors.primaryColor, BlendMode.softLight),
                       fit: BoxFit.cover,
                     ),
                     border: Border.all(color: Colors.grey.shade300),
@@ -106,7 +108,7 @@ class BuyDeviceCardState extends State<BuyDeviceCard> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFEAD3B6),
+                      backgroundColor:AppColors.primaryColor,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -116,7 +118,7 @@ class BuyDeviceCardState extends State<BuyDeviceCard> {
                       l10n.sendOrder,
                       style: const TextStyle(
                         fontSize: 18,
-                        color: Colors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontFamily: 'NeoSansArabic',
                       ),
