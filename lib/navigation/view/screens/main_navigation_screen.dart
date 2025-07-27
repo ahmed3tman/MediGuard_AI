@@ -10,17 +10,17 @@ import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 
 // استيراد صفحات التطبيق
 import 'package:spider_doctor/features/home/view/screens/home_screen.dart';
-import '../features/devices/view/screens/devices_screen.dart';
-import '../features/devices/view/screens/add_device_screen.dart';
-import '../features/critical_cases/view/screens/critical_cases_screen.dart';
-import '../features/profile/view/screens/profile_screen.dart';
+import '../../../features/devices/view/screens/devices_screen.dart';
+import '../../../features/devices/view/screens/add_device_screen.dart';
+import '../../../features/critical_cases/view/screens/critical_cases_screen.dart';
+import '../../../features/profile/view/screens/profile_screen.dart';
 
 // استيراد الـ Cubits لإدارة الحالة
-import '../features/devices/cubit/device_cubit.dart';
-import '../features/home/cubit/home_cubit.dart';
-import '../features/profile/cubit/profile_cubit.dart';
-import '../features/critical_cases/cubit/critical_cases_cubit.dart';
-import '../features/critical_cases/cubit/critical_cases_state.dart';
+import '../../../features/devices/cubit/device_cubit.dart';
+import '../../../features/home/cubit/home_cubit.dart';
+import '../../../features/profile/cubit/profile_cubit.dart';
+import '../../../features/critical_cases/cubit/critical_cases_cubit.dart';
+import '../../../features/critical_cases/cubit/critical_cases_state.dart';
 
 // كلاس الشاشة الرئيسية للتنقل - يحتوي على البوتوم نافيجيشن بار
 class MainNavigationScreen extends StatefulWidget {

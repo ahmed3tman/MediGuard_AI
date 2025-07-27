@@ -6,7 +6,7 @@ import 'core/localization/locale_cubit.dart';
 import 'features/auth/services/auth_service.dart';
 import 'features/auth/view/screens/login_screen.dart';
 import 'features/settings/repository/settings_repository.dart';
-import 'navigation/main_navigation_screen.dart';
+import 'navigation/view/screens/main_navigation_screen.dart';
 import 'l10n/generated/app_localizations.dart';
 
 class MyApp extends StatelessWidget {

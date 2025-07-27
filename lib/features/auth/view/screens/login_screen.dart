@@ -4,7 +4,7 @@ import '../../../../core/shared/theme/theme.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/localization/language_switcher.dart';
 import '../../services/auth_service.dart';
-import '../../../../navigation/main_navigation_screen.dart';
+import '../../../../navigation/view/screens/main_navigation_screen.dart';
 import 'welcome_screen.dart';
 
 class LoginScreen extends StatefulWidget {

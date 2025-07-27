@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:spider_doctor/features/profile/view/widgets/coming_soon_card.dart';
+import 'package:spider_doctor/features/profile/view/widgets/stat_card.dart';
 import '../../../../core/shared/widgets/widgets.dart';
 import '../../../../core/shared/theme/theme.dart';
 import '../../../../l10n/generated/app_localizations.dart';
