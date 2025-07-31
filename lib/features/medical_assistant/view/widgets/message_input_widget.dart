@@ -38,18 +38,8 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
+     
       child: SafeArea(
         child: Row(
           children: [
