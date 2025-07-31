@@ -5,9 +5,9 @@ import 'package:spider_doctor/features/devices/model/data_model.dart';
 import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 import '../../cubit/patient_detail_cubit.dart';
 import '../../cubit/patient_detail_state.dart';
-import '../widgets/patient_detail_doctor_tab.dart';
-import '../../../medical_assistant/view/screens/medical_assistant_screen.dart';
-import '../../../medical_assistant/cubit/medical_assistant_cubit.dart';
+import '../../../doctor_tap/view/screens/doctor_tab.dart';
+import '../../../medical_assistant_tap/view/screens/medical_assistant_tap.dart';
+import '../../../medical_assistant_tap/cubit/medical_assistant_cubit.dart';
 import '../../../../core/localization/locale_cubit.dart';
 
 /// Main patient detail screen with tabbed interface
@@ -67,17 +67,17 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white70,
                 indicatorColor: Colors.white,
-                indicatorWeight: 3,
-                labelStyle: const TextStyle(
-                  fontFamily: 'NeoSansArabic',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-                unselectedLabelStyle: const TextStyle(
-                  fontFamily: 'NeoSansArabic',
-                  fontWeight: FontWeight.normal,
-                  fontSize: 13,
-                ),
+                indicatorWeight: 1,
+                // labelStyle: const TextStyle(
+                //   fontFamily: 'NeoSansArabic',
+                //   fontWeight: FontWeight.bold,
+                //   fontSize: 14,
+                // ),
+                // unselectedLabelStyle: const TextStyle(
+                //   fontFamily: 'NeoSansArabic',
+                //   fontWeight: FontWeight.normal,
+                //   fontSize: 13,
+                // ),
                 tabs: [
                   Tab(
                     icon: const Icon(Icons.local_hospital),

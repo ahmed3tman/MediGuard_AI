@@ -135,7 +135,7 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
 
   /// تحديث الأسئلة المقترحة
   void _updateSuggestedQuestions(bool isArabic) {
-    print('📝 تحديث الأسئلة المقترحة - اللغة العربية: $isArabic');
+   // print('📝 تحديث الأسئلة المقترحة - اللغة العربية: $isArabic');
 
     if (isArabic) {
       _suggestedQuestions = [
@@ -153,10 +153,10 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
       ];
     }
 
-    print('📋 عدد الأسئلة المقترحة: ${_suggestedQuestions.length}');
-    _suggestedQuestions.forEach(
-      (q) => print('   ${q['icon']} ${q['question']}'),
-    );
+    // print('📋 عدد الأسئلة المقترحة: ${_suggestedQuestions.length}');
+    // _suggestedQuestions.forEach(
+    //   (q) => print('   ${q['icon']} ${q['question']}'),
+    // );
   }
 
   /// إرسال سؤال مقترح

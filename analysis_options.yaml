@@ -16,6 +16,7 @@ analyzer:
     use_super_parameters: ignore
     avoid_function_literals_in_foreach_calls: ignore
     library_private_types_in_public_api: ignore
+    unused_element: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:

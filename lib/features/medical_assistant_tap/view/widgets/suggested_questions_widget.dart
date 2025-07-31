@@ -14,8 +14,8 @@ class SuggestedQuestionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('🔍 SuggestedQuestionsWidget - عدد الأسئلة: ${questions.length}');
-    questions.forEach((q) => print('   ${q['icon']} ${q['question']}'));
+  //  print('🔍 SuggestedQuestionsWidget - عدد الأسئلة: ${questions.length}');
+   // questions.forEach((q) => print('   ${q['icon']} ${q['question']}'));
 
     if (questions.isEmpty) return const SizedBox.shrink();
 
