@@ -24,7 +24,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutDeveloperUniversity => 'Menoufia University';
 
   @override
-  String get appTitle => 'Spider Doctor';
+  String get appTitle => 'MediGuard AI';
 
   @override
   String get realTimeMonitoring => 'Real Time Monitoring';

@@ -36,23 +36,21 @@ class BuyDeviceCardState extends State<BuyDeviceCard> {
               children: [
                 Container(
                   height: 120,
-                  width: 160,
-      
+                  width: 180,
+
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/device.png'),
-                      colorFilter: ColorFilter.mode(AppColors.primaryColor, BlendMode.softLight),
-                      fit: BoxFit.cover,
+                      image: AssetImage('assets/images/logo.png'),
+                      fit: BoxFit.contain,
                     ),
-                    border: Border.all(color: Colors.grey.shade300),
                     borderRadius: BorderRadius.circular(12),
-                    color: Colors.grey.shade200,
                   ),
                 ),
                 const SizedBox(height: 5),
                 Text(
                   l10n.buyDeviceTitle,
                   style: const TextStyle(
+                    color: AppColors.primaryColor,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -108,7 +106,7 @@ class BuyDeviceCardState extends State<BuyDeviceCard> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:AppColors.primaryColor,
+                      backgroundColor: AppColors.primaryColor,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

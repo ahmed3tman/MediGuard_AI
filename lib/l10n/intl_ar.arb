@@ -20,7 +20,7 @@
     "description": "جامعة المطور لعرضها في نافذة عن المطور"
   },
   "@@locale": "ar",
-  "appTitle": "الطبيب العنكبوت",
+  "appTitle": "MediGuard AI",
   "@appTitle": {
     "description": "عنوان التطبيق"
   },
@@ -302,20 +302,20 @@
   },
   "timeHoursAgo": "منذ {count} ساعة",
   "@timeHoursAgo": {
-      "description": "نص يعبر عن الوقت منذ عدد ساعات",
-      "placeholders": {
-          "count": {}
-      }
+    "description": "نص يعبر عن الوقت منذ عدد ساعات",
+    "placeholders": {
+      "count": {}
+    }
   },
   "buyDeviceTitle": "شراء الجهاز",
   "buyYourDevice": "إشتري جهازك",
-"buyDeviceDesc": "يرجى إدخال بياناتك لإتمام طلب الشراء:",
-"buyDeviceSuccess": "تم إرسال طلب الشراء بنجاح! سيتم التواصل معك قريباً.",
-"buyDeviceError": "حدث خطأ أثناء إرسال الطلب",
-"fullNameRequired": "الاسم الكامل مطلوب",
-"phoneNumber": "رقم الجوال",
-"phoneNumberRequired": "رقم الجوال مطلوب",
-"address": "العنوان",
-"addressRequired": "العنوان مطلوب",
-"sendOrder": "إرسال الطلب"
+  "buyDeviceDesc": "يرجى إدخال بياناتك لإتمام طلب الشراء:",
+  "buyDeviceSuccess": "تم إرسال طلب الشراء بنجاح! سيتم التواصل معك قريباً.",
+  "buyDeviceError": "حدث خطأ أثناء إرسال الطلب",
+  "fullNameRequired": "الاسم الكامل مطلوب",
+  "phoneNumber": "رقم الجوال",
+  "phoneNumberRequired": "رقم الجوال مطلوب",
+  "address": "العنوان",
+  "addressRequired": "العنوان مطلوب",
+  "sendOrder": "إرسال الطلب"
 }

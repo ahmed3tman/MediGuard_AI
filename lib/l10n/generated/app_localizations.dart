@@ -131,7 +131,7 @@ abstract class AppLocalizations {
   /// Application title
   ///
   /// In en, this message translates to:
-  /// **'Spider Doctor'**
+  /// **'MediGuard AI'**
   String get appTitle;
 
   /// Real time monitoring title

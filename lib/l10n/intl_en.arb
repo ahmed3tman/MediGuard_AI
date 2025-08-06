@@ -20,7 +20,7 @@
     "description": "Developer's university for About Developer dialog"
   },
   "@@locale": "en",
-  "appTitle": "Spider Doctor",
+  "appTitle": "MediGuard AI",
   "@appTitle": {
     "description": "Application title"
   },
@@ -129,7 +129,6 @@
   "@oxygenSaturation": {
     "description": "Oxygen saturation label"
   },
-
   "normal": "Normal",
   "@normal": {
     "description": "Normal status"
@@ -138,7 +137,6 @@
   "@abnormal": {
     "description": "Abnormal status"
   },
-
   "connected": "Connected",
   "@connected": {
     "description": "Connected status"
@@ -414,7 +412,6 @@
   "@ecg": {
     "description": "ECG label"
   },
-
   "noDevicesFound": "No devices found",
   "@noDevicesFound": {
     "description": "No devices found message"
@@ -843,10 +840,8 @@
   "@sendOrder": {
     "description": "Button text to send the purchase order"
   },
-
   "buyYourDevice": "Buy Your Device",
   "@buyYourDevice": {
     "description": "Button text to buy a device"
   }
-
 }

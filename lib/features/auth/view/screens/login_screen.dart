@@ -57,12 +57,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [const LanguageSwitcher()],
                   ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.04),
                   // Logo and title
                   Center(
                     child: Image.asset(
                       'assets/images/logo.png',
-                      width: 180,
-                      height: 180,
+                      width: 160,
+                      height: 160,
                       fit: BoxFit.contain,
                     ),
                   ),

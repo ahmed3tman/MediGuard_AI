@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         builder: (context, locale) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Spider Doctor',
+            title: 'MediGuard AI',
             theme: AppTheme.lightTheme,
             locale: locale,
             localizationsDelegates: [
