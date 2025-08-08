@@ -9,26 +9,26 @@ class HomeDataRepository {
       DevicePromotion(
         id: 'device_001',
         name: const LocalizedText(
-          en: 'Blood Pressure Monitor',
-          ar: 'جهاز قياس ضغط الدم',
+          en: 'Patient Monitoring Device',
+          ar: 'جهاز مراقبة المريض',
         ),
         shortDescription: const LocalizedText(
-          en: 'Professional digital blood pressure monitor with Bluetooth connectivity.',
-          ar: 'جهاز قياس ضغط الدم الرقمي المتقدم مع اتصال البلوتوث.',
+          en: 'Advanced patient monitoring device that tracks patient condition moment by moment.',
+          ar: 'جهاز متطور يتابع حالة المريض لحظة بلحظة.',
         ),
         fullDescription: const LocalizedText(
-          en: 'Professional digital blood pressure monitor with Bluetooth connectivity for home monitoring. Features high accuracy measurements, large display, and mobile app integration.',
-          ar: 'جهاز قياس ضغط الدم الرقمي المتقدم مع اتصال البلوتوث للمراقبة المنزلية. يتميز بقياسات عالية الدقة وشاشة كبيرة وتكامل مع تطبيق الهاتف المحمول.',
+          en: 'Advanced patient monitoring device with real-time tracking capabilities. Features comprehensive vital signs monitoring, intelligent alerts, and seamless connectivity for continuous patient care.',
+          ar: 'جهاز مراقبة المريض المتطور مع إمكانيات التتبع اللحظي. يتميز بمراقبة شاملة للعلامات الحيوية وتنبيهات ذكية واتصال سلس للرعاية المستمرة للمريض.',
         ),
         imageAsset: 'assets/images/logo.png',
         features: const LocalizedText(
-          en: 'Bluetooth connectivity|Mobile app integration|High accuracy|Large display|Memory storage',
-          ar: 'اتصال البلوتوث|تطبيق الهاتف المحمول|دقة عالية|شاشة كبيرة|ذاكرة تخزين',
+          en: 'Real-time monitoring|Multi-vital tracking|Smart alerts|Wireless connectivity|Cloud storage',
+          ar: 'مراقبة لحظية|تتبع متعدد العلامات الحيوية|تنبيهات ذكية|اتصال لاسلكي|تخزين سحابي',
         ),
         price: const LocalizedText(en: '2999 LE', ar: '2999 جنية'),
         specifications: const LocalizedText(
-          en: 'Accuracy: ±3mmHg|Memory: 200 readings|Battery: 4 AA|Weight: 850g',
-          ar: 'الدقة: ±3 ملم زئبق|الذاكرة: 200 قراءة|البطارية: 4 AA|الوزن: 850 جرام',
+          en: 'Sensors: Multi-vital|Connectivity: WiFi+Bluetooth|Battery: 48h|Weight: 650g',
+          ar: 'أجهزة الاستشعار: متعددة العلامات الحيوية|الاتصال: WiFi+بلوتوث|البطارية: 48 ساعة|الوزن: 650 جرام',
         ),
         warranty: const LocalizedText(
           en: '2 years international warranty',

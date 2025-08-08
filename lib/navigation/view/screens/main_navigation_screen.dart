@@ -223,8 +223,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                     // مستمع الاسكرول للتحكم في إظهار/إخفاء البوتوم بار
                     onNotification: (ScrollNotification scrollInfo) {
                       if (scrollInfo is ScrollUpdateNotification) {
-                        // التحقق من وجود حركة اسكرول فعلية وليس في منطقة التمدد
+                        // التحقق من وجود حركة اسكرول عمودية فقط وليس أفقية
                         if (scrollInfo.scrollDelta != null &&
+                            scrollInfo.metrics.axis == Axis.vertical &&
                             scrollInfo.metrics.pixels >= 0 &&
                             scrollInfo.metrics.pixels <=
                                 scrollInfo.metrics.maxScrollExtent &&
@@ -237,7 +238,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                                 0.0; // إعادة تعيين مسافة الاسكرول لأعلى
 
                             // إخفاء البوتوم بار إذا تم الاسكرول لأسفل بما فيه الكفاية
-                            if (_scrollDistance > 100 && _isBottomBarVisible) {
+                            if (_scrollDistance > 200 && _isBottomBarVisible) {
                               setState(() {
                                 _isBottomBarVisible = false;
                               });
@@ -261,7 +262,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                                 .abs(); // إضافة القيمة المطلقة
 
                             // إظهار البوتوم بار إذا تم الاسكرول لأعلى بما فيه الكفاية
-                            if (_upScrollDistance > 30 &&
+                            if (_upScrollDistance > 50 &&
                                 !_isBottomBarVisible) {
                               setState(() {
                                 _isBottomBarVisible = true;
@@ -294,13 +295,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                   bottom: _isBottomBarVisible
                       ? 30
                       : -100, // إظهار أو إخفاء البار
-                  left: MediaQuery.of(context).size.width * 0.05,
-                  right: MediaQuery.of(context).size.width * 0.05,
+                  left: MediaQuery.of(context).size.width * 0.04,
+                  right: MediaQuery.of(context).size.width * 0.04,
                   child: Container(
-                    height: 65,
+                    height: 75,
                     decoration: BoxDecoration(
                       color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(30),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.blue.withOpacity(0.3),
@@ -315,7 +316,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                       onTap: _onTabTapped,
                       indicator: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       labelColor: Colors.white,
                       unselectedLabelColor: Colors.white70,
@@ -338,11 +339,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
                       // تابات البوتوم بار
                       tabs: [
                         Tab(
-                          icon: const Icon(Icons.home_outlined, size: 20),
+                          icon: const Icon(Icons.home_outlined, size: 22),
                           text: AppLocalizations.of(context).home,
                         ),
                         Tab(
-                          icon: const Icon(Icons.devices, size: 20),
+                          icon: const Icon(Icons.devices, size: 22),
                           text: AppLocalizations.of(context).devices,
                         ),
                         // استخدام BlocBuilder للاستماع لتغيرات عدد الحالات الحرجة

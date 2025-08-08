@@ -74,8 +74,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             isArabic
-                                ? 'مرحباً بك في MediGuard'
-                                : 'Welcome to MediGuard',
+                                ? 'مرحباً بك في MediGuard AI'
+                                : 'Welcome to MediGuard AI',
                             style: TextStyle(
                               color: AppColors.textPrimary,
                               fontSize: isTablet ? 28 : 24,
@@ -86,8 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(height: isTablet ? 8 : 6),
                           Text(
                             isArabic
-                                ? 'رفيقك الذكي لمراقبة صحتك والعناية بها'
-                                : 'Your smart companion for health monitoring and care',
+                                ? 'رفيقك الذكي لمراقبة وتحليل العلامات الحيوية لحظياً'
+                                : 'Your smart companion for real-time health monitoring and analysis',
                             style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: isTablet ? 16 : 14,
