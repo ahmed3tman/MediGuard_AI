@@ -1,31 +1,33 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../repository/home_data_repository.dart';
 import 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   HomeCubit() : super(HomeInitial());
 
-  // Load dashboard data
-  Future<void> loadDashboard() async {
+  // Load home data
+  Future<void> loadHomeData() async {
     emit(HomeLoading());
     try {
-      // Simulate loading dashboard data
-      await Future.delayed(const Duration(seconds: 1));
+      // Simulate loading time
+      await Future.delayed(const Duration(milliseconds: 500));
 
-      final dashboardData = {
-        'totalDevices': 0,
-        'activeDevices': 0,
-        'criticalAlerts': 0,
-        'lastUpdate': DateTime.now().toIso8601String(),
-      };
+      final devicePromotions = HomeDataRepository.getDevicePromotions();
+      final healthTips = HomeDataRepository.getHealthTips();
 
-      emit(HomeLoaded(dashboardData));
+      emit(
+        HomeLoaded(
+          devicePromotion: devicePromotions.first,
+          healthTips: healthTips,
+        ),
+      );
     } catch (e) {
-      emit(HomeError('Failed to load dashboard: ${e.toString()}'));
+      emit(HomeError(message: 'Failed to load home data: ${e.toString()}'));
     }
   }
 
-  // Refresh dashboard
-  Future<void> refreshDashboard() async {
-    await loadDashboard();
+  // Refresh home data
+  Future<void> refreshHomeData() async {
+    await loadHomeData();
   }
 }

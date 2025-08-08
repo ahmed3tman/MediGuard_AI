@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../models/health_models.dart';
 
 abstract class HomeState extends Equatable {
   const HomeState();
@@ -12,18 +13,19 @@ class HomeInitial extends HomeState {}
 class HomeLoading extends HomeState {}
 
 class HomeLoaded extends HomeState {
-  final Map<String, dynamic> dashboardData;
+  final DevicePromotion devicePromotion;
+  final List<HealthTip> healthTips;
 
-  const HomeLoaded(this.dashboardData);
+  const HomeLoaded({required this.devicePromotion, required this.healthTips});
 
   @override
-  List<Object?> get props => [dashboardData];
+  List<Object?> get props => [devicePromotion, healthTips];
 }
 
 class HomeError extends HomeState {
   final String message;
 
-  const HomeError(this.message);
+  const HomeError({required this.message});
 
   @override
   List<Object?> get props => [message];
