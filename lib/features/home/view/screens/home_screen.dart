@@ -79,19 +79,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 : 'Welcome to MediGuard AI',
                             style: TextStyle(
                               color: AppColors.textPrimary,
-                              fontSize: isTablet ? 28 : 24,
+                              fontSize: isTablet ? 24 : 20,
                               fontWeight: FontWeight.bold,
                               fontFamily: isArabic ? 'NeoSansArabic' : null,
                             ),
                           ),
-                          SizedBox(height: isTablet ? 8 : 6),
+                          SizedBox(height: isTablet ? 6 : 4),
                           Text(
                             isArabic
                                 ? 'رفيقك الذكي لمراقبة وتحليل العلامات الحيوية لحظياً'
                                 : 'Your smart companion for real-time health monitoring and analysis',
                             style: TextStyle(
                               color: AppColors.textSecondary,
-                              fontSize: isTablet ? 16 : 14,
+                              fontSize: isTablet ? 14 : 12,
                               fontFamily: isArabic ? 'NeoSansArabic' : null,
                             ),
                           ),
@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // Quick Actions Section
                   SliverToBoxAdapter(
-                    child: SizedBox(height: isTablet ? 20 : 16),
+                    child: SizedBox(height: isTablet ? 10 : 8),
                   ),
 
                   // Quick Actions Section
@@ -262,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   SliverToBoxAdapter(
-                    child: SizedBox(height: isTablet ? 20 : 16),
+                    child: SizedBox(height: isTablet ? 10 : 8),
                   ),
 
                   // Health Tips Horizontal List
@@ -292,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // Final Bottom Spacing
                   SliverToBoxAdapter(
-                    child: SizedBox(height: isTablet ? 30 : 22),
+                    child: SizedBox(height: isTablet ? 20 : 11),
                   ),
 
                   // --- Early Self-Check Section ---
@@ -390,7 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 {
                                   'icon': Icons.visibility_outlined,
-                                  'color': Colors.tealAccent,
+                                  'color': const Color.fromARGB(255, 23, 84, 53),
                                   'title': isArabic
                                       ? 'فحص النظر الذاتي'
                                       : 'Vision Self-Check',
@@ -476,7 +476,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   // Final Bottom Spacing
                   SliverToBoxAdapter(
-                    child: SizedBox(height: isTablet ? 40 : 32),
+                    child: SizedBox(height: isTablet ? 32 : 24),
                   ),
 
                   // --- Health Awareness Section ---
@@ -537,7 +537,117 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     ),
-                  ), // --- Suggested New Section: Daily Health Challenge ---
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: isTablet ? 10 : 5),
+                  ),
+
+                  // --- Suggested New Section: Daily Health Challenge ---
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 24 : 16,
+                        vertical: isTablet ? 12 : 8,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981).withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: const Color(0xFF10B981).withOpacity(0.18),
+                            width: 1,
+                          ),
+                        ),
+                        padding: EdgeInsets.all(isTablet ? 20 : 14),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.directions_walk_outlined,
+                              color: const Color(0xFF10B981),
+                              size: isTablet ? 32 : 26,
+                            ),
+                            SizedBox(width: isTablet ? 18 : 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    isArabic
+                                        ? 'تحدي اليوم الصحي'
+                                        : 'Today\'s Health Challenge',
+                                    style: TextStyle(
+                                      color: AppColors.textPrimary,
+                                      fontSize: isTablet ? 16 : 14,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: isArabic
+                                          ? 'NeoSansArabic'
+                                          : null,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    isArabic
+                                        ? 'امشِ 7000 خطوة اليوم لتعزيز نشاطك وصحتك!'
+                                        : 'Walk 7,000 steps today to boost your activity and health!',
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontSize: isTablet ? 13 : 12,
+                                      fontFamily: isArabic
+                                          ? 'NeoSansArabic'
+                                          : null,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: isTablet ? 12 : 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      isArabic
+                                          ? 'رائع! استمر في الحركة 🚶‍♂️'
+                                          : 'Awesome! Keep moving 🚶‍♂️',
+                                      style: TextStyle(
+                                        fontFamily: isArabic
+                                            ? 'NeoSansArabic'
+                                            : null,
+                                      ),
+                                    ),
+                                    backgroundColor: const Color(0xFF10B981),
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF10B981),
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isTablet ? 18 : 12,
+                                  vertical: isTablet ? 12 : 8,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              child: Text(
+                                isArabic ? 'أنجزت' : 'Done',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: isTablet ? 13 : 12,
+                                  fontFamily: isArabic ? 'NeoSansArabic' : null,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -2091,7 +2201,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Color color,
     bool isArabic,
   ) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: () {

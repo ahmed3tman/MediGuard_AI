@@ -23,7 +23,7 @@ class DevicePromotionCard extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(
           horizontal: isTablet ? 20 : 12,
-          vertical: 6,
+          vertical: 1,
         ),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -47,46 +47,46 @@ class DevicePromotionCard extends StatelessWidget {
           child: Stack(
             children: [
               // Background Pattern
-              Positioned(
-                top: -50,
-                right: isArabic ? -50 : null,
-                left: isArabic ? null : -50,
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.1),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: -30,
-                left: -30,
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.05),
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   top: -50,
+              //   right: isArabic ? -50 : null,
+              //   left: isArabic ? null : -50,
+              //   child: Container(
+              //     width: 150,
+              //     height: 150,
+              //     decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       color: Colors.white.withOpacity(0.1),
+              //     ),
+              //   ),
+              // ),
+              // Positioned(
+              //   bottom: -30,
+              //   left: -30,
+              //   child: Container(
+              //     width: 100,
+              //     height: 100,
+              //     decoration: BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       color: Colors.white.withOpacity(0.05),
+              //     ),
+              //   ),
+              // ),
 
               // Logo Image
-              Positioned(
-                bottom: 10,
-                right: 10,
-                child: Opacity(
-                  opacity: 0.15,
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    width: isTablet ? 80 : 60,
-                    height: isTablet ? 80 : 60,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   bottom: 120,
+              //   right: 240,
+              //   child: Opacity(
+              //     opacity: 0.15,
+              //     child: Image.asset(
+              //       'assets/images/logo.png',
+              //       width: isTablet ? 120 : 100,
+              //       // height: isTablet ? 80 : 60,
+              //       color: Colors.white,
+              //     ),
+              //   ),
+              // ),
 
               // Content
               Padding(
@@ -135,7 +135,7 @@ class DevicePromotionCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            isArabic ? 'جديد' : 'New',
+                            isArabic ? 'حصريًا' : 'Exclusive',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: isTablet ? 14 : 12,
@@ -182,7 +182,9 @@ class DevicePromotionCard extends StatelessWidget {
                       children: [
                         _buildFeatureIcon(
                           Icons.monitor_heart,
-                          isArabic ? 'مراقبة العلامات الحيوية' : 'Vital Signs Monitoring',
+                          isArabic
+                              ? 'مراقبة العلامات الحيوية'
+                              : 'Vital Signs Monitoring',
                           isTablet,
                           isArabic,
                         ),

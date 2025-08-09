@@ -16,7 +16,6 @@ class HealthTipCard extends StatelessWidget {
     final cardWidth = isTablet ? 300.0 : 260.0;
     final locale = Localizations.localeOf(context).languageCode;
     final isArabic = locale.startsWith('ar');
-   
 
     return GestureDetector(
       onTap: onTap,
@@ -106,40 +105,40 @@ class HealthTipCard extends StatelessWidget {
                   ),
 
                   // Reading Time Badge
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.7),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.access_time,
-                            color: Colors.white,
-                            size: isTablet ? 14 : 12,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${healthTip.readingTimeMinutes} د',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: isTablet ? 12 : 10,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'NeoSansArabic',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // Positioned(
+                  //   top: 8,
+                  //   left: 8,
+                  //   child: Container(
+                  //     padding: const EdgeInsets.symmetric(
+                  //       horizontal: 8,
+                  //       vertical: 3,
+                  //     ),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.black.withOpacity(0.7),
+                  //       borderRadius: BorderRadius.circular(12),
+                  //     ),
+                  //     child: Row(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         Icon(
+                  //           Icons.access_time,
+                  //           color: Colors.white,
+                  //           size: isTablet ? 14 : 12,
+                  //         ),
+                  //         const SizedBox(width: 4),
+                  //         Text(
+                  //           '${healthTip.readingTimeMinutes} د',
+                  //           style: TextStyle(
+                  //             color: Colors.white,
+                  //             fontSize: isTablet ? 12 : 10,
+                  //             fontWeight: FontWeight.w600,
+                  //             fontFamily: 'NeoSansArabic',
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
 
                   // Gradient Overlay at bottom
                   Positioned(
