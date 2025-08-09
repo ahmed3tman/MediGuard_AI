@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/shared/theme/my_colors.dart';
+import '../../../../../core/shared/widgets/floating_snackbar.dart';
 
 class HomeDialogManager {
   static void showMedicalAnalysisInfo(BuildContext context, bool isArabic) {
@@ -152,22 +153,11 @@ class HomeDialogManager {
                 child: ElevatedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          isArabic
-                              ? '🚀 سيتم فتح الكاميرا لتحليل النتائج الطبية'
-                              : '🚀 Opening camera for medical analysis',
-                          style: TextStyle(
-                            fontFamily: isArabic ? 'NeoSansArabic' : null,
-                          ),
-                        ),
-                        backgroundColor: primaryColor,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+                    FloatingSnackBar.showInfo(
+                      context,
+                      message: isArabic
+                          ? '🚀 سيتم فتح الكاميرا لتحليل النتائج الطبية'
+                          : '🚀 Opening camera for medical analysis',
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -257,22 +247,11 @@ class HomeDialogManager {
           ElevatedButton.icon(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    isArabic
-                        ? '📞 جاري الاتصال بالإسعاف...'
-                        : '📞 Calling emergency...',
-                    style: TextStyle(
-                      fontFamily: isArabic ? 'NeoSansArabic' : null,
-                    ),
-                  ),
-                  backgroundColor: const Color(0xFFEF4444),
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+              FloatingSnackBar.showError(
+                context,
+                message: isArabic
+                    ? '📞 جاري الاتصال بالإسعاف...'
+                    : '📞 Calling emergency...',
               );
             },
             style: ElevatedButton.styleFrom(
@@ -411,22 +390,11 @@ class HomeDialogManager {
                     child: ElevatedButton.icon(
                       onPressed: () {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              isArabic
-                                  ? 'تم حفظ المعلومات في مفكرتك الصحية'
-                                  : 'Information saved to your health notes',
-                              style: TextStyle(
-                                fontFamily: isArabic ? 'NeoSansArabic' : null,
-                              ),
-                            ),
-                            backgroundColor: color,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
+                        FloatingSnackBar.showSuccess(
+                          context,
+                          message: isArabic
+                              ? 'تم حفظ المعلومات في مفكرتك الصحية'
+                              : 'Information saved to your health notes',
                         );
                       },
                       style: ElevatedButton.styleFrom(

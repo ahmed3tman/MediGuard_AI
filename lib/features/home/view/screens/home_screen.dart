@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/shared/theme/my_colors.dart';
+import '../../../../core/shared/widgets/floating_snackbar.dart';
 import '../widgets/device_promotion_card.dart';
 import '../widgets/health_tip_card.dart';
 import '../widgets/welcome_section.dart';
@@ -209,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.only(
                 right: isTablet ? 24 : 16,
-                left: isTablet ? 4 : 0,
+                left: isTablet ? 16 : 8,
               ),
               itemCount: state.healthTips.length,
               itemBuilder: (context, index) {
@@ -415,16 +416,11 @@ class _HomeScreenState extends State<HomeScreen> {
     Color color,
     bool isArabic,
   ) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          isArabic ? 'تم إضافة التذكير لـ $title' : 'Reminder added for $title',
-          style: TextStyle(fontFamily: isArabic ? 'NeoSansArabic' : null),
-        ),
-        backgroundColor: color,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
+    FloatingSnackBar.showSuccess(
+      context,
+      message: isArabic
+          ? 'تم إضافة التذكير لـ $title'
+          : 'Reminder added for $title',
     );
   }
 
@@ -530,20 +526,11 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ElevatedButton.icon(
         onPressed: () {
           Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                isArabic
-                    ? 'تم تفعيل التذكير $title بنجاح!'
-                    : '$title reminder activated successfully!',
-                style: TextStyle(fontFamily: isArabic ? 'NeoSansArabic' : null),
-              ),
-              backgroundColor: color,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
+          FloatingSnackBar.showSuccess(
+            context,
+            message: isArabic
+                ? 'تم تفعيل التذكير $title بنجاح!'
+                : '$title reminder activated successfully!',
           );
         },
         style: ElevatedButton.styleFrom(

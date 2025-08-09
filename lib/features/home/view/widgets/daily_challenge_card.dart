@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/shared/theme/my_colors.dart';
+import '../../../../../core/shared/widgets/floating_snackbar.dart';
 
 class DailyChallengeCard extends StatelessWidget {
   final IconData icon;
@@ -106,16 +107,6 @@ class DailyChallengeCard extends StatelessWidget {
   }
 
   void _showSuccessMessage(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          successMessage,
-          style: TextStyle(fontFamily: isArabic ? 'NeoSansArabic' : null),
-        ),
-        backgroundColor: const Color(0xFF10B981),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
+    FloatingSnackBar.showSuccess(context, message: successMessage);
   }
 }

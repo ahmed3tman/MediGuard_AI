@@ -23,8 +23,8 @@ class HealthTipCard extends StatelessWidget {
         width: cardWidth,
         height: 100,
         margin: EdgeInsets.only(
-          right: isTablet ? 16 : 12,
-          left: isTablet ? 16 : 12,
+          right: isTablet ? 10 : 8,
+          left: isTablet ? 10 : 8,
           bottom: 6,
           top: 6,
         ),
@@ -33,9 +33,9 @@ class HealthTipCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: const Color.fromARGB(255, 118, 118, 118).withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 1),
               spreadRadius: 1,
             ),
           ],
