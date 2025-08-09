@@ -137,7 +137,7 @@ class DevicePromotionCard extends StatelessWidget {
                   children: [
                     _buildFeatureIcon(
                       Icons.monitor_heart,
-                      isArabic ? 'مراقبة' : 'Monitoring',
+                      isArabic ? 'مراقبة لحظية' : 'Real-time Monitoring',
                       isTablet,
                       isArabic,
                     ),
