@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/health_models.dart';
 import '../../../../../core/shared/theme/my_colors.dart';
+import '../../../buy_your_device/view/screens/buy_ur_device_screen.dart';
 
 class DevicePromotionCard extends StatelessWidget {
   final DevicePromotion devicePromotion;
@@ -205,7 +206,13 @@ class DevicePromotionCard extends StatelessWidget {
                         color: Colors.transparent,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(25),
-                          onTap: onTap,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const BuyDeviceScreen(),
+                              ),
+                            );
+                          },
                           child: Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: isTablet ? 24 : 20,
