@@ -13,7 +13,7 @@ class PatientInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -35,13 +35,13 @@ class PatientInfoCard extends StatelessWidget {
           // Header with icon, title and edit button
           Row(
             children: [
-              Icon(Icons.person, color: AppColors.primaryColor, size: 24),
-              const SizedBox(width: 12),
+              Icon(Icons.person, color: AppColors.primaryColor, size: 22),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   AppLocalizations.of(context).patientInformation,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'NeoSansArabic',
                     color: AppColors.primaryColor,
@@ -54,8 +54,8 @@ class PatientInfoCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+                      horizontal: 10,
+                      vertical: 5,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -71,13 +71,13 @@ class PatientInfoCard extends StatelessWidget {
                         Icon(
                           Icons.edit,
                           color: AppColors.primaryColor,
-                          size: 18,
+                          size: 16,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 3),
                         Text(
                           AppLocalizations.of(context).edit,
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'NeoSansArabic',
                             color: AppColors.primaryColor,
@@ -89,12 +89,12 @@ class PatientInfoCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Patient name and device ID in white container
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -110,7 +110,7 @@ class PatientInfoCard extends StatelessWidget {
                       child: Text(
                         '${AppLocalizations.of(context).patientName}:',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.grey[700],
                           fontFamily: 'NeoSansArabic',
@@ -123,7 +123,7 @@ class PatientInfoCard extends StatelessWidget {
                         patientInfo.patientName ??
                             AppLocalizations.of(context).notSpecified,
                         style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                           fontFamily: 'NeoSansArabic',
                           color: AppColors.primaryColor,
@@ -132,7 +132,7 @@ class PatientInfoCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
 
                 // Device ID row
                 Row(
@@ -142,7 +142,7 @@ class PatientInfoCard extends StatelessWidget {
                       child: Text(
                         '${AppLocalizations.of(context).deviceId}:',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.grey[700],
                           fontFamily: 'NeoSansArabic',
@@ -154,7 +154,7 @@ class PatientInfoCard extends StatelessWidget {
                       child: Text(
                         patientInfo.deviceId,
                         style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 13,
                           fontWeight: FontWeight.w500,
                           fontFamily: 'NeoSansArabic',
                           color: Colors.black87,
@@ -166,7 +166,7 @@ class PatientInfoCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 14),
 
           // Patient information grid
           Row(
@@ -180,7 +180,7 @@ class PatientInfoCard extends StatelessWidget {
                       '${patientInfo.age} ${AppLocalizations.of(context).years}',
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildInfoItem(
                   context,
@@ -195,7 +195,7 @@ class PatientInfoCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
 
           Row(
             children: [
@@ -209,7 +209,7 @@ class PatientInfoCard extends StatelessWidget {
                       AppLocalizations.of(context).notSpecified,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: _buildInfoItem(
                   context,
@@ -226,13 +226,13 @@ class PatientInfoCard extends StatelessWidget {
           // Chronic diseases section
           if (patientInfo.chronicDiseases.isNotEmpty &&
               !patientInfo.chronicDiseases.contains('لا يوجد')) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             _buildChronicDiseasesSection(context),
           ],
 
           // Notes section
           if (patientInfo.notes != null && patientInfo.notes!.isNotEmpty) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             _buildNotesSection(context),
           ],
         ],
@@ -247,7 +247,7 @@ class PatientInfoCard extends StatelessWidget {
     required String value,
   }) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -258,13 +258,13 @@ class PatientInfoCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: AppColors.primaryColor),
-              const SizedBox(width: 8),
+              Icon(icon, size: 14, color: AppColors.primaryColor),
+              const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: Colors.grey[600],
                     fontFamily: 'NeoSansArabic',
                   ),
@@ -272,11 +272,11 @@ class PatientInfoCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           Text(
             value,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               fontFamily: 'NeoSansArabic',
             ),
@@ -289,7 +289,7 @@ class PatientInfoCard extends StatelessWidget {
   Widget _buildChronicDiseasesSection(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -302,35 +302,35 @@ class PatientInfoCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.health_and_safety,
-                size: 16,
+                size: 14,
                 color: AppColors.primaryColor,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Text(
                 AppLocalizations.of(context).chronicDiseases,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: Colors.grey[600],
                   fontFamily: 'NeoSansArabic',
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Wrap(
-            spacing: 8,
-            runSpacing: 4,
+            spacing: 6,
+            runSpacing: 3,
             children: patientInfo.chronicDiseases.map((disease) {
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   disease,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: AppColors.primaryColor,
                     fontFamily: 'NeoSansArabic',
                   ),
@@ -346,7 +346,7 @@ class PatientInfoCard extends StatelessWidget {
   Widget _buildNotesSection(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
@@ -357,22 +357,22 @@ class PatientInfoCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.note, size: 16, color: AppColors.primaryColor),
-              const SizedBox(width: 8),
+              Icon(Icons.note, size: 14, color: AppColors.primaryColor),
+              const SizedBox(width: 6),
               Text(
                 AppLocalizations.of(context).notes,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: Colors.grey[600],
                   fontFamily: 'NeoSansArabic',
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             patientInfo.notes!,
-            style: const TextStyle(fontSize: 14, fontFamily: 'NeoSansArabic'),
+            style: const TextStyle(fontSize: 12, fontFamily: 'NeoSansArabic'),
           ),
         ],
       ),

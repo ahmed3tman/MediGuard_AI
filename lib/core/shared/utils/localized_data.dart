@@ -18,7 +18,6 @@ class LocalizedData {
 
   static List<String> getChronicDiseases(BuildContext context) {
     return [
-      AppLocalizations.of(context).noChronicDiseases,
       AppLocalizations.of(context).diabetes,
       AppLocalizations.of(context).hypertension,
       AppLocalizations.of(context).heartDisease,
@@ -33,6 +32,7 @@ class LocalizedData {
       AppLocalizations.of(context).osteoporosis,
       AppLocalizations.of(context).thyroidDisease,
       AppLocalizations.of(context).cholesterol,
+      AppLocalizations.of(context).noChronicDiseases,
     ];
   }
 

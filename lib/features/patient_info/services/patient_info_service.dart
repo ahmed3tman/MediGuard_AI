@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/patient_info_model.dart';
 import 'firebase_patient_info_service.dart';
+import '../../devices/services/device_service.dart';
 
 class PatientInfoService {
   static const String _keyPrefix = 'patient_info_';
@@ -15,10 +16,36 @@ class PatientInfoService {
 
       // Also save locally as backup for offline use
       await _saveToLocal(patientInfo);
+
+      // مزامنة اسم الجهاز مع اسم المريض
+      if (patientInfo.patientName != null &&
+          patientInfo.patientName!.isNotEmpty) {
+        try {
+          await DeviceService.updateDeviceName(
+            patientInfo.deviceId,
+            patientInfo.patientName!,
+          );
+        } catch (e) {
+          print('Failed to sync device name during save: $e');
+        }
+      }
     } catch (firebaseError) {
       print('Firebase save failed, saving locally: $firebaseError');
       // If Firebase fails, still save locally
       await _saveToLocal(patientInfo);
+
+      // حاول مزامنة اسم الجهاز حتى لو فشل Firebase
+      if (patientInfo.patientName != null &&
+          patientInfo.patientName!.isNotEmpty) {
+        try {
+          await DeviceService.updateDeviceName(
+            patientInfo.deviceId,
+            patientInfo.patientName!,
+          );
+        } catch (e) {
+          print('Failed to sync device name locally during save: $e');
+        }
+      }
     }
   }
 
@@ -54,10 +81,39 @@ class PatientInfoService {
 
       // Also update locally
       await _saveToLocal(updatedPatientInfo);
+
+      // مزامنة اسم الجهاز مع اسم المريض
+      if (updatedPatientInfo.patientName != null &&
+          updatedPatientInfo.patientName!.isNotEmpty) {
+        try {
+          // تحديث اسم الجهاز ليطابق اسم المريض
+          await DeviceService.updateDeviceName(
+            updatedPatientInfo.deviceId,
+            updatedPatientInfo.patientName!,
+          );
+        } catch (e) {
+          print('Failed to sync device name: $e');
+          // لا نرمي خطأ هنا لأن تحديث معلومات المريض نجح
+        }
+      }
     } catch (firebaseError) {
       print('Firebase update failed, updating locally: $firebaseError');
       // If Firebase fails, still update locally
-      await _saveToLocal(patientInfo.copyWith(updatedAt: DateTime.now()));
+      final localUpdate = patientInfo.copyWith(updatedAt: DateTime.now());
+      await _saveToLocal(localUpdate);
+
+      // حاول مزامنة اسم الجهاز حتى لو فشل Firebase
+      if (localUpdate.patientName != null &&
+          localUpdate.patientName!.isNotEmpty) {
+        try {
+          await DeviceService.updateDeviceName(
+            localUpdate.deviceId,
+            localUpdate.patientName!,
+          );
+        } catch (e) {
+          print('Failed to sync device name locally: $e');
+        }
+      }
     }
   }
 

@@ -33,7 +33,31 @@ class CriticalCasesScreen extends StatelessWidget {
               itemCount: state.criticalCases.length,
               itemBuilder: (context, index) {
                 final criticalCase = state.criticalCases[index];
-                return CriticalCaseCard(criticalCase: criticalCase);
+                return CriticalCaseCard(
+                  criticalCase: criticalCase,
+                  isDeleting: false,
+                );
+              },
+            );
+          } else if (state is CriticalCaseDeleting) {
+            // عرض القائمة مع تفعيل حالة الحذف للعنصر المحدد
+            if (state.criticalCases.isEmpty) {
+              return _buildEmptyState(l10n);
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.only(
+                left: 8,
+                right: 8,
+                top: 8,
+                bottom: 100,
+              ),
+              itemCount: state.criticalCases.length,
+              itemBuilder: (context, index) {
+                final criticalCase = state.criticalCases[index];
+                return CriticalCaseCard(
+                  criticalCase: criticalCase,
+                  isDeleting: criticalCase.deviceId == state.deletingDeviceId,
+                );
               },
             );
           } else if (state is CriticalCasesError) {

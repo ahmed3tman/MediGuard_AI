@@ -115,6 +115,15 @@ class DeviceService {
     });
   }
 
+  // Update device name
+  static Future<void> updateDeviceName(String deviceId, String newName) async {
+    if (currentUserId == null) throw Exception('User not authenticated');
+
+    final deviceRef = _database.ref('users/$currentUserId/devices/$deviceId');
+
+    await deviceRef.update({'name': newName});
+  }
+
   // Delete a device
   static Future<void> deleteDevice(String deviceId) async {
     if (currentUserId == null) throw Exception('User not authenticated');

@@ -5,6 +5,7 @@ import 'package:spider_doctor/features/auth/services/auth_service.dart';
 import 'package:spider_doctor/features/critical_cases/model/critical_case_model.dart';
 import 'package:spider_doctor/features/critical_cases/services/firebase_critical_cases_service.dart';
 import 'package:spider_doctor/features/devices/model/data_model.dart';
+import 'package:spider_doctor/features/patient_info/services/patient_info_service.dart';
 import 'critical_cases_state.dart';
 
 class CriticalCasesCubit extends Cubit<CriticalCasesState> {
@@ -17,13 +18,30 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
       );
       if (idx != -1) {
         final old = _criticalCases[idx];
-        // إذا تغيرت البيانات فعلاً (بدون ecgData)
+
+        // الحصول على اسم المريض من معلومات المريض
+        String patientName = device.name; // القيمة الافتراضية
+        try {
+          final patientInfo = await PatientInfoService.getPatientInfo(
+            device.deviceId,
+          );
+          if (patientInfo?.patientName != null &&
+              patientInfo!.patientName!.isNotEmpty) {
+            patientName = patientInfo.patientName!;
+          }
+        } catch (e) {
+          print('Failed to get patient name for device ${device.deviceId}: $e');
+        }
+
+        // إذا تغيرت البيانات فعلاً (بما في ذلك الاسم)
         if (old.temperature != device.temperature ||
             old.heartRate != device.heartRate ||
             old.spo2 != device.spo2 ||
             old.bloodPressure.toString() != device.bloodPressure.toString() ||
-            old.lastUpdated != device.lastUpdated) {
+            old.lastUpdated != device.lastUpdated ||
+            old.name != patientName) {
           final updatedCase = old.copyWith(
+            name: patientName,
             temperature: device.temperature,
             heartRate: device.heartRate,
             spo2: device.spo2,
@@ -63,9 +81,23 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
   Future<void> addCriticalCase(Device device) async {
     emit(CriticalCasesLoading());
     try {
+      // الحصول على اسم المريض من معلومات المريض
+      String patientName = device.name; // القيمة الافتراضية
+      try {
+        final patientInfo = await PatientInfoService.getPatientInfo(
+          device.deviceId,
+        );
+        if (patientInfo?.patientName != null &&
+            patientInfo!.patientName!.isNotEmpty) {
+          patientName = patientInfo.patientName!;
+        }
+      } catch (e) {
+        print('Failed to get patient name for device ${device.deviceId}: $e');
+      }
+
       final criticalCase = CriticalCase(
         deviceId: device.deviceId,
-        name: device.name,
+        name: patientName,
         temperature: device.temperature,
         heartRate: device.heartRate,
         ecgData: const [], // تمرير قيمة افتراضية فارغة
@@ -93,7 +125,8 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
   }
 
   Future<void> removeCriticalCase(String deviceId) async {
-    emit(CriticalCasesLoading());
+    // إصدار state للحذف مع عرض loading في مكان الأيقونة
+    emit(CriticalCaseDeleting(List.from(_criticalCases), deviceId));
     try {
       // حفظ الحالة المحذوفة للتراجع في حالة فشل Firebase
       final removedCase = _criticalCases.firstWhere(
@@ -179,6 +212,46 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
 
   bool isDeviceCritical(String deviceId) {
     return _criticalCases.any((c) => c.deviceId == deviceId);
+  }
+
+  /// مزامنة أسماء جميع الحالات الحرجة مع أسماء المرضى
+  Future<void> syncAllNamesWithPatientInfo() async {
+    bool updated = false;
+
+    for (int idx = 0; idx < _criticalCases.length; idx++) {
+      final criticalCase = _criticalCases[idx];
+      try {
+        final patientInfo = await PatientInfoService.getPatientInfo(
+          criticalCase.deviceId,
+        );
+        if (patientInfo?.patientName != null &&
+            patientInfo!.patientName!.isNotEmpty &&
+            criticalCase.name != patientInfo.patientName) {
+          final updatedCase = criticalCase.copyWith(
+            name: patientInfo.patientName!,
+          );
+          _criticalCases[idx] = updatedCase;
+
+          // محاولة تحديث في Firebase
+          try {
+            await FirebaseCriticalCasesService.updateCriticalCase(updatedCase);
+          } catch (e) {
+            print('Failed to update critical case name in Firebase: $e');
+          }
+
+          updated = true;
+        }
+      } catch (e) {
+        print(
+          'Failed to get patient info for critical case ${criticalCase.deviceId}: $e',
+        );
+      }
+    }
+
+    if (updated) {
+      await _saveToLocalStorage();
+      emit(CriticalCasesLoaded(List.from(_criticalCases)));
+    }
   }
 
   /// مزامنة البيانات المحلية مع Firebase

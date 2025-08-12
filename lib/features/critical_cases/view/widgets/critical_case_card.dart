@@ -10,8 +10,13 @@ import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 
 class CriticalCaseCard extends StatelessWidget {
   final CriticalCase criticalCase;
+  final bool isDeleting;
 
-  const CriticalCaseCard({super.key, required this.criticalCase});
+  const CriticalCaseCard({
+    super.key,
+    required this.criticalCase,
+    this.isDeleting = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -130,6 +135,7 @@ class CriticalCaseCard extends StatelessWidget {
                     children: [
                       _CriticalCaseHeader(
                         patientName: criticalCase.name,
+                        isDeleting: isDeleting,
                         onRemove: () {
                           context.read<CriticalCasesCubit>().removeCriticalCase(
                             criticalCase.deviceId,
@@ -160,10 +166,12 @@ class CriticalCaseCard extends StatelessWidget {
 class _CriticalCaseHeader extends StatelessWidget {
   final String patientName;
   final VoidCallback onRemove;
+  final bool isDeleting;
 
   const _CriticalCaseHeader({
     required this.patientName,
     required this.onRemove,
+    this.isDeleting = false,
   });
 
   @override
@@ -183,11 +191,22 @@ class _CriticalCaseHeader extends StatelessWidget {
         Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: onRemove,
+            onTap: isDeleting ? null : onRemove,
             borderRadius: BorderRadius.circular(8),
             child: Container(
               padding: const EdgeInsets.all(6),
-              child: Icon(Icons.close, color: Colors.red[300], size: 20),
+              child: isDeleting
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.red[300]!,
+                        ),
+                      ),
+                    )
+                  : Icon(Icons.close, color: Colors.red[300], size: 20),
             ),
           ),
         ),

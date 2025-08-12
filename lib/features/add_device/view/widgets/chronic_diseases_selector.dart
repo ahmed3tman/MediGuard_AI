@@ -27,36 +27,79 @@ class ChronicDiseasesSelector extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _getDisplayText(context),
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontFamily: 'NeoSansArabic',
-                ),
+        InkWell(
+          onTap: () => _showSelectionDialog(context),
+          borderRadius: BorderRadius.circular(12),
+          splashColor: AppColors.primaryColor.withOpacity(0.1),
+          highlightColor: AppColors.primaryColor.withOpacity(0.05),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color:
+                    selectedDiseases.isEmpty ||
+                        selectedDiseases.contains(
+                          LocalizedData.getChronicDiseases(context).last,
+                        )
+                    ? Colors.grey.shade300
+                    : AppColors.primaryColor.withOpacity(0.5),
+                width:
+                    selectedDiseases.isEmpty ||
+                        selectedDiseases.contains(
+                          LocalizedData.getChronicDiseases(context).last,
+                        )
+                    ? 1
+                    : 1.5,
               ),
-              const SizedBox(height: 8),
-              ElevatedButton(
-                onPressed: () => _showSelectionDialog(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  foregroundColor: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              color:
+                  selectedDiseases.isEmpty ||
+                      selectedDiseases.contains(
+                        LocalizedData.getChronicDiseases(context).last,
+                      )
+                  ? Colors.grey.shade50
+                  : AppColors.primaryColor.withOpacity(0.05),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _getDisplayText(context),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'NeoSansArabic',
+                      color:
+                          _getDisplayText(context) ==
+                              LocalizedData.getChronicDiseases(context).last
+                          ? Colors.grey.shade600
+                          : Colors.black87,
+                      fontWeight:
+                          _getDisplayText(context) ==
+                              LocalizedData.getChronicDiseases(context).last
+                          ? FontWeight.normal
+                          : FontWeight.w500,
+                    ),
+                  ),
                 ),
-                child: Text(
-                  AppLocalizations.of(context).selectChronicDiseases,
-                  style: const TextStyle(fontFamily: 'NeoSansArabic'),
+                AnimatedRotation(
+                  duration: const Duration(milliseconds: 150),
+                  turns: 0,
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color:
+                        selectedDiseases.isEmpty ||
+                            selectedDiseases.contains(
+                              LocalizedData.getChronicDiseases(context).last,
+                            )
+                        ? Colors.grey.shade600
+                        : AppColors.primaryColor,
+                    size: 20,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
@@ -71,7 +114,15 @@ class ChronicDiseasesSelector extends StatelessWidget {
       return noDiseases;
     }
 
-    return selectedDiseases.join(', ');
+    if (selectedDiseases.length == 1) {
+      return selectedDiseases.first;
+    }
+
+    if (selectedDiseases.length <= 2) {
+      return selectedDiseases.join(' و ');
+    }
+
+    return '${selectedDiseases.take(2).join(' و ')} +${selectedDiseases.length - 2}';
   }
 
   void _showSelectionDialog(BuildContext context) {
@@ -93,9 +144,34 @@ class ChronicDiseasesSelector extends StatelessWidget {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(
-                AppLocalizations.of(context).selectChronicDiseases,
-                style: const TextStyle(fontFamily: 'NeoSansArabic'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Column(
+                children: [
+                  Text(
+                    AppLocalizations.of(context).selectChronicDiseasesTitle,
+                    style: const TextStyle(
+                      fontFamily: 'NeoSansArabic',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (tempSelected.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        'تم اختيار ${tempSelected.length} من الأمراض',
+                        style: TextStyle(
+                          fontFamily: 'NeoSansArabic',
+                          fontSize: 12,
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                ],
               ),
               content: SizedBox(
                 width: double.maxFinite,
@@ -103,49 +179,88 @@ class ChronicDiseasesSelector extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // None option
-                    CheckboxListTile(
-                      title: Text(
-                        noDiseases,
-                        style: const TextStyle(fontFamily: 'NeoSansArabic'),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: tempSelected.isEmpty
+                            ? AppColors.primaryColor.withOpacity(0.1)
+                            : null,
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      value: tempSelected.isEmpty,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          if (value == true) {
-                            tempSelected.clear();
-                          }
-                        });
-                      },
-                      activeColor: AppColors.primaryColor,
+                      child: CheckboxListTile(
+                        title: Text(
+                          noDiseases,
+                          style: TextStyle(
+                            fontFamily: 'NeoSansArabic',
+                            fontWeight: tempSelected.isEmpty
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            color: tempSelected.isEmpty
+                                ? AppColors.primaryColor
+                                : null,
+                          ),
+                        ),
+                        value: tempSelected.isEmpty,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            if (value == true) {
+                              tempSelected.clear();
+                            }
+                          });
+                        },
+                        activeColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                     ),
-                    const Divider(),
+                    const Divider(height: 20),
                     // Disease options
-                    Flexible(
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 300),
                       child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: availableDiseases.length,
                         itemBuilder: (context, index) {
                           final disease = availableDiseases[index];
-                          return CheckboxListTile(
-                            title: Text(
-                              disease,
-                              style: const TextStyle(
-                                fontFamily: 'NeoSansArabic',
+                          final isSelected = tempSelected.contains(disease);
+                          return Container(
+                            margin: const EdgeInsets.symmetric(vertical: 2),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppColors.primaryColor.withOpacity(0.1)
+                                  : null,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: CheckboxListTile(
+                              title: Text(
+                                disease,
+                                style: TextStyle(
+                                  fontFamily: 'NeoSansArabic',
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? AppColors.primaryColor
+                                      : null,
+                                ),
+                              ),
+                              value: isSelected,
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  if (value == true) {
+                                    if (!tempSelected.contains(disease)) {
+                                      tempSelected.add(disease);
+                                    }
+                                  } else {
+                                    tempSelected.remove(disease);
+                                  }
+                                });
+                              },
+                              activeColor: AppColors.primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            value: tempSelected.contains(disease),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                if (value == true) {
-                                  if (!tempSelected.contains(disease)) {
-                                    tempSelected.add(disease);
-                                  }
-                                } else {
-                                  tempSelected.remove(disease);
-                                }
-                              });
-                            },
-                            activeColor: AppColors.primaryColor,
                           );
                         },
                       ),
@@ -154,29 +269,57 @@ class ChronicDiseasesSelector extends StatelessWidget {
                 ),
               ),
               actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(
-                    AppLocalizations.of(context).cancel,
-                    style: const TextStyle(fontFamily: 'NeoSansArabic'),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    List<String> finalSelection = tempSelected.isEmpty
-                        ? [noDiseases]
-                        : tempSelected;
-                    onSelectionChanged(finalSelection);
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryColor,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).confirm,
-                    style: const TextStyle(fontFamily: 'NeoSansArabic'),
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(color: Colors.grey.shade300),
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context).cancel,
+                          style: const TextStyle(
+                            fontFamily: 'NeoSansArabic',
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          List<String> finalSelection = tempSelected.isEmpty
+                              ? [noDiseases]
+                              : tempSelected;
+                          onSelectionChanged(finalSelection);
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context).confirm,
+                          style: const TextStyle(
+                            fontFamily: 'NeoSansArabic',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );

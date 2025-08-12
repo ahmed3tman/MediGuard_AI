@@ -50,6 +50,16 @@ class DeviceCubit extends Cubit<DeviceState> {
     }
   }
 
+  // Update device name
+  Future<void> updateDeviceName(String deviceId, String newName) async {
+    try {
+      await DeviceService.updateDeviceName(deviceId, newName);
+      // No need to emit states as the stream will automatically update
+    } catch (e) {
+      emit(DeviceError('Failed to update device name: ${e.toString()}'));
+    }
+  }
+
   // Simulate device data
   Future<void> simulateDeviceData(String deviceId) async {
     try {

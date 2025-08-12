@@ -10,6 +10,7 @@ import '../../../medical_assistant_tap/view/screens/medical_assistant_tap.dart';
 import '../../../medical_assistant_tap/cubit/medical_assistant_cubit.dart';
 import '../../../patient_info/cubit/patient_info_cubit.dart';
 import '../../../patient_info/cubit/patient_info_state.dart';
+import '../../../patient_info/services/patient_info_service.dart';
 import '../../../../core/localization/locale_cubit.dart';
 
 /// Main patient detail screen with tabbed interface
@@ -30,6 +31,25 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    // مزامنة الاسم عند فتح الشاشة
+    _syncPatientName();
+  }
+
+  /// مزامنة اسم الجهاز مع اسم المريض
+  Future<void> _syncPatientName() async {
+    try {
+      final patientInfo = await PatientInfoService.getPatientInfo(
+        widget.device.deviceId,
+      );
+      if (patientInfo?.patientName != null &&
+          patientInfo!.patientName!.isNotEmpty &&
+          widget.device.name != patientInfo.patientName) {
+        // تحديث اسم الجهاز إذا كان مختلفاً عن اسم المريض
+        widget.device.copyWith(name: patientInfo.patientName);
+      }
+    } catch (e) {
+      print('Failed to sync patient name: $e');
+    }
   }
 
   @override

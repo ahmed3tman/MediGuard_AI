@@ -29,3 +29,13 @@ class CriticalCasesError extends CriticalCasesState {
   @override
   List<Object> get props => [message];
 }
+
+class CriticalCaseDeleting extends CriticalCasesState {
+  final List<CriticalCase> criticalCases;
+  final String deletingDeviceId;
+
+  const CriticalCaseDeleting(this.criticalCases, this.deletingDeviceId);
+
+  @override
+  List<Object> get props => [criticalCases, deletingDeviceId];
+}
