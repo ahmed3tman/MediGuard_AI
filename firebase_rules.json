@@ -4,12 +4,30 @@
       "$userId": {
         ".read": "auth != null && auth.uid == $userId",
         ".write": "auth != null && auth.uid == $userId",
+
         "devices": {
           "$deviceId": {
             ".validate": "newData.hasChildren(['deviceId', 'name', 'readings'])"
           }
+        },
+
+        "patients": {
+          "$deviceId": {
+            ".validate": "newData.hasChildren(['deviceId', 'age', 'gender'])"
+          }
+        },
+
+        "criticalCases": {
+          "$deviceId": {
+            ".validate": "newData.hasChildren(['deviceId', 'name', 'temperature', 'heartRate', 'spo2', 'bloodPressure'])"
+          }
         }
       }
+    },
+
+    "device_readings": {
+      ".read": true,
+      ".write": true
     }
   }
 }

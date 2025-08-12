@@ -3,6 +3,7 @@ import '../../../../core/shared/widgets/widgets.dart';
 import '../../../../core/shared/theme/theme.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/localization/language_switcher.dart';
+import '../../../../core/services/data_sync_service.dart';
 import '../../services/auth_service.dart';
 import '../../../../navigation/view/screens/main_navigation_screen.dart';
 import 'welcome_screen.dart';
@@ -221,6 +222,15 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } else {
         await AuthService.signInWithEmailAndPassword(email, password);
+
+        // تشغيل مزامنة البيانات بعد تسجيل الدخول
+        try {
+          await DataSyncService.syncAllDataOnLogin();
+          print('Data sync completed after login');
+        } catch (e) {
+          print('Data sync failed after login: $e');
+          // لا نعرض خطأ للمستخدم لأن تسجيل الدخول نجح
+        }
 
         // Navigate to main app for existing users
         if (mounted) {
