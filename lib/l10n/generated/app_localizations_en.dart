@@ -478,7 +478,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get patientDetails => 'Patient Details';
 
   @override
-  String get doctorTab => 'Doctor';
+  String get doctorTab => 'Patient Record';
 
   @override
   String get vitalSigns => 'Vital Signs';
@@ -648,4 +648,285 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get buyYourDevice => 'Buy Your Device';
+
+  @override
+  String get qrScannerTooltip => 'Scan QR Code';
+
+  @override
+  String get scanDeviceIdQR => 'Scan Device ID';
+
+  @override
+  String get cameraNotAccessible =>
+      'Cannot access camera. Please enter manually';
+
+  @override
+  String deviceIdScannedSuccessfully(String deviceId) {
+    return 'Device ID scanned successfully: $deviceId';
+  }
+
+  @override
+  String deviceIdEnteredManually(String deviceId) {
+    return 'Device ID entered: $deviceId';
+  }
+
+  @override
+  String get deviceIdInfo =>
+      'Device ID is the number on the device label or you can scan it using the QR code attached to the device';
+
+  @override
+  String get patientInformation => 'Patient Information';
+
+  @override
+  String get patientName => 'Patient Name';
+
+  @override
+  String get enterPatientName => 'Enter patient name';
+
+  @override
+  String get patientAge => 'Patient Age';
+
+  @override
+  String get enterPatientAge => 'Enter patient age';
+
+  @override
+  String get pleaseEnterPatientAge => 'Please enter patient age';
+
+  @override
+  String get validAgeRange => 'Please enter a valid age (1-150)';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get male => 'Male';
+
+  @override
+  String get female => 'Female';
+
+  @override
+  String get bloodType => 'Blood Type';
+
+  @override
+  String get phoneNumberOptional => 'Phone Number (Optional)';
+
+  @override
+  String get enterPhoneNumber => 'Enter phone number';
+
+  @override
+  String get validPhoneNumber =>
+      'Please enter a valid phone number (10 digits)';
+
+  @override
+  String get chronicDiseases => 'Chronic Diseases';
+
+  @override
+  String get selectChronicDiseases => 'Select chronic diseases';
+
+  @override
+  String get none => 'None';
+
+  @override
+  String get diabetes => 'Diabetes';
+
+  @override
+  String get hypertension => 'Hypertension';
+
+  @override
+  String get heartDisease => 'Heart Disease';
+
+  @override
+  String get asthma => 'Asthma';
+
+  @override
+  String get arthritis => 'Arthritis';
+
+  @override
+  String get kidneyDisease => 'Kidney Disease';
+
+  @override
+  String get liverDisease => 'Liver Disease';
+
+  @override
+  String get cancer => 'Cancer';
+
+  @override
+  String get epilepsy => 'Epilepsy';
+
+  @override
+  String get depression => 'Depression';
+
+  @override
+  String get anxietyDisorders => 'Anxiety Disorders';
+
+  @override
+  String get osteoporosis => 'Osteoporosis';
+
+  @override
+  String get thyroidDisease => 'Thyroid Disease';
+
+  @override
+  String get cholesterol => 'Cholesterol';
+
+  @override
+  String get digestiveDisorders => 'Digestive Disorders';
+
+  @override
+  String numberOfSelectedDiseases(int count) {
+    return '$count diseases selected';
+  }
+
+  @override
+  String get selectChronicDiseasesTitle => 'Select Chronic Diseases';
+
+  @override
+  String get confirmSelection => 'Confirm';
+
+  @override
+  String get notes => 'Notes';
+
+  @override
+  String get addPatientNotes => 'Add any additional notes about the patient...';
+
+  @override
+  String get patientDataInfo =>
+      'Patient data will be saved locally and linked to the device to provide more accurate medical analysis';
+
+  @override
+  String get addDeviceAndPatient => 'Add Device and Patient';
+
+  @override
+  String get deviceAddedAndPatientSaved =>
+      'Device and patient data added successfully';
+
+  @override
+  String get pointCameraToQR => 'Point the camera at the device\'s QR code';
+
+  @override
+  String get manualDeviceIdEntry => 'Manual Device ID Entry';
+
+  @override
+  String get enterDeviceIdManually => 'Please enter device ID';
+
+  @override
+  String get deviceIdMinLengthManual =>
+      'Device ID must be at least 3 characters';
+
+  @override
+  String get add => 'Add';
+
+  @override
+  String get editPatientInfo => 'Edit Patient Information';
+
+  @override
+  String get updatePatientInfo => 'Update Patient Information';
+
+  @override
+  String get patientInfoUpdatedSuccessfully =>
+      'Patient information updated successfully';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get patientDataCard => 'Patient Data';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get deviceIdDisplay => 'Device ID:';
+
+  @override
+  String get patientNameDisplay => 'Patient Name:';
+
+  @override
+  String get ageDisplay => 'Age:';
+
+  @override
+  String yearsOld(int age) {
+    return '$age years old';
+  }
+
+  @override
+  String get genderDisplay => 'Gender:';
+
+  @override
+  String get bloodTypeDisplay => 'Blood Type';
+
+  @override
+  String get phoneNumberDisplay => 'Phone Number';
+
+  @override
+  String get chronicDiseasesDisplay => 'Chronic Diseases';
+
+  @override
+  String get notesDisplay => 'Notes';
+
+  @override
+  String get notSpecified => 'Not specified';
+
+  @override
+  String get noNotes => 'No notes';
+
+  @override
+  String lastUpdate(String time) {
+    return 'Last updated: $time';
+  }
+
+  @override
+  String get nowTime => 'Now';
+
+  @override
+  String minutesAgo(int minutes) {
+    return '${minutes}m ago';
+  }
+
+  @override
+  String hoursAgo(int hours) {
+    return '${hours}h ago';
+  }
+
+  @override
+  String daysAgo(int days) {
+    return '${days}d ago';
+  }
+
+  @override
+  String get scanDeviceQR => 'Scan Device QR Code';
+
+  @override
+  String get qrScanInstructions =>
+      'Point the camera at the medical device QR code';
+
+  @override
+  String get enterManually => 'Enter Manually';
+
+  @override
+  String get manualEntryInstructions =>
+      'Please enter the medical device ID manually';
+
+  @override
+  String get deviceIdTooShort =>
+      'Device ID is too short (minimum 3 characters)';
+
+  @override
+  String get age => 'Age';
+
+  @override
+  String get years => 'years';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get notUpdated => 'Not updated';
+
+  @override
+  String get unspecifiedBloodType => 'Not specified';
+
+  @override
+  String get noChronicDiseases => 'None';
+
+  @override
+  String get noChronicDiseasesSelected => 'No chronic diseases selected';
 }

@@ -1010,10 +1010,10 @@ abstract class AppLocalizations {
   /// **'Patient Details'**
   String get patientDetails;
 
-  /// Doctor tab title
+  /// Patient record tab title
   ///
   /// In en, this message translates to:
-  /// **'Doctor'**
+  /// **'Patient Record'**
   String get doctorTab;
 
   /// Vital signs section title
@@ -1327,6 +1327,516 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Buy Your Device'**
   String get buyYourDevice;
+
+  /// Tooltip for QR scanner button
+  ///
+  /// In en, this message translates to:
+  /// **'Scan QR Code'**
+  String get qrScannerTooltip;
+
+  /// QR scanner dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Device ID'**
+  String get scanDeviceIdQR;
+
+  /// Error message when camera is not accessible
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot access camera. Please enter manually'**
+  String get cameraNotAccessible;
+
+  /// Success message for scanned device ID
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID scanned successfully: {deviceId}'**
+  String deviceIdScannedSuccessfully(String deviceId);
+
+  /// Success message for manually entered device ID
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID entered: {deviceId}'**
+  String deviceIdEnteredManually(String deviceId);
+
+  /// Information about device ID
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID is the number on the device label or you can scan it using the QR code attached to the device'**
+  String get deviceIdInfo;
+
+  /// Patient information section title
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Information'**
+  String get patientInformation;
+
+  /// Patient name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Name'**
+  String get patientName;
+
+  /// Patient name field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter patient name'**
+  String get enterPatientName;
+
+  /// Patient age field label
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Age'**
+  String get patientAge;
+
+  /// Patient age field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter patient age'**
+  String get enterPatientAge;
+
+  /// Patient age validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter patient age'**
+  String get pleaseEnterPatientAge;
+
+  /// Patient age range validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid age (1-150)'**
+  String get validAgeRange;
+
+  /// Gender field label
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// Male gender option
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// Female gender option
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// Blood type field label
+  ///
+  /// In en, this message translates to:
+  /// **'Blood Type'**
+  String get bloodType;
+
+  /// Phone number field label
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number (Optional)'**
+  String get phoneNumberOptional;
+
+  /// Phone number field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter phone number'**
+  String get enterPhoneNumber;
+
+  /// Phone number validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid phone number (10 digits)'**
+  String get validPhoneNumber;
+
+  /// Chronic diseases field label
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Diseases'**
+  String get chronicDiseases;
+
+  /// Chronic diseases field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Select chronic diseases'**
+  String get selectChronicDiseases;
+
+  /// None option for chronic diseases
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get none;
+
+  /// Diabetes chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Diabetes'**
+  String get diabetes;
+
+  /// Hypertension chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Hypertension'**
+  String get hypertension;
+
+  /// Heart disease chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Heart Disease'**
+  String get heartDisease;
+
+  /// Asthma chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Asthma'**
+  String get asthma;
+
+  /// Arthritis chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Arthritis'**
+  String get arthritis;
+
+  /// Kidney disease chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Kidney Disease'**
+  String get kidneyDisease;
+
+  /// Liver disease chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Liver Disease'**
+  String get liverDisease;
+
+  /// Cancer chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Cancer'**
+  String get cancer;
+
+  /// Epilepsy chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Epilepsy'**
+  String get epilepsy;
+
+  /// Depression chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Depression'**
+  String get depression;
+
+  /// Anxiety disorders chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Anxiety Disorders'**
+  String get anxietyDisorders;
+
+  /// Osteoporosis chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Osteoporosis'**
+  String get osteoporosis;
+
+  /// Thyroid disease chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Thyroid Disease'**
+  String get thyroidDisease;
+
+  /// Cholesterol chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Cholesterol'**
+  String get cholesterol;
+
+  /// Digestive disorders chronic disease
+  ///
+  /// In en, this message translates to:
+  /// **'Digestive Disorders'**
+  String get digestiveDisorders;
+
+  /// Number of selected chronic diseases
+  ///
+  /// In en, this message translates to:
+  /// **'{count} diseases selected'**
+  String numberOfSelectedDiseases(int count);
+
+  /// Chronic diseases bottom sheet title
+  ///
+  /// In en, this message translates to:
+  /// **'Select Chronic Diseases'**
+  String get selectChronicDiseasesTitle;
+
+  /// Confirm selection button
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirmSelection;
+
+  /// Notes field label
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notes;
+
+  /// Notes field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Add any additional notes about the patient...'**
+  String get addPatientNotes;
+
+  /// Information about patient data storage
+  ///
+  /// In en, this message translates to:
+  /// **'Patient data will be saved locally and linked to the device to provide more accurate medical analysis'**
+  String get patientDataInfo;
+
+  /// Add device and patient button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add Device and Patient'**
+  String get addDeviceAndPatient;
+
+  /// Success message for adding device and patient
+  ///
+  /// In en, this message translates to:
+  /// **'Device and patient data added successfully'**
+  String get deviceAddedAndPatientSaved;
+
+  /// QR scanner instruction
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the device\'s QR code'**
+  String get pointCameraToQR;
+
+  /// Manual device ID dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Device ID Entry'**
+  String get manualDeviceIdEntry;
+
+  /// Manual device ID validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter device ID'**
+  String get enterDeviceIdManually;
+
+  /// Manual device ID length validation
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID must be at least 3 characters'**
+  String get deviceIdMinLengthManual;
+
+  /// Add button text
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// Edit patient info screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Patient Information'**
+  String get editPatientInfo;
+
+  /// Update patient info section title
+  ///
+  /// In en, this message translates to:
+  /// **'Update Patient Information'**
+  String get updatePatientInfo;
+
+  /// Success message for updating patient info
+  ///
+  /// In en, this message translates to:
+  /// **'Patient information updated successfully'**
+  String get patientInfoUpdatedSuccessfully;
+
+  /// Save changes button text
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// Patient data card title
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Data'**
+  String get patientDataCard;
+
+  /// Edit button text
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// Device ID display label
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID:'**
+  String get deviceIdDisplay;
+
+  /// Patient name display label
+  ///
+  /// In en, this message translates to:
+  /// **'Patient Name:'**
+  String get patientNameDisplay;
+
+  /// Age display label
+  ///
+  /// In en, this message translates to:
+  /// **'Age:'**
+  String get ageDisplay;
+
+  /// Age display with years
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years old'**
+  String yearsOld(int age);
+
+  /// Gender display label
+  ///
+  /// In en, this message translates to:
+  /// **'Gender:'**
+  String get genderDisplay;
+
+  /// Blood type display label
+  ///
+  /// In en, this message translates to:
+  /// **'Blood Type'**
+  String get bloodTypeDisplay;
+
+  /// Phone number display label
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumberDisplay;
+
+  /// Chronic diseases display label
+  ///
+  /// In en, this message translates to:
+  /// **'Chronic Diseases'**
+  String get chronicDiseasesDisplay;
+
+  /// Notes display label
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notesDisplay;
+
+  /// Not specified text
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get notSpecified;
+
+  /// No notes text
+  ///
+  /// In en, this message translates to:
+  /// **'No notes'**
+  String get noNotes;
+
+  /// Last update time display
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {time}'**
+  String lastUpdate(String time);
+
+  /// Current time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get nowTime;
+
+  /// Minutes ago time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m ago'**
+  String minutesAgo(int minutes);
+
+  /// Hours ago time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h ago'**
+  String hoursAgo(int hours);
+
+  /// Days ago time indicator
+  ///
+  /// In en, this message translates to:
+  /// **'{days}d ago'**
+  String daysAgo(int days);
+
+  /// QR scanner dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Device QR Code'**
+  String get scanDeviceQR;
+
+  /// QR scan instructions text
+  ///
+  /// In en, this message translates to:
+  /// **'Point the camera at the medical device QR code'**
+  String get qrScanInstructions;
+
+  /// Manual entry option
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Manually'**
+  String get enterManually;
+
+  /// Manual entry instructions text
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter the medical device ID manually'**
+  String get manualEntryInstructions;
+
+  /// Error message when device ID is too short
+  ///
+  /// In en, this message translates to:
+  /// **'Device ID is too short (minimum 3 characters)'**
+  String get deviceIdTooShort;
+
+  /// Age label
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get age;
+
+  /// Years unit
+  ///
+  /// In en, this message translates to:
+  /// **'years'**
+  String get years;
+
+  /// Phone label
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// Text when there is no update
+  ///
+  /// In en, this message translates to:
+  /// **'Not updated'**
+  String get notUpdated;
+
+  /// Unspecified option for blood type
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get unspecifiedBloodType;
+
+  /// None option for chronic diseases
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get noChronicDiseases;
+
+  /// Message when no chronic diseases are selected
+  ///
+  /// In en, this message translates to:
+  /// **'No chronic diseases selected'**
+  String get noChronicDiseasesSelected;
 }
 
 class _AppLocalizationsDelegate

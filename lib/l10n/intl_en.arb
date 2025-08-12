@@ -630,9 +630,9 @@
   "@patientDetails": {
     "description": "Patient details title"
   },
-  "doctorTab": "Doctor",
+  "doctorTab": "Patient Record",
   "@doctorTab": {
-    "description": "Doctor tab title"
+    "description": "Patient record tab title"
   },
   "vitalSigns": "Vital Signs",
   "@vitalSigns": {
@@ -843,5 +843,385 @@
   "buyYourDevice": "Buy Your Device",
   "@buyYourDevice": {
     "description": "Button text to buy a device"
+  },
+  "qrScannerTooltip": "Scan QR Code",
+  "@qrScannerTooltip": {
+    "description": "Tooltip for QR scanner button"
+  },
+  "scanDeviceIdQR": "Scan Device ID",
+  "@scanDeviceIdQR": {
+    "description": "QR scanner dialog title"
+  },
+  "cameraNotAccessible": "Cannot access camera. Please enter manually",
+  "@cameraNotAccessible": {
+    "description": "Error message when camera is not accessible"
+  },
+  "deviceIdScannedSuccessfully": "Device ID scanned successfully: {deviceId}",
+  "@deviceIdScannedSuccessfully": {
+    "description": "Success message for scanned device ID",
+    "placeholders": {
+      "deviceId": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceIdEnteredManually": "Device ID entered: {deviceId}",
+  "@deviceIdEnteredManually": {
+    "description": "Success message for manually entered device ID",
+    "placeholders": {
+      "deviceId": {
+        "type": "String"
+      }
+    }
+  },
+  "deviceIdInfo": "Device ID is the number on the device label or you can scan it using the QR code attached to the device",
+  "@deviceIdInfo": {
+    "description": "Information about device ID"
+  },
+  "patientInformation": "Patient Information",
+  "@patientInformation": {
+    "description": "Patient information section title"
+  },
+  "patientName": "Patient Name",
+  "@patientName": {
+    "description": "Patient name field label"
+  },
+  "enterPatientName": "Enter patient name",
+  "@enterPatientName": {
+    "description": "Patient name field hint"
+  },
+  "patientAge": "Patient Age",
+  "@patientAge": {
+    "description": "Patient age field label"
+  },
+  "enterPatientAge": "Enter patient age",
+  "@enterPatientAge": {
+    "description": "Patient age field hint"
+  },
+  "pleaseEnterPatientAge": "Please enter patient age",
+  "@pleaseEnterPatientAge": {
+    "description": "Patient age validation message"
+  },
+  "validAgeRange": "Please enter a valid age (1-150)",
+  "@validAgeRange": {
+    "description": "Patient age range validation message"
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Gender field label"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Male gender option"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Female gender option"
+  },
+  "bloodType": "Blood Type",
+  "@bloodType": {
+    "description": "Blood type field label"
+  },
+  "phoneNumberOptional": "Phone Number (Optional)",
+  "@phoneNumberOptional": {
+    "description": "Phone number field label"
+  },
+  "enterPhoneNumber": "Enter phone number",
+  "@enterPhoneNumber": {
+    "description": "Phone number field hint"
+  },
+  "validPhoneNumber": "Please enter a valid phone number (10 digits)",
+  "@validPhoneNumber": {
+    "description": "Phone number validation message"
+  },
+  "chronicDiseases": "Chronic Diseases",
+  "@chronicDiseases": {
+    "description": "Chronic diseases field label"
+  },
+  "selectChronicDiseases": "Select chronic diseases",
+  "@selectChronicDiseases": {
+    "description": "Chronic diseases field hint"
+  },
+  "none": "None",
+  "@none": {
+    "description": "None option for chronic diseases"
+  },
+  "diabetes": "Diabetes",
+  "@diabetes": {
+    "description": "Diabetes chronic disease"
+  },
+  "hypertension": "Hypertension",
+  "@hypertension": {
+    "description": "Hypertension chronic disease"
+  },
+  "heartDisease": "Heart Disease",
+  "@heartDisease": {
+    "description": "Heart disease chronic disease"
+  },
+  "asthma": "Asthma",
+  "@asthma": {
+    "description": "Asthma chronic disease"
+  },
+  "arthritis": "Arthritis",
+  "@arthritis": {
+    "description": "Arthritis chronic disease"
+  },
+  "kidneyDisease": "Kidney Disease",
+  "@kidneyDisease": {
+    "description": "Kidney disease chronic disease"
+  },
+  "liverDisease": "Liver Disease",
+  "@liverDisease": {
+    "description": "Liver disease chronic disease"
+  },
+  "cancer": "Cancer",
+  "@cancer": {
+    "description": "Cancer chronic disease"
+  },
+  "epilepsy": "Epilepsy",
+  "@epilepsy": {
+    "description": "Epilepsy chronic disease"
+  },
+  "depression": "Depression",
+  "@depression": {
+    "description": "Depression chronic disease"
+  },
+  "anxietyDisorders": "Anxiety Disorders",
+  "@anxietyDisorders": {
+    "description": "Anxiety disorders chronic disease"
+  },
+  "osteoporosis": "Osteoporosis",
+  "@osteoporosis": {
+    "description": "Osteoporosis chronic disease"
+  },
+  "thyroidDisease": "Thyroid Disease",
+  "@thyroidDisease": {
+    "description": "Thyroid disease chronic disease"
+  },
+  "cholesterol": "Cholesterol",
+  "@cholesterol": {
+    "description": "Cholesterol chronic disease"
+  },
+  "digestiveDisorders": "Digestive Disorders",
+  "@digestiveDisorders": {
+    "description": "Digestive disorders chronic disease"
+  },
+  "numberOfSelectedDiseases": "{count} diseases selected",
+  "@numberOfSelectedDiseases": {
+    "description": "Number of selected chronic diseases",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectChronicDiseasesTitle": "Select Chronic Diseases",
+  "@selectChronicDiseasesTitle": {
+    "description": "Chronic diseases bottom sheet title"
+  },
+  "confirmSelection": "Confirm",
+  "@confirmSelection": {
+    "description": "Confirm selection button"
+  },
+  "notes": "Notes",
+  "@notes": {
+    "description": "Notes field label"
+  },
+  "addPatientNotes": "Add any additional notes about the patient...",
+  "@addPatientNotes": {
+    "description": "Notes field hint"
+  },
+  "patientDataInfo": "Patient data will be saved locally and linked to the device to provide more accurate medical analysis",
+  "@patientDataInfo": {
+    "description": "Information about patient data storage"
+  },
+  "addDeviceAndPatient": "Add Device and Patient",
+  "@addDeviceAndPatient": {
+    "description": "Add device and patient button text"
+  },
+  "deviceAddedAndPatientSaved": "Device and patient data added successfully",
+  "@deviceAddedAndPatientSaved": {
+    "description": "Success message for adding device and patient"
+  },
+  "pointCameraToQR": "Point the camera at the device's QR code",
+  "@pointCameraToQR": {
+    "description": "QR scanner instruction"
+  },
+  "manualDeviceIdEntry": "Manual Device ID Entry",
+  "@manualDeviceIdEntry": {
+    "description": "Manual device ID dialog title"
+  },
+  "enterDeviceIdManually": "Please enter device ID",
+  "@enterDeviceIdManually": {
+    "description": "Manual device ID validation message"
+  },
+  "deviceIdMinLengthManual": "Device ID must be at least 3 characters",
+  "@deviceIdMinLengthManual": {
+    "description": "Manual device ID length validation"
+  },
+  "add": "Add",
+  "@add": {
+    "description": "Add button text"
+  },
+  "editPatientInfo": "Edit Patient Information",
+  "@editPatientInfo": {
+    "description": "Edit patient info screen title"
+  },
+  "updatePatientInfo": "Update Patient Information",
+  "@updatePatientInfo": {
+    "description": "Update patient info section title"
+  },
+  "patientInfoUpdatedSuccessfully": "Patient information updated successfully",
+  "@patientInfoUpdatedSuccessfully": {
+    "description": "Success message for updating patient info"
+  },
+  "saveChanges": "Save Changes",
+  "@saveChanges": {
+    "description": "Save changes button text"
+  },
+  "patientDataCard": "Patient Data",
+  "@patientDataCard": {
+    "description": "Patient data card title"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "deviceIdDisplay": "Device ID:",
+  "@deviceIdDisplay": {
+    "description": "Device ID display label"
+  },
+  "patientNameDisplay": "Patient Name:",
+  "@patientNameDisplay": {
+    "description": "Patient name display label"
+  },
+  "ageDisplay": "Age:",
+  "@ageDisplay": {
+    "description": "Age display label"
+  },
+  "yearsOld": "{age} years old",
+  "@yearsOld": {
+    "description": "Age display with years",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "genderDisplay": "Gender:",
+  "@genderDisplay": {
+    "description": "Gender display label"
+  },
+  "bloodTypeDisplay": "Blood Type",
+  "@bloodTypeDisplay": {
+    "description": "Blood type display label"
+  },
+  "phoneNumberDisplay": "Phone Number",
+  "@phoneNumberDisplay": {
+    "description": "Phone number display label"
+  },
+  "chronicDiseasesDisplay": "Chronic Diseases",
+  "@chronicDiseasesDisplay": {
+    "description": "Chronic diseases display label"
+  },
+  "notesDisplay": "Notes",
+  "@notesDisplay": {
+    "description": "Notes display label"
+  },
+  "notSpecified": "Not specified",
+  "@notSpecified": {
+    "description": "Not specified text"
+  },
+  "noNotes": "No notes",
+  "@noNotes": {
+    "description": "No notes text"
+  },
+  "lastUpdate": "Last updated: {time}",
+  "@lastUpdate": {
+    "description": "Last update time display",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "nowTime": "Now",
+  "@nowTime": {
+    "description": "Current time indicator"
+  },
+  "minutesAgo": "{minutes}m ago",
+  "@minutesAgo": {
+    "description": "Minutes ago time indicator",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{hours}h ago",
+  "@hoursAgo": {
+    "description": "Hours ago time indicator",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{days}d ago",
+  "@daysAgo": {
+    "description": "Days ago time indicator",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "scanDeviceQR": "Scan Device QR Code",
+  "@scanDeviceQR": {
+    "description": "QR scanner dialog title"
+  },
+  "qrScanInstructions": "Point the camera at the medical device QR code",
+  "@qrScanInstructions": {
+    "description": "QR scan instructions text"
+  },
+  "enterManually": "Enter Manually",
+  "@enterManually": {
+    "description": "Manual entry option"
+  },
+  "manualEntryInstructions": "Please enter the medical device ID manually",
+  "@manualEntryInstructions": {
+    "description": "Manual entry instructions text"
+  },
+  "deviceIdTooShort": "Device ID is too short (minimum 3 characters)",
+  "@deviceIdTooShort": {
+    "description": "Error message when device ID is too short"
+  },
+  "age": "Age",
+  "@age": {
+    "description": "Age label"
+  },
+  "years": "years",
+  "@years": {
+    "description": "Years unit"
+  },
+  "phone": "Phone",
+  "@phone": {
+    "description": "Phone label"
+  },
+  "notUpdated": "Not updated",
+  "@notUpdated": {
+    "description": "Text when there is no update"
+  },
+  "unspecifiedBloodType": "Not specified",
+  "@unspecifiedBloodType": {
+    "description": "Unspecified option for blood type"
+  },
+  "noChronicDiseases": "None",
+  "@noChronicDiseases": {
+    "description": "None option for chronic diseases"
+  },
+  "noChronicDiseasesSelected": "No chronic diseases selected",
+  "@noChronicDiseasesSelected": {
+    "description": "Message when no chronic diseases are selected"
   }
 }

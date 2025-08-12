@@ -11,7 +11,7 @@ import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 // استيراد صفحات التطبيق
 import 'package:spider_doctor/features/home/view/screens/home_screen.dart';
 import '../../../features/devices/view/screens/devices_screen.dart';
-import '../../../features/devices/view/screens/add_device_screen.dart';
+import '../../../features/add_device/view/screens/add_device_screen.dart';
 import '../../../features/critical_cases/view/screens/critical_cases_screen.dart';
 import '../../../features/profile/view/screens/profile_screen.dart';
 

@@ -5,9 +5,11 @@ import 'package:spider_doctor/features/devices/model/data_model.dart';
 import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 import '../../cubit/patient_detail_cubit.dart';
 import '../../cubit/patient_detail_state.dart';
-import '../../../doctor_tap/view/screens/doctor_tab.dart';
+import '../../../patient_record/view/screens/patient_record_screen.dart';
 import '../../../medical_assistant_tap/view/screens/medical_assistant_tap.dart';
 import '../../../medical_assistant_tap/cubit/medical_assistant_cubit.dart';
+import '../../../patient_info/cubit/patient_info_cubit.dart';
+import '../../../patient_info/cubit/patient_info_state.dart';
 import '../../../../core/localization/locale_cubit.dart';
 
 /// Main patient detail screen with tabbed interface
@@ -39,11 +41,16 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return BlocProvider(
-      create: (context) => PatientDetailCubit(
-        deviceId: widget.device.deviceId,
-        patientName: widget.device.name,
-      )..initialize(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => PatientDetailCubit(
+            deviceId: widget.device.deviceId,
+            patientName: widget.device.name,
+          )..initialize(),
+        ),
+        BlocProvider(create: (context) => PatientInfoCubit()),
+      ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
           return Scaffold(
@@ -132,15 +139,15 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                 return TabBarView(
                   controller: _tabController,
                   children: [
-                    // Doctor Tab - Main medical monitoring view
-                    const PatientDetailDoctorTab(),
+                    // Patient Record Tab - Main medical monitoring view
+                    const PatientRecordScreen(),
 
                     // AI Assistant Tab - New Smart Medical Assistant
                     BlocProvider(
                       create: (context) => MedicalAssistantCubit(),
                       child: Builder(
                         builder: (context) {
-                          // جمع بيانات المريض من الحالة
+                          // جمع بيانات المريض من الحالة مع معلومات المريض المحفوظة
                           Map<String, dynamic> patientData = {};
 
                           if (state is PatientDetailLoaded) {
@@ -156,10 +163,43 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                                     state.vitalSigns.bloodPressure['diastolic'],
                               },
                               'spo2': state.vitalSigns.spo2,
-                              'age':
-                                  30, // يمكن إضافة عمر المريض من قاعدة البيانات
                               'lastUpdated': state.vitalSigns.timestamp,
                             };
+
+                            // إضافة معلومات المريض المحفوظة محلياً
+                            return BlocBuilder<
+                              PatientInfoCubit,
+                              PatientInfoState
+                            >(
+                              builder: (context, patientInfoState) {
+                                // تحميل معلومات المريض إذا لم تكن محملة
+                                if (patientInfoState is PatientInfoInitial) {
+                                  context
+                                      .read<PatientInfoCubit>()
+                                      .loadPatientInfo(widget.device.deviceId);
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+
+                                if (patientInfoState is PatientInfoLoaded &&
+                                    patientInfoState.patientInfo != null) {
+                                  final patientInfo =
+                                      patientInfoState.patientInfo!;
+                                  patientData.addAll({
+                                    'age': patientInfo.age,
+                                    'gender': patientInfo.gender.name,
+                                    'bloodType': patientInfo.bloodType,
+                                    'chronicDiseases':
+                                        patientInfo.chronicDiseases,
+                                  });
+                                }
+
+                                return MedicalAssistantScreen(
+                                  patientData: patientData,
+                                );
+                              },
+                            );
                           }
 
                           return MedicalAssistantScreen(

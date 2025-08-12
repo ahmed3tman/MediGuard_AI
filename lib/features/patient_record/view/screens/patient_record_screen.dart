@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:spider_doctor/features/patient_record/view/widgets/ecg_section.dart';
 import 'package:spider_doctor/features/patient_record/view/widgets/vital_sign_card.dart';
+import 'package:spider_doctor/features/patient_record/view/widgets/ecg_section.dart';
 import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 import '../../../patient_detail/cubit/patient_detail_cubit.dart';
 import '../../../patient_detail/cubit/patient_detail_state.dart';
@@ -11,15 +11,15 @@ import '../../../patient_info/cubit/patient_info_state.dart';
 import '../../../patient_info/view/screens/edit_patient_info_screen.dart';
 import '../../../patient_info/view/widgets/patient_info_card.dart';
 
-/// Doctor tab showing real-time vital signs and ECG chart
-class PatientDetailDoctorTab extends StatefulWidget {
-  const PatientDetailDoctorTab({super.key});
+/// Patient record screen showing real-time vital signs and ECG chart
+class PatientRecordScreen extends StatefulWidget {
+  const PatientRecordScreen({super.key});
 
   @override
-  State<PatientDetailDoctorTab> createState() => _PatientDetailDoctorTabState();
+  State<PatientRecordScreen> createState() => _PatientRecordScreenState();
 }
 
-class _PatientDetailDoctorTabState extends State<PatientDetailDoctorTab> {
+class _PatientRecordScreenState extends State<PatientRecordScreen> {
   @override
   void initState() {
     super.initState();
