@@ -12,7 +12,7 @@ class PatientDetailService {
   static String? get currentUserId => _auth.currentUser?.uid;
 
   /// Listen to real-time vital signs for a specific patient/device
-  /// Firebase path: /users/{userId}/devices/{deviceId}
+  /// Firebase path (after refactor): /users/{userId}/patients/{patientId}/device
   static Stream<PatientVitalSigns?> getPatientVitalSignsStream(
     String deviceId,
   ) {
@@ -24,13 +24,15 @@ class PatientDetailService {
       return Stream.value(null);
     }
 
-    return _database.ref('users/$currentUserId/devices/$deviceId').onValue.map((
+    return _database.ref('users/$currentUserId/patients/$deviceId/device').onValue.map((
       event,
     ) {
       final data = event.snapshot.value;
       print('Vital signs data from Firebase: $data');
       if (data == null) {
-        print('No device data found at users/$currentUserId/devices/$deviceId');
+        print(
+          'No device data found at users/$currentUserId/patients/$deviceId/device',
+        );
         return null;
       }
 
@@ -65,6 +67,8 @@ class PatientDetailService {
         patientName: deviceData['name'] ?? 'Unknown Patient',
         temperature: (deviceData['readings']?['temperature'] ?? 0.0).toDouble(),
         heartRate: (deviceData['readings']?['heartRate'] ?? 0.0).toDouble(),
+        respiratoryRate: (deviceData['readings']?['respiratoryRate'] ?? 0.0)
+            .toDouble(),
         bloodPressure: {
           'systolic':
               (deviceData['readings']?['bloodPressure']?['systolic'] ?? 0)
@@ -92,7 +96,7 @@ class PatientDetailService {
   }
 
   /// Listen to real-time ECG readings for chart display
-  /// Firebase path: /users/{userId}/devices/{deviceId}/readings (using ECG value)
+  /// Firebase path (after refactor): /users/{userId}/patients/{patientId}/device/readings (using ECG value)
   static Stream<List<EcgReading>> getEcgReadingsStream(String deviceId) {
     print('Getting ECG stream for device: $deviceId');
     if (currentUserId == null) {
@@ -102,7 +106,7 @@ class PatientDetailService {
 
     // Listen to user device readings and convert ECG values to chart data
     return _database
-        .ref('users/$currentUserId/devices/$deviceId/readings')
+        .ref('users/$currentUserId/patients/$deviceId/device/readings')
         .onValue
         .asyncMap((event) async {
           final data = event.snapshot.value;

@@ -29,6 +29,7 @@ class PatientVitalSigns extends Equatable {
   final String patientName;
   final double temperature;
   final double heartRate;
+  final double respiratoryRate;
   final Map<String, int> bloodPressure;
   final double spo2;
   final DateTime timestamp;
@@ -41,6 +42,7 @@ class PatientVitalSigns extends Equatable {
     required this.patientName,
     required this.temperature,
     required this.heartRate,
+    required this.respiratoryRate,
     required this.bloodPressure,
     required this.spo2,
     required this.timestamp,
@@ -55,6 +57,7 @@ class PatientVitalSigns extends Equatable {
       patientName: device.name,
       temperature: device.temperature,
       heartRate: device.heartRate,
+      respiratoryRate: device.respiratoryRate,
       bloodPressure: device.bloodPressure,
       spo2: device.spo2,
       timestamp: device.lastUpdated ?? DateTime.now(),
@@ -70,6 +73,7 @@ class PatientVitalSigns extends Equatable {
       patientName: json['patientName'] ?? '',
       temperature: (json['temperature'] ?? 0.0).toDouble(),
       heartRate: (json['heartRate'] ?? 0.0).toDouble(),
+      respiratoryRate: (json['respiratoryRate'] ?? 0.0).toDouble(),
       bloodPressure: {
         'systolic': (json['bloodPressure']?['systolic'] ?? 0).toInt(),
         'diastolic': (json['bloodPressure']?['diastolic'] ?? 0).toInt(),
@@ -94,6 +98,7 @@ class PatientVitalSigns extends Equatable {
       'patientName': patientName,
       'temperature': temperature,
       'heartRate': heartRate,
+      'respiratoryRate': respiratoryRate,
       'bloodPressure': bloodPressure,
       'spo2': spo2,
       'timestamp': timestamp.millisecondsSinceEpoch,
@@ -106,6 +111,8 @@ class PatientVitalSigns extends Equatable {
   // Helper methods for health status
   bool get isTemperatureNormal => temperature >= 36.1 && temperature <= 37.2;
   bool get isHeartRateNormal => heartRate >= 60 && heartRate <= 100;
+  bool get isRespiratoryRateNormal =>
+      respiratoryRate >= 12 && respiratoryRate <= 20;
   bool get isSpo2Normal => spo2 >= 95;
   bool get isBloodPressureNormal {
     return bloodPressure['systolic']! >= 90 &&
@@ -117,6 +124,7 @@ class PatientVitalSigns extends Equatable {
   // Device connection status helpers
   bool get hasValidTemperature => temperature > 0;
   bool get hasValidHeartRate => heartRate > 0;
+  bool get hasValidRespiratoryRate => respiratoryRate > 0;
   bool get hasValidSpo2 => spo2 > 0;
   bool get hasValidBloodPressure =>
       bloodPressure['systolic']! > 0 && bloodPressure['diastolic']! > 0;
@@ -129,6 +137,7 @@ class PatientVitalSigns extends Equatable {
     final hasAnyData =
         hasValidTemperature ||
         hasValidHeartRate ||
+        hasValidRespiratoryRate ||
         hasValidSpo2 ||
         hasValidBloodPressure;
     return (difference.inMinutes < 2) && hasAnyData;
@@ -150,6 +159,7 @@ class PatientVitalSigns extends Equatable {
     patientName,
     temperature,
     heartRate,
+    respiratoryRate,
     bloodPressure,
     spo2,
     timestamp,

@@ -10,7 +10,7 @@ class DeviceCubit extends Cubit<DeviceState> {
 
   DeviceCubit() : super(DeviceInitial());
 
-  // Load devices from the service
+  // Load devices from the service (now collected from patients subtree)
   void loadDevices() {
     emit(DeviceLoading());
 

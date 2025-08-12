@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/patient_info_model.dart';
 import 'firebase_patient_info_service.dart';
 import '../../devices/services/device_service.dart';
+import '../../devices/model/data_model.dart';
 
 class PatientInfoService {
   static const String _keyPrefix = 'patient_info_';
@@ -12,7 +13,27 @@ class PatientInfoService {
   static Future<void> savePatientInfo(PatientInfo patientInfo) async {
     try {
       // Save to Firebase first (primary storage)
-      await FirebasePatientInfoService.savePatientInfo(patientInfo);
+      // Ensure patient has nested device if not provided (initial structure)
+      final enriched = patientInfo.device != null
+          ? patientInfo
+          : patientInfo.copyWith(
+              device: Device(
+                deviceId: patientInfo.deviceId,
+                name:
+                    patientInfo.patientName ?? 'Device ${patientInfo.deviceId}',
+                readings: {
+                  'temperature': 0.0,
+                  'heartRate': 0.0,
+                  'respiratoryRate': 0.0,
+                  'spo2': 0.0,
+                  'bloodPressure': {'systolic': 0, 'diastolic': 0},
+                  'ecg': 0.0,
+                },
+                lastUpdated: null,
+              ),
+            );
+
+      await FirebasePatientInfoService.savePatientInfo(enriched);
 
       // Also save locally as backup for offline use
       await _saveToLocal(patientInfo);
@@ -77,7 +98,35 @@ class PatientInfoService {
       );
 
       // Update Firebase first
-      await FirebasePatientInfoService.updatePatientInfo(updatedPatientInfo);
+      final enriched = updatedPatientInfo.device != null
+          ? updatedPatientInfo.copyWith(
+              device: updatedPatientInfo.device!.copyWith(
+                name:
+                    updatedPatientInfo.patientName ??
+                    updatedPatientInfo.device!.name,
+              ),
+            )
+          : updatedPatientInfo.copyWith(
+              device: Device(
+                deviceId: updatedPatientInfo.deviceId,
+                name:
+                    updatedPatientInfo.patientName ??
+                    'Device ${updatedPatientInfo.deviceId}',
+                readings:
+                    updatedPatientInfo.device?.readings ??
+                    {
+                      'temperature': 0.0,
+                      'heartRate': 0.0,
+                      'respiratoryRate': 0.0,
+                      'spo2': 0.0,
+                      'bloodPressure': {'systolic': 0, 'diastolic': 0},
+                      'ecg': 0.0,
+                    },
+                lastUpdated: null,
+              ),
+            );
+
+      await FirebasePatientInfoService.updatePatientInfo(enriched);
 
       // Also update locally
       await _saveToLocal(updatedPatientInfo);

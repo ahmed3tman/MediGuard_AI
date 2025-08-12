@@ -100,6 +100,7 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
         name: patientName,
         temperature: device.temperature,
         heartRate: device.heartRate,
+        respiratoryRate: device.respiratoryRate,
         ecgData: const [], // تمرير قيمة افتراضية فارغة
         spo2: device.spo2,
         bloodPressure: device.bloodPressure,

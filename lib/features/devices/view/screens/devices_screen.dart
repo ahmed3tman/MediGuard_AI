@@ -27,6 +27,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
         context.read<DeviceCubit>().loadDevices();
       }
     });
+    // Devices are now fetched from nested path: users/{uid}/patients/{pid}/device
 
     // Listen to auth state changes
     _authSubscription = AuthService.authStateChanges.listen((user) {
@@ -81,7 +82,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
                 top: 8,
                 bottom: 100,
               ),
-              
+
               itemCount: state.devices.length,
               itemBuilder: (context, index) {
                 return DeviceCard(device: state.devices[index]);

@@ -16,10 +16,13 @@ class FirebasePatientInfoService {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     try {
-      final patientRef = _database.ref(
+      final rootRef = _database.ref(
         'users/$currentUserId/patients/${patientInfo.deviceId}',
       );
-      await patientRef.set(patientInfo.toJson());
+      await rootRef.set({
+        'info': patientInfo.toProfileJson(),
+        if (patientInfo.device != null) 'device': patientInfo.device!.toJson(),
+      });
       print('Patient info saved to Firebase: ${patientInfo.deviceId}');
     } catch (e) {
       throw Exception('Failed to save patient info to Firebase: $e');
@@ -31,10 +34,8 @@ class FirebasePatientInfoService {
     if (currentUserId == null) return null;
 
     try {
-      final patientRef = _database.ref(
-        'users/$currentUserId/patients/$deviceId',
-      );
-      final snapshot = await patientRef.get();
+      final rootRef = _database.ref('users/$currentUserId/patients/$deviceId');
+      final snapshot = await rootRef.get();
 
       if (snapshot.exists && snapshot.value != null) {
         final data = Map<String, dynamic>.from(snapshot.value as Map);
@@ -52,12 +53,12 @@ class FirebasePatientInfoService {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     try {
-      final patientRef = _database.ref(
+      final rootRef = _database.ref(
         'users/$currentUserId/patients/${patientInfo.deviceId}',
       );
 
       // التحقق من وجود البيانات قبل التحديث
-      final existingSnapshot = await patientRef.get();
+      final existingSnapshot = await rootRef.get();
 
       final updatedPatientInfo = patientInfo.copyWith(
         updatedAt: DateTime.now(),
@@ -70,10 +71,16 @@ class FirebasePatientInfoService {
       }
 
       // استخدام update بدلاً من set للحفاظ على البيانات الأخرى
-      await patientRef.update(updatedPatientInfo.toJson());
+      // Update only info; device updated if provided
+      await rootRef.child('info').update(updatedPatientInfo.toProfileJson());
+      if (updatedPatientInfo.device != null) {
+        await rootRef
+            .child('device')
+            .update(updatedPatientInfo.device!.toJson());
+      }
 
       // التحقق من نجاح التحديث
-      final verifySnapshot = await patientRef.get();
+      final verifySnapshot = await rootRef.get();
       if (verifySnapshot.exists) {
         print(
           'Patient info successfully updated in Firebase: ${patientInfo.deviceId}',
@@ -93,21 +100,19 @@ class FirebasePatientInfoService {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     try {
-      final patientRef = _database.ref(
-        'users/$currentUserId/patients/$deviceId',
-      );
+      final rootRef = _database.ref('users/$currentUserId/patients/$deviceId');
 
       // التحقق من وجود البيانات قبل الحذف
-      final snapshot = await patientRef.get();
+      final snapshot = await rootRef.get();
       if (!snapshot.exists) {
         print('Patient info already deleted or does not exist: $deviceId');
         return;
       }
 
-      await patientRef.remove();
+      await rootRef.remove();
 
       // التحقق من نجاح الحذف
-      final verifySnapshot = await patientRef.get();
+      final verifySnapshot = await rootRef.get();
       if (!verifySnapshot.exists) {
         print('Patient info successfully deleted from Firebase: $deviceId');
       } else {
@@ -128,13 +133,10 @@ class FirebasePatientInfoService {
 
       if (snapshot.exists && snapshot.value != null) {
         final data = Map<dynamic, dynamic>.from(snapshot.value as Map);
-        return data.values
-            .map(
-              (patientData) => PatientInfo.fromJson(
-                Map<String, dynamic>.from(patientData as Map),
-              ),
-            )
-            .toList();
+        return data.values.map((patientData) {
+          final mapData = Map<String, dynamic>.from(patientData as Map);
+          return PatientInfo.fromJson(mapData);
+        }).toList();
       }
       return [];
     } catch (e) {
@@ -186,13 +188,10 @@ class FirebasePatientInfoService {
 
       try {
         final patientsMap = Map<dynamic, dynamic>.from(data as Map);
-        return patientsMap.values
-            .map(
-              (patientData) => PatientInfo.fromJson(
-                Map<String, dynamic>.from(patientData as Map),
-              ),
-            )
-            .toList();
+        return patientsMap.values.map((patientData) {
+          final mapData = Map<String, dynamic>.from(patientData as Map);
+          return PatientInfo.fromJson(mapData);
+        }).toList();
       } catch (e) {
         print('Error parsing patients from stream: $e');
         return <PatientInfo>[];

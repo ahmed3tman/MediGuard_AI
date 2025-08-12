@@ -704,6 +704,7 @@
   },
   "temperature": "Temperature",
   "heartRate": "Heart Rate",
+  "respiratoryRate": "Respiratory Rate",
   "bloodPressure": "Blood Pressure",
   "spo2": "SpO₂",
   "connectedStatus": "Connected",

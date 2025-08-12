@@ -8,7 +8,14 @@ import '../../model/data_model.dart';
 import '../../cubit/device_cubit.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
-enum VitalSignType { temperature, heartRate, spo2, bloodPressure, unknown }
+enum VitalSignType {
+  temperature,
+  heartRate,
+  respiratoryRate,
+  spo2,
+  bloodPressure,
+  unknown,
+}
 
 enum ButtonState { idle, loading, done }
 
@@ -172,12 +179,12 @@ class _DeviceCardState extends State<DeviceCard> {
                         context: context,
                       ),
                       _buildVitalSignTile(
-                        icon: Icons.monitor_heart,
-                        title: AppLocalizations.of(context).bloodPressure,
+                        icon: Icons.air_outlined,
+                        title: AppLocalizations.of(context).respiratoryRate,
                         value:
-                            '${widget.device.bloodPressure['systolic']}/${widget.device.bloodPressure['diastolic']}',
-                        isNormal: widget.device.isBloodPressureNormal,
-                        color: Colors.deepPurple[200]!,
+                            '${widget.device.respiratoryRate.toStringAsFixed(0)} BPM',
+                        isNormal: widget.device.isRespiratoryRateNormal,
+                        color: Colors.teal[300]!,
                         context: context,
                       ),
                     ],
@@ -343,6 +350,12 @@ class _DeviceCardState extends State<DeviceCard> {
           displayValue = value;
         }
         break;
+      case VitalSignType.respiratoryRate:
+        if (widget.device.respiratoryRate > 0) {
+          hasValidReading = true;
+          displayValue = value;
+        }
+        break;
       case VitalSignType.spo2:
         if (widget.device.spo2 > 0) {
           hasValidReading = true;
@@ -483,6 +496,9 @@ class _DeviceCardState extends State<DeviceCard> {
     } else if (title == AppLocalizations.of(context).heartRate ||
         title == 'Heart Rate') {
       return VitalSignType.heartRate;
+    } else if (title == AppLocalizations.of(context).respiratoryRate ||
+        title == 'Respiratory Rate') {
+      return VitalSignType.respiratoryRate;
     } else if (title == AppLocalizations.of(context).spo2 || title == 'SpO2') {
       return VitalSignType.spo2;
     } else if (title == AppLocalizations.of(context).bloodPressure ||

@@ -7,6 +7,7 @@ const testDeviceData = {
       current: {
         temperature: 36.8,
         ecg: 75,
+        respiratoryRate: 16,
         spo2: 98,
         bloodPressure: {
           systolic: 120,
@@ -20,6 +21,7 @@ const testDeviceData = {
       current: {
         temperature: 37.2,
         ecg: 88,
+        respiratoryRate: 18,
         spo2: 96,
         bloodPressure: {
           systolic: 130,
@@ -40,6 +42,7 @@ const testDeviceData = {
           readings: {
             temperature: 36.8,
             ecg: 75,
+            respiratoryRate: 16,
             spo2: 98,
             bloodPressure: {
               systolic: 120,
@@ -54,6 +57,7 @@ const testDeviceData = {
           readings: {
             temperature: 37.2,
             ecg: 88,
+            respiratoryRate: 18,
             spo2: 96,
             bloodPressure: {
               systolic: 130,
@@ -83,6 +87,7 @@ function updateEcgData() {
       [`device_readings/${deviceId}/current`]: {
         temperature: parseFloat(temperature.toFixed(1)),
         ecg: parseInt(heartRate),
+        respiratoryRate: parseInt(12 + Math.random() * 8), // Random respiratory rate 12-20
         spo2: parseInt(spo2),
         bloodPressure: {
           systolic: 110 + Math.random() * 20,

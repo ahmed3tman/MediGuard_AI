@@ -16,7 +16,8 @@ class MedicalAssistantScreen extends StatefulWidget {
   State<MedicalAssistantScreen> createState() => _MedicalAssistantScreenState();
 }
 
-class _MedicalAssistantScreenState extends State<MedicalAssistantScreen> {
+class _MedicalAssistantScreenState extends State<MedicalAssistantScreen>
+    with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
   late MedicalAssistantCubit _cubit;
 
@@ -51,6 +52,7 @@ class _MedicalAssistantScreenState extends State<MedicalAssistantScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // keep alive
     final locale = Localizations.localeOf(context);
     final isArabic = locale.languageCode == 'ar';
 
@@ -106,6 +108,9 @@ class _MedicalAssistantScreenState extends State<MedicalAssistantScreen> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   Widget _buildChatArea(MedicalAssistantState state, bool isArabic) {
     if (state is MedicalAssistantInitial) {

@@ -7,7 +7,7 @@ import '../../../patient_detail/cubit/patient_detail_cubit.dart';
 import '../../../patient_detail/cubit/patient_detail_state.dart';
 import '../../../patient_detail/model/patient_vital_signs.dart';
 import '../../../patient_info/cubit/patient_info_cubit.dart';
-import '../../../patient_info/cubit/patient_info_state.dart';
+import '../../../patient_info/services/firebase_patient_info_service.dart';
 import '../../../patient_info/view/screens/edit_patient_info_screen.dart';
 import '../../../patient_info/view/widgets/patient_info_card.dart';
 
@@ -19,11 +19,13 @@ class PatientRecordScreen extends StatefulWidget {
   State<PatientRecordScreen> createState() => _PatientRecordScreenState();
 }
 
-class _PatientRecordScreenState extends State<PatientRecordScreen> {
+class _PatientRecordScreenState extends State<PatientRecordScreen>
+    with AutomaticKeepAliveClientMixin {
+  bool _isNavigatingToEdit = false;
   @override
   void initState() {
     super.initState();
-    // Load patient info when tab is initialized
+    // Initial one-time load (kept as fallback); stream will handle realtime
     final patientDetailCubit = context.read<PatientDetailCubit>();
     context.read<PatientInfoCubit>().loadPatientInfo(
       patientDetailCubit.deviceId,
@@ -32,6 +34,7 @@ class _PatientRecordScreenState extends State<PatientRecordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // for keep alive
     final l10n = AppLocalizations.of(context);
     return BlocBuilder<PatientDetailCubit, PatientDetailState>(
       builder: (context, state) {
@@ -62,28 +65,14 @@ class _PatientRecordScreenState extends State<PatientRecordScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Patient Information Section
-                BlocBuilder<PatientInfoCubit, PatientInfoState>(
-                  builder: (context, patientState) {
-                    if (patientState is PatientInfoLoaded &&
-                        patientState.patientInfo != null) {
-                      return Column(
-                        children: [
-                          PatientInfoCard(
-                            patientInfo: patientState.patientInfo!,
-                            onEdit: () => _editPatientInfo(
-                              context,
-                              patientState.patientInfo!,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
+                _buildRealtimePatientInfoSection(),
                 // Vital Signs Grid
                 _buildVitalSignsGrid(vitalSigns, l10n),
+                const SizedBox(height: 20),
+
+                // Blood Pressure Section (moved before ECG)
+                _buildBloodPressureSection(vitalSigns, l10n),
+                const SizedBox(height: 20),
 
                 // ECG Chart Section
                 _buildEcgSection(ecgReadings, vitalSigns, l10n),
@@ -99,6 +88,9 @@ class _PatientRecordScreenState extends State<PatientRecordScreen> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   Widget _buildVitalSignsGrid(
     PatientVitalSigns vitalSigns,
@@ -140,14 +132,15 @@ class _PatientRecordScreenState extends State<PatientRecordScreen> {
               isConnected: vitalSigns.heartRate > 0,
             ),
             VitalSignCard(
-              title: l10n.bloodPressure,
-              value: _getBloodPressureDisplay(vitalSigns.bloodPressure, l10n),
-              unit: _isBloodPressureConnected(vitalSigns.bloodPressure)
-                  ? 'mmHg'
-                  : '',
-              icon: Icons.monitor_heart,
-              color: Colors.indigo.shade300,
-              isConnected: _isBloodPressureConnected(vitalSigns.bloodPressure),
+              title: l10n.respiratoryRate,
+              value: _getRespiratoryRateDisplay(
+                vitalSigns.respiratoryRate,
+                l10n,
+              ),
+              unit: vitalSigns.respiratoryRate > 0 ? 'BPM' : '',
+              icon: Icons.air_outlined,
+              color: Colors.teal.shade300,
+              isConnected: vitalSigns.respiratoryRate > 0,
             ),
             VitalSignCard(
               title: l10n.spo2,
@@ -160,6 +153,45 @@ class _PatientRecordScreenState extends State<PatientRecordScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildRealtimePatientInfoSection() {
+    final deviceId = context.read<PatientDetailCubit>().deviceId;
+    return StreamBuilder(
+      stream: FirebasePatientInfoService.getPatientInfoStream(deviceId),
+      builder: (context, snapshot) {
+        // Debug logging
+        // ignore: avoid_print
+        print(
+          'PatientInfo stream snapshot: hasData=${snapshot.hasData} err=${snapshot.error}',
+        );
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        }
+        final patientInfo = snapshot.data;
+        if (patientInfo == null) {
+          return const SizedBox.shrink();
+        }
+        return Column(
+          children: [
+            PatientInfoCard(
+              patientInfo: patientInfo,
+              onEdit: () {
+                if (_isNavigatingToEdit) return; // guard
+                _isNavigatingToEdit = true;
+                _editPatientInfo(context, patientInfo).whenComplete(() {
+                  // small delay to avoid race
+                  Future.delayed(const Duration(milliseconds: 150), () {
+                    if (mounted) _isNavigatingToEdit = false;
+                  });
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+        );
+      },
     );
   }
 
@@ -261,7 +293,110 @@ class _PatientRecordScreenState extends State<PatientRecordScreen> {
     return spo2.toStringAsFixed(0);
   }
 
-  void _editPatientInfo(BuildContext context, patientInfo) async {
+  String _getRespiratoryRateDisplay(
+    double respiratoryRate,
+    AppLocalizations l10n,
+  ) {
+    if (respiratoryRate <= 0) {
+      return l10n.deviceNotConnected;
+    }
+    return respiratoryRate.toStringAsFixed(0);
+  }
+
+  Widget _buildBloodPressureSection(
+    PatientVitalSigns vitalSigns,
+    AppLocalizations l10n,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.bloodPressure,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[800],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.indigo.withOpacity(0.2),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.indigo.withOpacity(0.08),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.monitor_heart,
+                size: 40,
+                color: Colors.indigo.shade300,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                _getBloodPressureDisplay(vitalSigns.bloodPressure, l10n),
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: _isBloodPressureConnected(vitalSigns.bloodPressure)
+                      ? (vitalSigns.isBloodPressureNormal
+                            ? Colors.green[700]
+                            : Colors.red[700])
+                      : Colors.grey[600],
+                ),
+              ),
+              if (_isBloodPressureConnected(vitalSigns.bloodPressure))
+                Text(
+                  'mmHg',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _isBloodPressureConnected(vitalSigns.bloodPressure)
+                      ? (vitalSigns.isBloodPressureNormal
+                            ? Colors.green[100]
+                            : Colors.red[100])
+                      : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  _isBloodPressureConnected(vitalSigns.bloodPressure)
+                      ? (vitalSigns.isBloodPressureNormal
+                            ? l10n.normal
+                            : l10n.abnormal)
+                      : l10n.deviceNotConnected,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: _isBloodPressureConnected(vitalSigns.bloodPressure)
+                        ? (vitalSigns.isBloodPressureNormal
+                              ? Colors.green[700]
+                              : Colors.red[700])
+                        : Colors.grey[600],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _editPatientInfo(BuildContext context, patientInfo) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(

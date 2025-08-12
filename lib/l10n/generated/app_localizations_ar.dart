@@ -536,6 +536,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get heartRate => 'نبضات القلب';
 
   @override
+  String get respiratoryRate => 'معدل التنفس';
+
+  @override
   String get bloodPressure => 'ضغط الدم';
 
   @override

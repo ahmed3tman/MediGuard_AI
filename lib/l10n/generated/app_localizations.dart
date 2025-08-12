@@ -1130,6 +1130,12 @@ abstract class AppLocalizations {
   /// **'Heart Rate'**
   String get heartRate;
 
+  /// No description provided for @respiratoryRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Respiratory Rate'**
+  String get respiratoryRate;
+
   /// Blood pressure label
   ///
   /// In en, this message translates to:

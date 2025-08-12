@@ -47,6 +47,7 @@
   "error": "خطأ",
   "deviceStatus": "حالة الجهاز",
   "heartRate": "نبضات القلب",
+  "respiratoryRate": "معدل التنفس",
   "bloodPressure": "ضغط الدم",
   "oxygenSaturation": "تشبع الأكسجين",
   "normal": "طبيعي",

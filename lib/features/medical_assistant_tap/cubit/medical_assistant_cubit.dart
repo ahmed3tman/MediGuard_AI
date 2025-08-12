@@ -23,11 +23,20 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
 
   /// معرف المريض الحالي
   String _currentPatientId = '';
+  bool _initializedForCurrent = false;
 
   /// تهيئة المحادثة مع البيانات المحفوظة
   void initializeChat(Map<String, dynamic> patientData, BuildContext context) {
+    final newId = patientData['deviceId'] ?? '';
+    // Prevent reinitialization loops when switching tabs
+    if (_initializedForCurrent &&
+        newId == _currentPatientId &&
+        _messages.isNotEmpty) {
+      return;
+    }
     _currentPatientData = patientData;
-    _currentPatientId = patientData['deviceId'] ?? '';
+    _currentPatientId = newId;
+    _initializedForCurrent = true;
 
     final locale = Localizations.localeOf(context);
     final isArabic = locale.languageCode == 'ar';
@@ -53,7 +62,7 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
     // تحديث الأسئلة المقترحة
     _updateSuggestedQuestions(isArabic);
 
-    emit(
+    _safeEmit(
       MedicalAssistantChatUpdated(
         messages: _messages,
         suggestedQuestions: _suggestedQuestions,
@@ -61,9 +70,16 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
     );
   }
 
+  /// Update patient data without resetting conversation
+  void updatePatientData(Map<String, dynamic> patientData) {
+    if (patientData['deviceId'] == _currentPatientId) {
+      _currentPatientData = patientData;
+    }
+  }
+
   /// إرسال رسالة جديدة
   Future<void> sendMessage(String messageContent, BuildContext context) async {
-    emit(MedicalAssistantLoading());
+    _safeEmit(MedicalAssistantLoading());
 
     try {
       final locale = Localizations.localeOf(context);
@@ -103,14 +119,14 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
       // تحديث الأسئلة المقترحة
       _updateSuggestedQuestions(isArabic);
 
-      emit(
+      _safeEmit(
         MedicalAssistantChatUpdated(
           messages: _messages,
           suggestedQuestions: _suggestedQuestions,
         ),
       );
     } catch (e) {
-      emit(MedicalAssistantError(message: 'حدث خطأ في إرسال الرسالة: $e'));
+      _safeEmit(MedicalAssistantError(message: 'حدث خطأ في إرسال الرسالة: $e'));
     }
   }
 
@@ -135,7 +151,7 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
 
   /// تحديث الأسئلة المقترحة
   void _updateSuggestedQuestions(bool isArabic) {
-   // print('📝 تحديث الأسئلة المقترحة - اللغة العربية: $isArabic');
+    // print('📝 تحديث الأسئلة المقترحة - اللغة العربية: $isArabic');
 
     if (isArabic) {
       _suggestedQuestions = [
@@ -173,6 +189,17 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
     _suggestedQuestions.clear();
     _currentPatientData.clear();
     _currentPatientId = '';
-    emit(MedicalAssistantInitial());
+    _initializedForCurrent = false;
+    _safeEmit(MedicalAssistantInitial());
+  }
+
+  // Prevent emitting after cubit is closed (can happen if async finishes after pop)
+  void _safeEmit(MedicalAssistantState state) {
+    if (isClosed) return;
+    try {
+      emit(state);
+    } catch (_) {
+      // swallow to avoid crashing the app
+    }
   }
 }

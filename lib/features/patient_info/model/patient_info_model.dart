@@ -1,8 +1,17 @@
 import 'package:equatable/equatable.dart';
+import '../../devices/model/data_model.dart';
 
 enum Gender { male, female }
 
+/// Unified Patient model that now contains the associated device as a nested object
+/// Firebase path structure after refactor:
+/// users/{userId}/patients/{patientId} => {
+///   id: patientId,
+///   name / age / gender / ... patient fields,
+///   device: { deviceId, name(model), readings { ... }, lastUpdated }
+/// }
 class PatientInfo extends Equatable {
+  /// Acts as both patient unique id and (legacy) deviceId reference
   final String deviceId;
   final String? patientName;
   final int age;
@@ -13,6 +22,9 @@ class PatientInfo extends Equatable {
   final String? notes;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  /// Nested device (can be null for backward compatibility / before device creation)
+  final Device? device;
 
   const PatientInfo({
     required this.deviceId,
@@ -25,28 +37,66 @@ class PatientInfo extends Equatable {
     this.notes,
     required this.createdAt,
     required this.updatedAt,
+    this.device,
   });
 
   factory PatientInfo.fromJson(Map<String, dynamic> json) {
+    // دعم البنية الجديدة: العقدة قد تحتوي على 'info' كحاوية للحقول
+    final base = json['info'] is Map
+        ? Map<String, dynamic>.from(json['info'])
+        : json; // توافق عكسي مع البنية القديمة
+
     return PatientInfo(
-      deviceId: json['deviceId'] ?? '',
-      patientName: json['patientName'],
-      age: json['age'] ?? 0,
+      deviceId:
+          base['deviceId'] ??
+          base['id'] ??
+          json['deviceId'] ??
+          json['id'] ??
+          '',
+      patientName: base['patientName'] ?? base['name'],
+      age: base['age'] ?? 0,
       gender: Gender.values.firstWhere(
-        (g) => g.name == json['gender'],
+        (g) => g.name == base['gender'],
         orElse: () => Gender.male,
       ),
-      bloodType: json['bloodType'],
-      phoneNumber: json['phoneNumber'] ?? '',
-      chronicDiseases: List<String>.from(json['chronicDiseases'] ?? []),
-      notes: json['notes'],
-      createdAt: DateTime.fromMillisecondsSinceEpoch(json['createdAt'] ?? 0),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(json['updatedAt'] ?? 0),
+      bloodType: base['bloodType'],
+      phoneNumber: base['phoneNumber'] ?? '',
+      chronicDiseases: List<String>.from(base['chronicDiseases'] ?? []),
+      notes: base['notes'],
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        base['createdAt'] ?? json['createdAt'] ?? 0,
+      ),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        base['updatedAt'] ?? json['updatedAt'] ?? 0,
+      ),
+      device: json['device'] != null && json['device'] is Map
+          ? Device.fromJson(Map<String, dynamic>.from(json['device']))
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      // Keep both id & deviceId for backward compatibility
+      'id': deviceId,
+      'deviceId': deviceId,
+      'patientName': patientName,
+      'age': age,
+      'gender': gender.name,
+      'bloodType': bloodType,
+      'phoneNumber': phoneNumber,
+      'chronicDiseases': chronicDiseases,
+      'notes': notes,
+      'createdAt': createdAt.millisecondsSinceEpoch,
+      'updatedAt': updatedAt.millisecondsSinceEpoch,
+      if (device != null) 'device': device!.toJson(),
+    };
+  }
+
+  // تحويل خاص لكتابة بيانات المريض فقط داخل مسار info
+  Map<String, dynamic> toProfileJson() {
+    return {
+      'id': deviceId,
       'deviceId': deviceId,
       'patientName': patientName,
       'age': age,
@@ -71,6 +121,7 @@ class PatientInfo extends Equatable {
     String? notes,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Device? device,
   }) {
     return PatientInfo(
       deviceId: deviceId ?? this.deviceId,
@@ -83,6 +134,7 @@ class PatientInfo extends Equatable {
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      device: device ?? this.device,
     );
   }
 
@@ -103,6 +155,7 @@ class PatientInfo extends Equatable {
     notes,
     createdAt,
     updatedAt,
+    device,
   ];
 }
 

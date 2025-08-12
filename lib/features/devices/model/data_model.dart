@@ -24,6 +24,7 @@ class Device extends Equatable {
             {
               'temperature': 0.0, // Temperature in Celsius
               'heartRate': 0.0, // Heart Rate (BPM)
+              'respiratoryRate': 0.0, // Respiratory Rate (BPM)
               'ecgData': 0.0, // ECG waveform data
               'spo2': 0.0, // Oxygen saturation percentage
               'bloodPressure': {
@@ -52,6 +53,7 @@ class Device extends Equatable {
   // Helper getters for easier access to readings
   double get temperature => (readings['temperature'] ?? 0.0).toDouble();
   double get heartRate => (readings['heartRate'] ?? 0.0).toDouble();
+  double get respiratoryRate => (readings['respiratoryRate'] ?? 0.0).toDouble();
   double get ecgData {
     final value = readings['ecgData'];
     if (value == null) return 0.0;
@@ -75,6 +77,8 @@ class Device extends Equatable {
 
   // Helper methods to check if readings are normal
   bool get isTemperatureNormal => temperature >= 36.1 && temperature <= 37.2;
+  bool get isRespiratoryRateNormal =>
+      respiratoryRate >= 12 && respiratoryRate <= 20;
   bool get isSpo2Normal => spo2 >= 95;
   bool get isBloodPressureNormal {
     final bp = bloodPressure;
@@ -111,6 +115,7 @@ class Device extends Equatable {
   bool get hasValidReadings =>
       temperature > 0 ||
       heartRate > 0 ||
+      respiratoryRate > 0 ||
       spo2 > 0 ||
       bloodPressure['systolic']! > 0 ||
       bloodPressure['diastolic']! > 0;

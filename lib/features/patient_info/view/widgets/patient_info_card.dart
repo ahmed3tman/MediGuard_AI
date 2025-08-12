@@ -121,6 +121,7 @@ class PatientInfoCard extends StatelessWidget {
                       flex: 3,
                       child: Text(
                         patientInfo.patientName ??
+                            patientInfo.device?.name ??
                             AppLocalizations.of(context).notSpecified,
                         style: const TextStyle(
                           fontSize: 13,
@@ -176,8 +177,9 @@ class PatientInfoCard extends StatelessWidget {
                   context,
                   icon: Icons.cake,
                   label: AppLocalizations.of(context).age,
-                  value:
-                      '${patientInfo.age} ${AppLocalizations.of(context).years}',
+                  value: patientInfo.age > 0
+                      ? '${patientInfo.age} ${AppLocalizations.of(context).years}'
+                      : AppLocalizations.of(context).notSpecified,
                 ),
               ),
               const SizedBox(width: 12),
@@ -205,8 +207,10 @@ class PatientInfoCard extends StatelessWidget {
                   icon: Icons.water_drop,
                   label: AppLocalizations.of(context).bloodType,
                   value:
-                      patientInfo.bloodType ??
-                      AppLocalizations.of(context).notSpecified,
+                      (patientInfo.bloodType == null ||
+                          patientInfo.bloodType!.trim().isEmpty)
+                      ? AppLocalizations.of(context).notSpecified
+                      : patientInfo.bloodType!,
                 ),
               ),
               const SizedBox(width: 12),
@@ -216,8 +220,10 @@ class PatientInfoCard extends StatelessWidget {
                   icon: Icons.phone,
                   label: AppLocalizations.of(context).phone,
                   value:
-                      patientInfo.phoneNumber ??
-                      AppLocalizations.of(context).notSpecified,
+                      (patientInfo.phoneNumber == null ||
+                          patientInfo.phoneNumber!.trim().isEmpty)
+                      ? AppLocalizations.of(context).notSpecified
+                      : patientInfo.phoneNumber!,
                 ),
               ),
             ],

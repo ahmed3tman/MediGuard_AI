@@ -539,6 +539,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get heartRate => 'Heart Rate';
 
   @override
+  String get respiratoryRate => 'Respiratory Rate';
+
+  @override
   String get bloodPressure => 'Blood Pressure';
 
   @override

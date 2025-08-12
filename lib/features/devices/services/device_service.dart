@@ -13,12 +13,16 @@ class DeviceService {
   static Future<void> addDevice(String deviceId, String deviceName) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
-    final deviceRef = _database.ref('users/$currentUserId/devices/$deviceId');
+    // New unified structure: users/{userId}/patients/{patientId}/device
+    final deviceRef = _database.ref(
+      'users/$currentUserId/patients/$deviceId/device',
+    );
 
     // readings مع قسم ECG كرقم وليس ecgData كمصفوفة
     final readings = {
       'temperature': 0.0,
       'heartRate': 0.0,
+      'respiratoryRate': 0.0,
       'spo2': 0.0,
       'bloodPressure': {'systolic': 0, 'diastolic': 0},
       'ecg': 0.0,
@@ -40,15 +44,23 @@ class DeviceService {
       return Stream.value([]);
     }
 
-    return _database.ref('users/$currentUserId/devices').onValue.map((event) {
+    // Collect devices from patients subtree
+    return _database.ref('users/$currentUserId/patients').onValue.map((event) {
       final data = event.snapshot.value;
       if (data == null) return <Device>[];
-
-      final Map<dynamic, dynamic> devicesMap = data as Map<dynamic, dynamic>;
-      return devicesMap.entries.map((entry) {
-        final deviceData = Map<String, dynamic>.from(entry.value as Map);
-        return Device.fromJson(deviceData);
-      }).toList();
+      final Map<dynamic, dynamic> patientsMap = data as Map<dynamic, dynamic>;
+      final List<Device> devices = [];
+      for (final entry in patientsMap.entries) {
+        final patientData = Map<String, dynamic>.from(entry.value as Map);
+        if (patientData['device'] != null && patientData['device'] is Map) {
+          devices.add(
+            Device.fromJson(
+              Map<String, dynamic>.from(patientData['device'] as Map),
+            ),
+          );
+        }
+      }
+      return devices;
     });
   }
 
@@ -58,14 +70,14 @@ class DeviceService {
       return Stream.value(null);
     }
 
-    return _database.ref('users/$currentUserId/devices/$deviceId').onValue.map((
-      event,
-    ) {
-      final data = event.snapshot.value;
-      if (data == null) return null;
-
-      return Device.fromJson(Map<String, dynamic>.from(data as Map));
-    });
+    return _database
+        .ref('users/$currentUserId/patients/$deviceId/device')
+        .onValue
+        .map((event) {
+          final data = event.snapshot.value;
+          if (data == null) return null;
+          return Device.fromJson(Map<String, dynamic>.from(data as Map));
+        });
   }
 
   // Listen to device readings from external source (for real devices)
@@ -91,7 +103,9 @@ class DeviceService {
   ) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
-    final deviceRef = _database.ref('users/$currentUserId/devices/$deviceId');
+    final deviceRef = _database.ref(
+      'users/$currentUserId/patients/$deviceId/device',
+    );
 
     // Merge external readings with existing device data
     await deviceRef.update({
@@ -107,7 +121,9 @@ class DeviceService {
   ) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
-    final deviceRef = _database.ref('users/$currentUserId/devices/$deviceId');
+    final deviceRef = _database.ref(
+      'users/$currentUserId/patients/$deviceId/device',
+    );
 
     await deviceRef.update({
       'readings': newReadings,
@@ -119,7 +135,9 @@ class DeviceService {
   static Future<void> updateDeviceName(String deviceId, String newName) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
-    final deviceRef = _database.ref('users/$currentUserId/devices/$deviceId');
+    final deviceRef = _database.ref(
+      'users/$currentUserId/patients/$deviceId/device',
+    );
 
     await deviceRef.update({'name': newName});
   }
@@ -128,7 +146,9 @@ class DeviceService {
   static Future<void> deleteDevice(String deviceId) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
-    final deviceRef = _database.ref('users/$currentUserId/devices/$deviceId');
+    final deviceRef = _database.ref(
+      'users/$currentUserId/patients/$deviceId/device',
+    );
     await deviceRef.remove();
   }
 
@@ -141,6 +161,7 @@ class DeviceService {
     final simulatedReadings = {
       'temperature': 36.5 + (random % 20) / 10, // 36.5 - 38.5°C
       'heartRate': 60 + (random % 40), // 60-100 BPM
+      'respiratoryRate': 12 + (random % 9), // 12-20 BPM
       'ecgData': List.generate(
         100,
         (i) => (0.5 * (i % 10)),

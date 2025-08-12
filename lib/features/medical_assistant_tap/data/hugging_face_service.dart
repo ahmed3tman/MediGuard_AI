@@ -52,6 +52,7 @@ class MedicalAssistantService {
   ) {
     final temperature = patientData['temperature'] as double? ?? 0.0;
     final heartRate = patientData['heartRate'] as double? ?? 0.0;
+    final respiratoryRate = patientData['respiratoryRate'] as double? ?? 0.0;
     final bloodPressure =
         patientData['bloodPressure'] as Map<String, dynamic>? ?? {};
     final spo2 = patientData['spo2'] as double? ?? 0.0;
@@ -64,6 +65,7 @@ class MedicalAssistantService {
     // الجهاز متصل إذا كانت هناك قراءة معقولة أو إشارة من الجهاز
     final tempConnected = temperature > 0.0;
     final hrConnected = heartRate > 0.0;
+    final respiratoryConnected = respiratoryRate > 0.0;
     final bpConnected = (systolic > 0 || diastolic > 0);
     final spo2Connected = spo2 > 0.0;
 
@@ -77,6 +79,15 @@ class MedicalAssistantService {
     // أسئلة عن معدل النبض
     if (_isHeartRateQuestion(messageLower)) {
       return _analyzeHeartRate(heartRate, hrConnected, isArabic);
+    }
+
+    // أسئلة عن معدل التنفس
+    if (_isRespiratoryRateQuestion(messageLower)) {
+      return _analyzeRespiratoryRate(
+        respiratoryRate,
+        respiratoryConnected,
+        isArabic,
+      );
     }
 
     // أسئلة عن ضغط الدم
@@ -244,6 +255,44 @@ class MedicalAssistantService {
       return isArabic
           ? 'معدل النبض مرتفع جداً (${heartRate.toStringAsFixed(0)} ن/د). يجب استشارة الطبيب فوراً.'
           : 'Heart rate is very high (${heartRate.toStringAsFixed(0)} BPM). Immediate medical consultation required.';
+    }
+  }
+
+  /// تحليل معدل التنفس
+  static String _analyzeRespiratoryRate(
+    double respiratoryRate,
+    bool connected,
+    bool isArabic,
+  ) {
+    if (!connected || respiratoryRate == 0.0) {
+      return isArabic
+          ? 'جهاز قياس معدل التنفس غير متصل حالياً. يرجى التحقق من الاتصال.'
+          : 'Respiratory rate sensor is not connected. Please check the connection.';
+    }
+
+    // فحص القراءات غير المنطقية
+    if (respiratoryRate < 5.0 || respiratoryRate > 40.0) {
+      return isArabic
+          ? 'قراءة معدل التنفس غير منطقية (${respiratoryRate.toStringAsFixed(0)} ت/د). تأكد من:\n• وضع الجهاز بشكل صحيح\n• عدم وجود حركة زائدة\n• نظافة المستشعر\n• معايرة الجهاز'
+          : 'Unrealistic respiratory rate reading (${respiratoryRate.toStringAsFixed(0)} BPM). Check:\n• Proper device placement\n• No excessive movement\n• Clean sensor\n• Device calibration';
+    }
+
+    if (respiratoryRate < 12) {
+      return isArabic
+          ? 'معدل التنفس منخفض (${respiratoryRate.toStringAsFixed(0)} ت/د). قد يشير إلى بطء في التنفس. يُنصح بمراجعة الطبيب.'
+          : 'Respiratory rate is low (${respiratoryRate.toStringAsFixed(0)} BPM). May indicate bradypnea. Medical consultation recommended.';
+    } else if (respiratoryRate >= 12 && respiratoryRate <= 20) {
+      return isArabic
+          ? 'معدل التنفس طبيعي (${respiratoryRate.toStringAsFixed(0)} ت/د). التنفس منتظم.'
+          : 'Respiratory rate is normal (${respiratoryRate.toStringAsFixed(0)} BPM). Breathing is regular.';
+    } else if (respiratoryRate > 20 && respiratoryRate <= 25) {
+      return isArabic
+          ? 'معدل التنفس مرتفع قليلاً (${respiratoryRate.toStringAsFixed(0)} ت/د). قد يكون بسبب التوتر أو النشاط. يُنصح بالراحة.'
+          : 'Respiratory rate is slightly elevated (${respiratoryRate.toStringAsFixed(0)} BPM). May be due to stress or activity. Rest recommended.';
+    } else {
+      return isArabic
+          ? 'معدل التنفس مرتفع جداً (${respiratoryRate.toStringAsFixed(0)} ت/د). يجب استشارة الطبيب فوراً.'
+          : 'Respiratory rate is very high (${respiratoryRate.toStringAsFixed(0)} BPM). Immediate medical consultation required.';
     }
   }
 
@@ -908,6 +957,13 @@ class MedicalAssistantService {
     ).hasMatch(message);
   }
 
+  static bool _isRespiratoryRateQuestion(String message) {
+    return RegExp(
+      r'respiratory|تنفس|breathing|breath|معدل التنفس',
+      caseSensitive: false,
+    ).hasMatch(message);
+  }
+
   static bool _isBloodPressureQuestion(String message) {
     return RegExp(
       r'pressure|ضغط|blood|دم',
@@ -928,7 +984,6 @@ class MedicalAssistantService {
       caseSensitive: false,
     ).hasMatch(message);
   }
-
 
   static bool _isConcernsQuestion(String message) {
     return RegExp(

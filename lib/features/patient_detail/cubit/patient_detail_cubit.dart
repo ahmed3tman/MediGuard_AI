@@ -14,12 +14,17 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
 
   PatientVitalSigns? _currentVitalSigns;
   List<EcgReading> _currentEcgReadings = [];
+  DateTime? _lastEmit;
+  bool _isClosed = false;
 
   PatientDetailCubit({required this.deviceId, required this.patientName})
     : super(PatientDetailInitial());
 
   /// Initialize real-time data streaming
   Future<void> initialize() async {
+    // Cancel any existing streams before reinitializing (prevents leaks)
+    await _vitalSignsSubscription?.cancel();
+    await _ecgSubscription?.cancel();
     emit(PatientDetailLoading());
 
     try {
@@ -27,6 +32,7 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
       _vitalSignsSubscription =
           PatientDetailService.getPatientVitalSignsStream(deviceId).listen(
             (vitalSigns) {
+              if (_isClosed) return;
               print('Vital signs received: $vitalSigns');
               if (vitalSigns != null) {
                 print('Heart rate from vital signs: ${vitalSigns.heartRate}');
@@ -37,8 +43,11 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
               }
             },
             onError: (error) {
+              if (_isClosed) return;
               print('Error loading vital signs: $error');
-              emit(PatientDetailError('Error loading vital signs: $error'));
+              _safeEmit(
+                PatientDetailError('Error loading vital signs: $error'),
+              );
             },
           );
 
@@ -46,6 +55,7 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
       _ecgSubscription = PatientDetailService.getEcgReadingsStream(deviceId)
           .listen(
             (ecgReadings) {
+              if (_isClosed) return;
               print(
                 'ECG data received in cubit: ${ecgReadings.length} readings',
               );
@@ -53,6 +63,7 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
               _updateState();
             },
             onError: (error) {
+              if (_isClosed) return;
               print('Error loading ECG data: $error');
               // Don't emit error for ECG, just use empty list
               _currentEcgReadings = [];
@@ -60,23 +71,29 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
             },
           );
     } catch (e) {
-      emit(PatientDetailError('Failed to initialize patient monitoring: $e'));
+      _safeEmit(
+        PatientDetailError('Failed to initialize patient monitoring: $e'),
+      );
     }
   }
 
   /// Update the state when new data arrives
   void _updateState() {
-    if (_currentVitalSigns != null) {
-      print('Updating state - ECG readings: ${_currentEcgReadings.length}');
-      print(
-        'Device connection status: ${_currentVitalSigns!.connectionStatus}',
-      );
-      emit(
-        PatientDetailLoaded(
-          vitalSigns: _currentVitalSigns!,
-          ecgReadings: _currentEcgReadings,
-        ),
-      );
+    if (_currentVitalSigns != null && !_isClosed) {
+      final now = DateTime.now();
+      if (_lastEmit == null ||
+          now.difference(_lastEmit!).inMilliseconds > 500) {
+        _lastEmit = now;
+        print(
+          'Updating state (throttled) - ECG readings: ${_currentEcgReadings.length}',
+        );
+        _safeEmit(
+          PatientDetailLoaded(
+            vitalSigns: _currentVitalSigns!,
+            ecgReadings: _currentEcgReadings,
+          ),
+        );
+      }
     }
   }
 
@@ -103,8 +120,18 @@ class PatientDetailCubit extends Cubit<PatientDetailState> {
 
   @override
   Future<void> close() {
+    _isClosed = true;
     _vitalSignsSubscription?.cancel();
     _ecgSubscription?.cancel();
     return super.close();
+  }
+
+  void _safeEmit(PatientDetailState state) {
+    if (_isClosed || isClosed) return;
+    try {
+      emit(state);
+    } catch (_) {
+      // ignore late emit
+    }
   }
 }
