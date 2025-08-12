@@ -95,18 +95,42 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
   Future<void> removeCriticalCase(String deviceId) async {
     emit(CriticalCasesLoading());
     try {
+      // حفظ الحالة المحذوفة للتراجع في حالة فشل Firebase
+      final removedCase = _criticalCases.firstWhere(
+        (c) => c.deviceId == deviceId,
+        orElse: () => throw Exception('Critical case not found'),
+      );
+
       _criticalCases.removeWhere((c) => c.deviceId == deviceId);
 
-      // حذف من Firebase
+      // حذف من Firebase أولاً
+      bool firebaseDeleteSuccess = false;
       try {
         await FirebaseCriticalCasesService.deleteCriticalCase(deviceId);
+        firebaseDeleteSuccess = true;
+        print('Successfully deleted from Firebase: $deviceId');
       } catch (e) {
         print('Failed to delete critical case from Firebase: $e');
+
+        // في حالة فشل Firebase، أعد الحالة إلى القائمة
+        if (e.toString().contains('User not authenticated')) {
+          _criticalCases.add(removedCase);
+          emit(CriticalCasesError('يرجى تسجيل الدخول أولاً'));
+          return;
+        }
+
+        // إذا كان الخطأ مرتبط بالشبكة، احذف محلياً وأخبر المستخدم
+        print('Network error - deleting locally, will sync later');
       }
 
       // حذف محلياً
       await _saveToLocalStorage();
       emit(CriticalCasesLoaded(List.from(_criticalCases)));
+
+      // إظهار رسالة للمستخدم حول حالة الحذف
+      if (!firebaseDeleteSuccess) {
+        print('تم الحذف محلياً، سيتم المزامنة عند توفر الاتصال');
+      }
     } catch (e) {
       emit(
         CriticalCasesError('Failed to remove critical case: ${e.toString()}'),
@@ -163,8 +187,98 @@ class CriticalCasesCubit extends Cubit<CriticalCasesState> {
       for (final criticalCase in _criticalCases) {
         await FirebaseCriticalCasesService.saveCriticalCase(criticalCase);
       }
+      print(
+        'Successfully synced ${_criticalCases.length} critical cases to Firebase',
+      );
     } catch (e) {
       print('Failed to sync critical cases to Firebase: $e');
+      throw Exception('فشل في مزامنة البيانات مع الخادم: $e');
     }
+  }
+
+  /// التحقق من تطابق البيانات المحلية مع Firebase
+  Future<bool> verifyDataConsistency() async {
+    try {
+      final firebaseCases =
+          await FirebaseCriticalCasesService.getAllCriticalCases();
+
+      // مقارنة عدد الحالات
+      if (firebaseCases.length != _criticalCases.length) {
+        print(
+          'Data inconsistency: Firebase has ${firebaseCases.length} cases, local has ${_criticalCases.length}',
+        );
+        return false;
+      }
+
+      // مقارنة كل حالة
+      for (final localCase in _criticalCases) {
+        final firebaseCase = firebaseCases.firstWhere(
+          (c) => c.deviceId == localCase.deviceId,
+          orElse: () => throw Exception(
+            'Case ${localCase.deviceId} not found in Firebase',
+          ),
+        );
+
+        if (localCase.name != firebaseCase.name) {
+          print('Data inconsistency found for device: ${localCase.deviceId}');
+          return false;
+        }
+      }
+
+      return true;
+    } catch (e) {
+      print('Error verifying data consistency: $e');
+      return false;
+    }
+  }
+
+  /// إجبار إعادة المزامنة من Firebase
+  Future<void> forceResyncFromFirebase() async {
+    try {
+      emit(CriticalCasesLoading());
+
+      // تحميل البيانات من Firebase
+      final firebaseCases =
+          await FirebaseCriticalCasesService.getAllCriticalCases();
+
+      // استبدال البيانات المحلية
+      _criticalCases.clear();
+      _criticalCases.addAll(firebaseCases);
+
+      // حفظ البيانات الجديدة محلياً
+      await _saveToLocalStorage();
+
+      emit(CriticalCasesLoaded(List.from(_criticalCases)));
+      print(
+        'Successfully resynced ${_criticalCases.length} critical cases from Firebase',
+      );
+    } catch (e) {
+      print('Failed to resync from Firebase: $e');
+      // في حالة الفشل، احتفظ بالبيانات المحلية
+      emit(CriticalCasesLoaded(List.from(_criticalCases)));
+      throw Exception('فشل في إعادة المزامنة من الخادم: $e');
+    }
+  }
+
+  /// الحصول على إحصائيات حول حالة البيانات
+  Map<String, dynamic> getDataStatus() {
+    return {
+      'localCasesCount': _criticalCases.length,
+      'lastLocalUpdate': _criticalCases.isNotEmpty
+          ? _criticalCases
+                .map((c) => c.lastUpdated)
+                .reduce((a, b) => a.isAfter(b) ? a : b)
+                .toIso8601String()
+          : null,
+      'devices': _criticalCases
+          .map(
+            (c) => {
+              'deviceId': c.deviceId,
+              'name': c.name,
+              'lastUpdated': c.lastUpdated.toIso8601String(),
+            },
+          )
+          .toList(),
+    };
   }
 }

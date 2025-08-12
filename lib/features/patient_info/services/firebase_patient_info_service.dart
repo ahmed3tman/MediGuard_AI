@@ -52,10 +52,37 @@ class FirebasePatientInfoService {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     try {
+      final patientRef = _database.ref(
+        'users/$currentUserId/patients/${patientInfo.deviceId}',
+      );
+
+      // التحقق من وجود البيانات قبل التحديث
+      final existingSnapshot = await patientRef.get();
+
       final updatedPatientInfo = patientInfo.copyWith(
         updatedAt: DateTime.now(),
       );
-      await savePatientInfo(updatedPatientInfo);
+
+      if (!existingSnapshot.exists) {
+        // إذا لم تكن البيانات موجودة، احفظها بدلاً من التحديث
+        await savePatientInfo(updatedPatientInfo);
+        return;
+      }
+
+      // استخدام update بدلاً من set للحفاظ على البيانات الأخرى
+      await patientRef.update(updatedPatientInfo.toJson());
+
+      // التحقق من نجاح التحديث
+      final verifySnapshot = await patientRef.get();
+      if (verifySnapshot.exists) {
+        print(
+          'Patient info successfully updated in Firebase: ${patientInfo.deviceId}',
+        );
+      } else {
+        throw Exception(
+          'Update operation failed - data not found after update',
+        );
+      }
     } catch (e) {
       throw Exception('Failed to update patient info in Firebase: $e');
     }
@@ -69,8 +96,23 @@ class FirebasePatientInfoService {
       final patientRef = _database.ref(
         'users/$currentUserId/patients/$deviceId',
       );
+
+      // التحقق من وجود البيانات قبل الحذف
+      final snapshot = await patientRef.get();
+      if (!snapshot.exists) {
+        print('Patient info already deleted or does not exist: $deviceId');
+        return;
+      }
+
       await patientRef.remove();
-      print('Patient info deleted from Firebase: $deviceId');
+
+      // التحقق من نجاح الحذف
+      final verifySnapshot = await patientRef.get();
+      if (!verifySnapshot.exists) {
+        print('Patient info successfully deleted from Firebase: $deviceId');
+      } else {
+        throw Exception('Delete operation failed - data still exists');
+      }
     } catch (e) {
       throw Exception('Failed to delete patient info from Firebase: $e');
     }

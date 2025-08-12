@@ -13,6 +13,18 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    
+    // Add this to handle legacy plugins that don't specify namespace
+    androidComponents {
+        onVariants { variant ->
+            variant.packaging.resources.excludes.addAll(
+                listOf(
+                    "/META-INF/{AL2.0,LGPL2.1}",
+                    "/META-INF/versions/9/previous-compilation-data.bin"
+                )
+            )
+        }
+    }
 
     kotlinOptions {
         jvmTarget = "17"

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../../core/shared/theme/theme.dart';
 
@@ -13,13 +13,12 @@ class QRScannerDialog extends StatefulWidget {
 }
 
 class _QRScannerDialogState extends State<QRScannerDialog> {
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  QRViewController? controller;
+  MobileScannerController controller = MobileScannerController();
   bool isScanning = true;
 
   @override
   void dispose() {
-    controller?.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -97,16 +96,9 @@ class _QRScannerDialogState extends State<QRScannerDialog> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
-                  child: QRView(
-                    key: qrKey,
-                    onQRViewCreated: _onQRViewCreated,
-                    overlay: QrScannerOverlayShape(
-                      borderColor: AppColors.primaryColor,
-                      borderRadius: 10,
-                      borderLength: 30,
-                      borderWidth: 10,
-                      cutOutSize: 250,
-                    ),
+                  child: MobileScanner(
+                    controller: controller,
+                    onDetect: _onDetect,
                   ),
                 ),
               ),
@@ -150,14 +142,15 @@ class _QRScannerDialogState extends State<QRScannerDialog> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
-      if (isScanning && scanData.code != null) {
+  void _onDetect(BarcodeCapture capture) {
+    final List<Barcode> barcodes = capture.barcodes;
+    if (isScanning && barcodes.isNotEmpty) {
+      final barcode = barcodes.first;
+      if (barcode.rawValue != null) {
         isScanning = false;
-        widget.onCodeScanned(scanData.code!);
+        widget.onCodeScanned(barcode.rawValue!);
         Navigator.of(context).pop();
       }
-    });
+    }
   }
 }

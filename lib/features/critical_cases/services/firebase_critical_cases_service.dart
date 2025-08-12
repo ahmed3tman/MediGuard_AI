@@ -58,7 +58,32 @@ class FirebaseCriticalCasesService {
     if (currentUserId == null) throw Exception('User not authenticated');
 
     try {
-      await saveCriticalCase(criticalCase);
+      final criticalCaseRef = _database.ref(
+        'users/$currentUserId/criticalCases/${criticalCase.deviceId}',
+      );
+
+      // التحقق من وجود البيانات قبل التحديث
+      final existingSnapshot = await criticalCaseRef.get();
+      if (!existingSnapshot.exists) {
+        // إذا لم تكن البيانات موجودة، احفظها بدلاً من التحديث
+        await saveCriticalCase(criticalCase);
+        return;
+      }
+
+      // استخدام update بدلاً من set للحفاظ على البيانات الأخرى
+      await criticalCaseRef.update(criticalCase.toJson());
+
+      // التحقق من نجاح التحديث
+      final verifySnapshot = await criticalCaseRef.get();
+      if (verifySnapshot.exists) {
+        print(
+          'Critical case successfully updated in Firebase: ${criticalCase.deviceId}',
+        );
+      } else {
+        throw Exception(
+          'Update operation failed - data not found after update',
+        );
+      }
     } catch (e) {
       throw Exception('Failed to update critical case in Firebase: $e');
     }
@@ -72,8 +97,23 @@ class FirebaseCriticalCasesService {
       final criticalCaseRef = _database.ref(
         'users/$currentUserId/criticalCases/$deviceId',
       );
+
+      // التحقق من وجود البيانات قبل الحذف
+      final snapshot = await criticalCaseRef.get();
+      if (!snapshot.exists) {
+        print('Critical case already deleted or does not exist: $deviceId');
+        return;
+      }
+
       await criticalCaseRef.remove();
-      print('Critical case deleted from Firebase: $deviceId');
+
+      // التحقق من نجاح الحذف
+      final verifySnapshot = await criticalCaseRef.get();
+      if (!verifySnapshot.exists) {
+        print('Critical case successfully deleted from Firebase: $deviceId');
+      } else {
+        throw Exception('Delete operation failed - data still exists');
+      }
     } catch (e) {
       throw Exception('Failed to delete critical case from Firebase: $e');
     }

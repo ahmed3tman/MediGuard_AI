@@ -30,6 +30,24 @@ allprojects {
         }
         mavenCentral()
     }
+    
+    // Add this to handle plugins that don't specify namespace
+    afterEvaluate {
+        if (project.hasProperty("android")) {
+            val android = project.extensions.getByName("android") as com.android.build.gradle.BaseExtension
+            if (android.namespace == null) {
+                val manifestFile = file("src/main/AndroidManifest.xml")
+                if (manifestFile.exists()) {
+                    val manifest = manifestFile.readText()
+                    val packageRegex = """package\s*=\s*["']([^"']+)["']""".toRegex()
+                    val packageMatch = packageRegex.find(manifest)
+                    if (packageMatch != null) {
+                        android.namespace = packageMatch.groupValues[1]
+                    }
+                }
+            }
+        }
+    }
 }
 
 val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
