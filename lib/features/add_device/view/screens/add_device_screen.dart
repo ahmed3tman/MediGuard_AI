@@ -311,6 +311,19 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                                 style: const TextStyle(
                                   fontFamily: 'NeoSansArabic',
                                 ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return AppLocalizations.of(
+                                      context,
+                                    ).pleaseEnterPatientName;
+                                  }
+                                  if (value.trim().length < 2) {
+                                    return AppLocalizations.of(
+                                      context,
+                                    ).patientNameMinLength;
+                                  }
+                                  return null;
+                                },
                               ),
                               const SizedBox(height: 16),
 

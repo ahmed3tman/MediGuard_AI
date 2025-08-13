@@ -632,6 +632,18 @@ abstract class AppLocalizations {
   /// **'Error adding device'**
   String get errorAddingDevice;
 
+  /// Validation message for empty patient name
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter patient name'**
+  String get pleaseEnterPatientName;
+
+  /// Validation message for patient name length
+  ///
+  /// In en, this message translates to:
+  /// **'Patient name must be at least 2 characters long'**
+  String get patientNameMinLength;
+
   /// Please enter device name validation
   ///
   /// In en, this message translates to:

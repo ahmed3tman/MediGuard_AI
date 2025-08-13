@@ -279,6 +279,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorAddingDevice => 'خطأ في إضافة الجهاز';
 
   @override
+  String get pleaseEnterPatientName => 'يرجى إدخال اسم المريض';
+
+  @override
+  String get patientNameMinLength => 'اسم المريض يجب أن يكون حرفين على الأقل';
+
+  @override
   String get pleaseEnterDeviceName => 'يرجى إدخال اسم الجهاز';
 
   @override
@@ -288,7 +294,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deviceIdMinLength => 'معرف الجهاز يجب أن يكون 3 أحرف على الأقل';
 
   @override
-  String get deviceNameMinLength => 'اسم الجهاز يجب أن يكون حرفين على الأقل';
+  String get deviceNameMinLength => 'Device name must be at least 2 characters';
 
   @override
   String get deviceInfoMessage =>

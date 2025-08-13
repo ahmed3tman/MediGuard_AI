@@ -368,6 +368,14 @@
   "@errorAddingDevice": {
     "description": "Error adding device message"
   },
+  "pleaseEnterPatientName": "Please enter patient name",
+  "@pleaseEnterPatientName": {
+    "description": "Validation message for empty patient name"
+  },
+  "patientNameMinLength": "Patient name must be at least 2 characters long",
+  "@patientNameMinLength": {
+    "description": "Validation message for patient name length"
+  },
   "pleaseEnterDeviceName": "Please enter device name",
   "@pleaseEnterDeviceName": {
     "description": "Please enter device name validation"

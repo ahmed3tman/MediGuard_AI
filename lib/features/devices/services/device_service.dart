@@ -146,10 +146,9 @@ class DeviceService {
   static Future<void> deleteDevice(String deviceId) async {
     if (currentUserId == null) throw Exception('User not authenticated');
 
-    final deviceRef = _database.ref(
-      'users/$currentUserId/patients/$deviceId/device',
-    );
-    await deviceRef.remove();
+    // This will delete the entire patient entry, including the device and any other patient data.
+    final patientRef = _database.ref('users/$currentUserId/patients/$deviceId');
+    await patientRef.remove();
   }
 
   // Simulate real-time data updates (for testing purposes)

@@ -279,6 +279,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorAddingDevice => 'Error adding device';
 
   @override
+  String get pleaseEnterPatientName => 'Please enter patient name';
+
+  @override
+  String get patientNameMinLength =>
+      'Patient name must be at least 2 characters long';
+
+  @override
   String get pleaseEnterDeviceName => 'Please enter device name';
 
   @override
