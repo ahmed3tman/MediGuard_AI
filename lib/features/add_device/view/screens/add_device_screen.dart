@@ -7,7 +7,7 @@ import '../../../../l10n/generated/app_localizations.dart';
 import '../../../patient_info/cubit/patient_info_cubit.dart';
 import '../../../patient_info/cubit/patient_info_state.dart';
 import '../../../patient_info/model/patient_info_model.dart';
-import '../../../devices/model/data_model.dart';
+import '../../../devices/services/device_service.dart';
 import '../widgets/chronic_diseases_selector.dart';
 import '../widgets/qr_scanner_dialog.dart';
 import '../widgets/manual_device_id_dialog.dart';
@@ -655,20 +655,6 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
     final phoneNumber = _phoneController.text.trim();
     final notes = _notesController.text.trim();
 
-    final device = Device(
-      deviceId: patientId,
-      name: patientName.isNotEmpty ? patientName : 'جهاز $patientId',
-      readings: {
-        'temperature': 0.0,
-        'heartRate': 0.0,
-        'respiratoryRate': 0.0,
-        'spo2': 0.0,
-        'bloodPressure': {'systolic': 0, 'diastolic': 0},
-        'ecg': 0.0,
-      },
-      lastUpdated: null,
-    );
-
     final now = DateTime.now();
     final patientInfo = PatientInfo(
       deviceId: patientId,
@@ -683,18 +669,32 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
       notes: notes.isEmpty ? null : notes,
       createdAt: now,
       updatedAt: now,
-      device: device,
+      device: null, // no embedded device; readings separated globally
     );
-
-    context.read<PatientInfoCubit>().savePatientInfo(
-      deviceId: patientInfo.deviceId,
-      patientName: patientInfo.patientName,
-      age: patientInfo.age,
-      gender: patientInfo.gender,
-      bloodType: patientInfo.bloodType,
-      phoneNumber: patientInfo.phoneNumber,
-      chronicDiseases: patientInfo.chronicDiseases,
-      notes: patientInfo.notes,
-    );
+    () async {
+      try {
+        // Link device first (will validate existence in /devices)
+        await DeviceService.addDevice(
+          patientId,
+          patientInfo.patientName ?? 'Device $patientId',
+        );
+        // Save patient metadata
+        // Use cubit flow for consistency
+        // ignore: use_build_context_synchronously
+        context.read<PatientInfoCubit>().savePatientInfo(
+          deviceId: patientInfo.deviceId,
+          patientName: patientInfo.patientName,
+          age: patientInfo.age,
+          gender: patientInfo.gender,
+          bloodType: patientInfo.bloodType,
+          phoneNumber: patientInfo.phoneNumber,
+          chronicDiseases: patientInfo.chronicDiseases,
+          notes: patientInfo.notes,
+        );
+      } catch (e) {
+        // ignore: use_build_context_synchronously
+        FloatingSnackBar.showError(context, message: e.toString());
+      }
+    }();
   }
 }

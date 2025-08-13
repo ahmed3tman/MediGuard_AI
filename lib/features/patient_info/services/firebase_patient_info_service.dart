@@ -14,16 +14,20 @@ class FirebasePatientInfoService {
   /// Save patient information to Firebase
   static Future<void> savePatientInfo(PatientInfo patientInfo) async {
     if (currentUserId == null) throw Exception('User not authenticated');
+    if (patientInfo.deviceId.trim().isEmpty) {
+      throw Exception('Invalid patient/device ID');
+    }
+    final normalizedId = patientInfo.deviceId.trim();
 
     try {
       final rootRef = _database.ref(
-        'users/$currentUserId/patients/${patientInfo.deviceId}',
+        'users/$currentUserId/patients/$normalizedId',
       );
-      await rootRef.set({
-        'info': patientInfo.toProfileJson(),
-        if (patientInfo.device != null) 'device': patientInfo.device!.toJson(),
-      });
-      print('Patient info saved to Firebase: ${patientInfo.deviceId}');
+      // New structure: store only patient metadata (no nested device readings)
+      await rootRef.set(
+        patientInfo.copyWith(deviceId: normalizedId).toProfileJson(),
+      );
+      print('Patient info saved to Firebase: $normalizedId');
     } catch (e) {
       throw Exception('Failed to save patient info to Firebase: $e');
     }
@@ -51,10 +55,14 @@ class FirebasePatientInfoService {
   /// Update patient information in Firebase
   static Future<void> updatePatientInfo(PatientInfo patientInfo) async {
     if (currentUserId == null) throw Exception('User not authenticated');
+    if (patientInfo.deviceId.trim().isEmpty) {
+      throw Exception('Invalid patient/device ID');
+    }
+    final normalizedId = patientInfo.deviceId.trim();
 
     try {
       final rootRef = _database.ref(
-        'users/$currentUserId/patients/${patientInfo.deviceId}',
+        'users/$currentUserId/patients/$normalizedId',
       );
 
       // التحقق من وجود البيانات قبل التحديث
@@ -72,19 +80,12 @@ class FirebasePatientInfoService {
 
       // استخدام update بدلاً من set للحفاظ على البيانات الأخرى
       // Update only info; device updated if provided
-      await rootRef.child('info').update(updatedPatientInfo.toProfileJson());
-      if (updatedPatientInfo.device != null) {
-        await rootRef
-            .child('device')
-            .update(updatedPatientInfo.device!.toJson());
-      }
+      await rootRef.update(updatedPatientInfo.toProfileJson());
 
       // التحقق من نجاح التحديث
       final verifySnapshot = await rootRef.get();
       if (verifySnapshot.exists) {
-        print(
-          'Patient info successfully updated in Firebase: ${patientInfo.deviceId}',
-        );
+        print('Patient info successfully updated in Firebase: $normalizedId');
       } else {
         throw Exception(
           'Update operation failed - data not found after update',
@@ -98,6 +99,8 @@ class FirebasePatientInfoService {
   /// Delete patient information from Firebase
   static Future<void> deletePatientInfo(String deviceId) async {
     if (currentUserId == null) throw Exception('User not authenticated');
+    if (deviceId.trim().isEmpty) return; // nothing to delete
+    deviceId = deviceId.trim();
 
     try {
       final rootRef = _database.ref('users/$currentUserId/patients/$deviceId');
@@ -133,10 +136,34 @@ class FirebasePatientInfoService {
 
       if (snapshot.exists && snapshot.value != null) {
         final data = Map<dynamic, dynamic>.from(snapshot.value as Map);
-        return data.values.map((patientData) {
-          final mapData = Map<String, dynamic>.from(patientData as Map);
-          return PatientInfo.fromJson(mapData);
-        }).toList();
+        final patients = <PatientInfo>[];
+        data.forEach((key, value) {
+          final k = key.toString();
+          // Basic invalid key filter similar to DeviceService
+          const invalidKeys = {
+            'age',
+            'gender',
+            'id',
+            'deviceId',
+            'patientName',
+            'bloodType',
+            'phoneNumber',
+            'chronicDiseases',
+            'notes',
+            'createdAt',
+            'updatedAt',
+          };
+          if (k.trim().isEmpty || invalidKeys.contains(k)) return;
+          if (value is Map) {
+            try {
+              final mapData = Map<String, dynamic>.from(value);
+              final pi = PatientInfo.fromJson(mapData);
+              if (pi.deviceId.trim().isEmpty) return; // skip malformed
+              patients.add(pi);
+            } catch (_) {}
+          }
+        });
+        return patients;
       }
       return [];
     } catch (e) {
@@ -165,7 +192,6 @@ class FirebasePatientInfoService {
       (event) {
         final data = event.snapshot.value;
         if (data == null) return null;
-
         try {
           return PatientInfo.fromJson(Map<String, dynamic>.from(data as Map));
         } catch (e) {

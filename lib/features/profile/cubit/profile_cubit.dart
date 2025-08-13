@@ -42,7 +42,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     final user = AuthService.currentUser;
     if (user != null) {
       final devicesRef = FirebaseDatabase.instance.ref(
-        'users/${user.uid}/devices',
+        'users/${user.uid}/patients', // updated structure
       );
 
       _devicesSubscription = devicesRef.onValue.listen((event) {

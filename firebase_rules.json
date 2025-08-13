@@ -4,30 +4,31 @@
       "$userId": {
         ".read": "auth != null && auth.uid == $userId",
         ".write": "auth != null && auth.uid == $userId",
-
-        "devices": {
-          "$deviceId": {
-            ".validate": "newData.hasChildren(['deviceId', 'name', 'readings'])"
-          }
-        },
-
         "patients": {
           "$deviceId": {
-            ".validate": "newData.hasChildren(['deviceId', 'age', 'gender'])"
+            ".validate": "newData.hasChildren(['deviceId']) && newData.child('deviceId').val() == $deviceId"
           }
         },
-
         "criticalCases": {
           "$deviceId": {
-            ".validate": "newData.hasChildren(['deviceId', 'name', 'temperature', 'heartRate', 'spo2', 'bloodPressure'])"
+            ".validate": "newData.hasChildren(['deviceId']) && newData.child('deviceId').val() == $deviceId"
           }
         }
       }
     },
-
-    "device_readings": {
-      ".read": true,
-      ".write": true
+    "devices": {
+      "$deviceId": {
+        "readings": {
+          ".read": "auth != null && root.child('users').child(auth.uid).child('patients').child($deviceId).exists()",
+          ".write": "auth != null && root.child('deviceOwners').child($deviceId).val() == auth.uid",
+          "$other": {
+            ".validate": "newData.isNumber() || newData.hasChildren()"
+          }
+        }
+      }
+    },
+    "deviceOwners": {
+      "$deviceId": { ".read": "auth != null", ".write": "auth != null" }
     }
   }
 }

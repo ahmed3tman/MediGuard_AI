@@ -24,7 +24,7 @@ class FirebasePatientInfoServiceEnhanced {
           'users/$currentUserId/patients/${patientInfo.deviceId}',
         );
 
-        final dataToSave = patientInfo.toJson();
+        final dataToSave = patientInfo.toProfileJson();
         dataToSave['lastUpdated'] = ServerValue.timestamp;
 
         await patientRef.set(dataToSave);
@@ -101,7 +101,7 @@ class FirebasePatientInfoServiceEnhanced {
           updatedAt: DateTime.now(),
         );
 
-        final dataToUpdate = updatedPatientInfo.toJson();
+        final dataToUpdate = updatedPatientInfo.toProfileJson();
         dataToUpdate['lastUpdated'] = ServerValue.timestamp;
 
         await patientRef.update(dataToUpdate);

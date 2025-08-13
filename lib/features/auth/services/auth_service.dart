@@ -176,10 +176,11 @@ class AuthService {
   // Get user devices count
   static Future<int> getUserDevicesCount(String uid) async {
     try {
+      // Updated path: devices are linked under patients
       final snapshot = await _database
           .child('users')
           .child(uid)
-          .child('devices')
+          .child('patients')
           .get();
       if (snapshot.exists && snapshot.value != null) {
         final data = snapshot.value;

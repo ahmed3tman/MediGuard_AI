@@ -1,39 +1,26 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../model/patient_info_model.dart';
 import 'firebase_patient_info_service.dart';
 import '../../devices/services/device_service.dart';
-import '../../devices/model/data_model.dart';
 
 class PatientInfoService {
-  static const String _keyPrefix = 'patient_info_';
+  // Legacy prefix (pre-namespacing)
+  static const String _legacyPrefix = 'patient_info_';
+  // New prefix includes user id to avoid cross-user contamination
+  static String _namespacedPrefix(String uid) => 'patient_info_${uid}_';
+  static String _currentUserId() =>
+      FirebaseAuth.instance.currentUser?.uid ?? 'no_user';
+  static String _localKey(String deviceId) =>
+      _namespacedPrefix(_currentUserId()) + deviceId;
 
   /// Save patient information to both Firebase and local storage
   /// Firebase is primary, local is backup for offline use
   static Future<void> savePatientInfo(PatientInfo patientInfo) async {
     try {
-      // Save to Firebase first (primary storage)
-      // Ensure patient has nested device if not provided (initial structure)
-      final enriched = patientInfo.device != null
-          ? patientInfo
-          : patientInfo.copyWith(
-              device: Device(
-                deviceId: patientInfo.deviceId,
-                name:
-                    patientInfo.patientName ?? 'Device ${patientInfo.deviceId}',
-                readings: {
-                  'temperature': 0.0,
-                  'heartRate': 0.0,
-                  'respiratoryRate': 0.0,
-                  'spo2': 0.0,
-                  'bloodPressure': {'systolic': 0, 'diastolic': 0},
-                  'ecg': 0.0,
-                },
-                lastUpdated: null,
-              ),
-            );
-
-      await FirebasePatientInfoService.savePatientInfo(enriched);
+      // Store only patient metadata now (device readings separated globally)
+      await FirebasePatientInfoService.savePatientInfo(patientInfo);
 
       // Also save locally as backup for offline use
       await _saveToLocal(patientInfo);
@@ -98,35 +85,7 @@ class PatientInfoService {
       );
 
       // Update Firebase first
-      final enriched = updatedPatientInfo.device != null
-          ? updatedPatientInfo.copyWith(
-              device: updatedPatientInfo.device!.copyWith(
-                name:
-                    updatedPatientInfo.patientName ??
-                    updatedPatientInfo.device!.name,
-              ),
-            )
-          : updatedPatientInfo.copyWith(
-              device: Device(
-                deviceId: updatedPatientInfo.deviceId,
-                name:
-                    updatedPatientInfo.patientName ??
-                    'Device ${updatedPatientInfo.deviceId}',
-                readings:
-                    updatedPatientInfo.device?.readings ??
-                    {
-                      'temperature': 0.0,
-                      'heartRate': 0.0,
-                      'respiratoryRate': 0.0,
-                      'spo2': 0.0,
-                      'bloodPressure': {'systolic': 0, 'diastolic': 0},
-                      'ecg': 0.0,
-                    },
-                lastUpdated: null,
-              ),
-            );
-
-      await FirebasePatientInfoService.updatePatientInfo(enriched);
+      await FirebasePatientInfoService.updatePatientInfo(updatedPatientInfo);
 
       // Also update locally
       await _saveToLocal(updatedPatientInfo);
@@ -215,9 +174,20 @@ class PatientInfoService {
   /// Sync local data to Firebase (called when connection restored)
   static Future<void> syncToFirebase() async {
     try {
+      // Safety: fetch remote first; if remote already has patients, treat remote as source of truth
+      final remotePatients =
+          await FirebasePatientInfoService.getAllPatientInfo();
+      final hasRemote = remotePatients.isNotEmpty;
+
       final localPatients = await _getAllFromLocal();
       for (final patient in localPatients) {
         try {
+          if (patient.deviceId.trim().isEmpty) continue;
+          // If remote has data, only push if this specific patient missing remotely
+          final alreadyRemote = remotePatients.any(
+            (rp) => rp.deviceId == patient.deviceId,
+          );
+          if (hasRemote && alreadyRemote) continue;
           await FirebasePatientInfoService.savePatientInfo(patient);
         } catch (e) {
           print('Failed to sync patient ${patient.deviceId}: $e');
@@ -228,11 +198,41 @@ class PatientInfoService {
     }
   }
 
+  /// One-time migration to new namespaced keys; call after login
+  static Future<void> migrateLocalKeys() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final uid = _currentUserId();
+      if (uid == 'no_user') return;
+      final newPrefix = _namespacedPrefix(uid);
+      final keys = prefs.getKeys();
+      for (final key in keys) {
+        if (key.startsWith(_legacyPrefix) && !key.startsWith(newPrefix)) {
+          final jsonString = prefs.getString(key);
+          if (jsonString == null) continue;
+          // Extract deviceId from legacy key: patient_info_<deviceId>
+          final deviceId = key.substring(_legacyPrefix.length);
+          if (deviceId.trim().isEmpty) continue;
+          final newKey = newPrefix + deviceId;
+          // If new key already exists, drop legacy
+          if (prefs.containsKey(newKey)) {
+            await prefs.remove(key);
+            continue;
+          }
+          await prefs.setString(newKey, jsonString);
+          await prefs.remove(key);
+        }
+      }
+    } catch (e) {
+      print('Local patient info migration failed: $e');
+    }
+  }
+
   // Private methods for local storage operations
   static Future<void> _saveToLocal(PatientInfo patientInfo) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final key = _keyPrefix + patientInfo.deviceId;
+      final key = _localKey(patientInfo.deviceId);
       final jsonString = jsonEncode(patientInfo.toJson());
       await prefs.setString(key, jsonString);
     } catch (e) {
@@ -243,7 +243,7 @@ class PatientInfoService {
   static Future<PatientInfo?> _getFromLocal(String deviceId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final key = _keyPrefix + deviceId;
+      final key = _localKey(deviceId);
       final jsonString = prefs.getString(key);
 
       if (jsonString == null) return null;
@@ -259,7 +259,7 @@ class PatientInfoService {
   static Future<void> _deleteFromLocal(String deviceId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final key = _keyPrefix + deviceId;
+      final key = _localKey(deviceId);
       await prefs.remove(key);
     } catch (e) {
       print('Failed to delete patient info locally: $e');
@@ -269,7 +269,9 @@ class PatientInfoService {
   static Future<List<PatientInfo>> _getAllFromLocal() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final keys = prefs.getKeys().where((key) => key.startsWith(_keyPrefix));
+      final uid = _currentUserId();
+      final prefix = _namespacedPrefix(uid);
+      final keys = prefs.getKeys().where((key) => key.startsWith(prefix));
 
       final List<PatientInfo> patientInfoList = [];
       for (final key in keys) {

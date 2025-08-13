@@ -68,7 +68,7 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
                 _buildRealtimePatientInfoSection(),
                 // Vital Signs Grid
                 _buildVitalSignsGrid(vitalSigns, l10n),
-                const SizedBox(height: 20),
+                //  const SizedBox(height: 4),
 
                 // Blood Pressure Section (moved before ECG)
                 _buildBloodPressureSection(vitalSigns, l10n),
@@ -320,57 +320,64 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
         const SizedBox(height: 16),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.indigo.withOpacity(0.2),
-              width: 1.2,
-            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.indigo.withOpacity(0.2), width: 1),
             boxShadow: [
               BoxShadow(
-                color: Colors.indigo.withOpacity(0.08),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
+                color: Colors.indigo.withOpacity(0.06),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
               ),
             ],
           ),
-          child: Column(
+          child: Row(
             children: [
               Icon(
                 Icons.monitor_heart,
-                size: 40,
+                size: 28,
                 color: Colors.indigo.shade300,
               ),
-              const SizedBox(height: 10),
-              Text(
-                _getBloodPressureDisplay(vitalSigns.bloodPressure, l10n),
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: _isBloodPressureConnected(vitalSigns.bloodPressure)
-                      ? (vitalSigns.isBloodPressureNormal
-                            ? Colors.green[700]
-                            : Colors.red[700])
-                      : Colors.grey[600],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _getBloodPressureDisplay(vitalSigns.bloodPressure, l10n),
+                      style: TextStyle(
+                        fontSize:
+                            _isBloodPressureConnected(vitalSigns.bloodPressure)
+                            ? 20
+                            : 14,
+                        fontWeight: FontWeight.bold,
+                        color:
+                            _isBloodPressureConnected(vitalSigns.bloodPressure)
+                            ? (vitalSigns.isBloodPressureNormal
+                                  ? Colors.green[700]
+                                  : Colors.red[700])
+                            : Colors.grey[600],
+                      ),
+                    ),
+                    if (_isBloodPressureConnected(vitalSigns.bloodPressure))
+                      Text(
+                        'mmHg',
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                      ),
+                  ],
                 ),
               ),
-              if (_isBloodPressureConnected(vitalSigns.bloodPressure))
-                Text(
-                  'mmHg',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-              const SizedBox(height: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: _isBloodPressureConnected(vitalSigns.bloodPressure)
                       ? (vitalSigns.isBloodPressureNormal
                             ? Colors.green[100]
                             : Colors.red[100])
                       : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   _isBloodPressureConnected(vitalSigns.bloodPressure)
@@ -379,7 +386,10 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
                             : l10n.abnormal)
                       : l10n.deviceNotConnected,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize:
+                        _isBloodPressureConnected(vitalSigns.bloodPressure)
+                        ? 10
+                        : 8,
                     fontWeight: FontWeight.w600,
                     color: _isBloodPressureConnected(vitalSigns.bloodPressure)
                         ? (vitalSigns.isBloodPressureNormal

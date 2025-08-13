@@ -11,154 +11,123 @@ class PatientDetailService {
   // Get current user ID
   static String? get currentUserId => _auth.currentUser?.uid;
 
-  /// Listen to real-time vital signs for a specific patient/device
-  /// Firebase path (after refactor): /users/{userId}/patients/{patientId}/device
+  /// Merged stream: patient meta (/users) + device readings (/devices)
+  /// Keeps same return type & behavior for UI.
   static Stream<PatientVitalSigns?> getPatientVitalSignsStream(
     String deviceId,
   ) {
-    print(
-      'Getting vital signs stream for device: $deviceId, user: $currentUserId',
-    );
-    if (currentUserId == null) {
-      print('No current user ID available');
-      return Stream.value(null);
+    if (currentUserId == null) return Stream.value(null);
+
+    final patientRef = _database.ref('users/$currentUserId/patients/$deviceId');
+    final readingsRef = _database.ref('devices/$deviceId/readings');
+    final controller = StreamController<PatientVitalSigns?>.broadcast();
+
+    Map<String, dynamic>? patientMeta;
+    Map<String, dynamic>? readings;
+    DateTime? lastUpdated;
+
+    void emit() {
+      if (patientMeta == null && readings == null) {
+        controller.add(null);
+        return;
+      }
+
+      final r = readings ?? {};
+      final p = patientMeta ?? {};
+
+      // If we have patient meta but no readings yet, don't emit an empty object
+      if (p.isNotEmpty && r.isEmpty) {
+        // You might want to emit something that indicates "waiting for readings"
+        // For now, we'll wait for readings to come in.
+        return;
+      }
+
+      final name = p['patientName'] ?? p['name'] ?? deviceId;
+      final lu = lastUpdated;
+      final ecgData = (r['ecgData'] is List)
+          ? (r['ecgData'] as List)
+                .where((e) => e != null)
+                .map((e) => (e as num).toDouble())
+                .toList()
+          : <double>[];
+      final vs = PatientVitalSigns(
+        deviceId: deviceId,
+        patientName: name,
+        temperature: (r['temperature'] ?? 0.0).toDouble(),
+        heartRate: (r['heartRate'] ?? 0.0).toDouble(),
+        respiratoryRate: (r['respiratoryRate'] ?? 0.0).toDouble(),
+        bloodPressure: {
+          'systolic': (r['bloodPressure']?['systolic'] ?? 0).toInt(),
+          'diastolic': (r['bloodPressure']?['diastolic'] ?? 0).toInt(),
+        },
+        spo2: (r['spo2'] ?? 0.0).toDouble(),
+        timestamp: lu ?? DateTime.now(),
+        ecgReadings: ecgData
+            .map((v) => EcgReading(value: v, timestamp: DateTime.now()))
+            .toList(),
+        isDeviceConnected:
+            lu != null && DateTime.now().difference(lu).inMinutes < 5,
+        lastDataReceived: lu,
+      );
+      controller.add(vs);
     }
 
-    return _database.ref('users/$currentUserId/patients/$deviceId/device').onValue.map((
-      event,
-    ) {
-      final data = event.snapshot.value;
-      print('Vital signs data from Firebase: $data');
-      if (data == null) {
-        print(
-          'No device data found at users/$currentUserId/patients/$deviceId/device',
-        );
-        return null;
+    final sub1 = patientRef.onValue.listen((e) {
+      final v = e.snapshot.value;
+      if (v is Map) {
+        patientMeta = Map<String, dynamic>.from(v);
+      } else {
+        patientMeta = {};
       }
-
-      final deviceData = Map<String, dynamic>.from(data as Map);
-      print('Device data parsed: $deviceData');
-
-      // Check device connection status
-      final lastUpdated = deviceData['lastUpdated'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(deviceData['lastUpdated'])
-          : null;
-
-      final now = DateTime.now();
-      bool isConnected = false;
-
-      if (lastUpdated != null) {
-        final difference = now.difference(lastUpdated);
-        isConnected =
-            difference.inMinutes <
-            5; // Connected if data is less than 5 minutes old
-      }
-
-      // Only use real data from Firebase, no simulation
-      // Read ECG waveform data from readings if available
-      final List<double> ecgData =
-          (deviceData['readings']?['ecgData'] as List?)
-              ?.where((e) => e != null)
-              .map((e) => (e as num).toDouble())
-              .toList() ??
-          <double>[];
-      final vitalSigns = PatientVitalSigns(
-        deviceId: deviceData['deviceId'] ?? deviceId,
-        patientName: deviceData['name'] ?? 'Unknown Patient',
-        temperature: (deviceData['readings']?['temperature'] ?? 0.0).toDouble(),
-        heartRate: (deviceData['readings']?['heartRate'] ?? 0.0).toDouble(),
-        respiratoryRate: (deviceData['readings']?['respiratoryRate'] ?? 0.0)
-            .toDouble(),
-        bloodPressure: {
-          'systolic':
-              (deviceData['readings']?['bloodPressure']?['systolic'] ?? 0)
-                  .toInt(),
-          'diastolic':
-              (deviceData['readings']?['bloodPressure']?['diastolic'] ?? 0)
-                  .toInt(),
-        },
-        spo2: (deviceData['readings']?['spo2'] ?? 0.0).toDouble(),
-        timestamp: lastUpdated ?? DateTime.now(),
-        ecgReadings: ecgData.isNotEmpty
-            ? ecgData
-                  .map((v) => EcgReading(value: v, timestamp: DateTime.now()))
-                  .toList()
-            : [],
-        isDeviceConnected: isConnected,
-        lastDataReceived: lastUpdated,
-      );
-
-      print(
-        'Created vital signs: HR=${vitalSigns.heartRate}, Temp=${vitalSigns.temperature}, Connected=${vitalSigns.isDeviceConnected}',
-      );
-      return vitalSigns;
+      emit();
     });
+    final sub2 = readingsRef.onValue.listen((e) {
+      final v = e.snapshot.value;
+      if (v is Map) {
+        readings = Map<String, dynamic>.from(v);
+        final lu = readings?['lastUpdated'];
+        if (lu is int) {
+          lastUpdated = DateTime.fromMillisecondsSinceEpoch(lu);
+        }
+      } else {
+        readings = {};
+      }
+      emit();
+    });
+
+    controller.onCancel = () async {
+      await sub1.cancel();
+      await sub2.cancel();
+    };
+    return controller.stream;
   }
 
-  /// Listen to real-time ECG readings for chart display
-  /// Firebase path (after refactor): /users/{userId}/patients/{patientId}/device/readings (using ECG value)
+  /// ECG stream now reads from /devices/{id}/readings (ecg scalar or waveform)
   static Stream<List<EcgReading>> getEcgReadingsStream(String deviceId) {
-    print('Getting ECG stream for device: $deviceId');
-    if (currentUserId == null) {
-      print('No current user ID, returning empty stream');
-      return Stream.value([]);
-    }
-
-    // Listen to user device readings and convert ECG values to chart data
-    return _database
-        .ref('users/$currentUserId/patients/$deviceId/device/readings')
-        .onValue
-        .asyncMap((event) async {
-          final data = event.snapshot.value;
-          print('ECG Firebase data from users path: $data');
-          if (data == null) {
-            print('No ECG data found in users path');
-            return <EcgReading>[];
-          }
-
-          final Map<String, dynamic> deviceData = Map<String, dynamic>.from(
-            data as Map,
-          );
-          final ecgValue = (deviceData['ecg'] ?? 0.0).toDouble();
-          final timestamp =
-              DateTime.now().millisecondsSinceEpoch; // Use current time
-
-          print('ECG value from users path: $ecgValue, timestamp: $timestamp');
-
-          if (ecgValue > 0) {
-            // Normalize heart rate if it's too high (might be raw sensor data)
-            double normalizedHR = ecgValue;
-            if (ecgValue > 200) {
-              normalizedHR = (60 + (ecgValue % 40))
-                  .toDouble(); // Normalize to 60-100 range
-            }
-
-            // Generate sample ECG waveform data based on heart rate
-            final List<EcgReading> readings = [];
-            final baseTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-
-            // Create 20 sample points for ECG waveform simulation
-            for (int i = 0; i < 20; i++) {
-              final timeOffset = i * 50; // 50ms between each point
-              final waveformValue = _generateEcgWaveform(i, normalizedHR);
-
-              readings.add(
-                EcgReading(
-                  value: waveformValue,
-                  timestamp: baseTime.add(Duration(milliseconds: timeOffset)),
-                ),
-              );
-            }
-
-            print(
-              'Generated ${readings.length} ECG readings from HR: $ecgValue (normalized: $normalizedHR)',
-            );
-            return readings;
-          }
-
-          print('ECG value is 0 or negative, returning empty list');
-          return <EcgReading>[];
-        });
+    if (currentUserId == null) return Stream.value([]);
+    return _database.ref('devices/$deviceId/readings').onValue.asyncMap((
+      event,
+    ) async {
+      final data = event.snapshot.value;
+      if (data is! Map) return <EcgReading>[];
+      final map = Map<String, dynamic>.from(data);
+      final ecgValue = (map['ecg'] ?? map['heartRate'] ?? 0.0).toDouble();
+      if (ecgValue <= 0) return <EcgReading>[];
+      double normalizedHR = ecgValue;
+      if (ecgValue > 200) normalizedHR = (60 + (ecgValue % 40)).toDouble();
+      final List<EcgReading> readings = [];
+      final baseTime = DateTime.now();
+      for (int i = 0; i < 20; i++) {
+        final waveformValue = _generateEcgWaveform(i, normalizedHR);
+        readings.add(
+          EcgReading(
+            value: waveformValue,
+            timestamp: baseTime.add(Duration(milliseconds: i * 50)),
+          ),
+        );
+      }
+      return readings;
+    });
   }
 
   /// Generate ECG waveform pattern based on heart rate
