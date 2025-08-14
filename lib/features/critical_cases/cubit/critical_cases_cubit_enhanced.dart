@@ -6,7 +6,7 @@ import 'package:spider_doctor/features/critical_cases/services/firebase_critical
 import 'package:spider_doctor/features/critical_cases/cubit/critical_cases_state.dart';
 import 'package:spider_doctor/features/devices/model/data_model.dart';
 import 'package:spider_doctor/features/auth/services/auth_service.dart';
-import 'package:spider_doctor/features/patient_info/services/patient_info_service.dart';
+import 'package:spider_doctor/features/edit_patient_info/services/patient_info_service.dart';
 
 part 'critical_cases_cubit_enhanced_state.dart';
 

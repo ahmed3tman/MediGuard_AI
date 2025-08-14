@@ -23,6 +23,9 @@ class PatientInfo extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  /// True if gender was explicitly provided in source data (not a default)
+  final bool genderExplicit;
+
   /// Nested device (can be null for backward compatibility / before device creation)
   final Device? device;
 
@@ -38,6 +41,7 @@ class PatientInfo extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     this.device,
+    this.genderExplicit = false,
   });
 
   factory PatientInfo.fromJson(Map<String, dynamic> json) {
@@ -45,6 +49,33 @@ class PatientInfo extends Equatable {
     final base = json['info'] is Map
         ? Map<String, dynamic>.from(json['info'])
         : json; // توافق عكسي مع البنية القديمة
+
+    // Normalize gender from multiple possible representations (Arabic/English)
+    Gender _parseGender(dynamic value) {
+      final v = (value?.toString() ?? '').trim().toLowerCase();
+      if (v.isEmpty) return Gender.male; // keep existing default for compat
+      final malePatterns = ['male', 'm', 'man', 'ذكر', 'ولد', 'رجل'];
+      final femalePatterns = [
+        'female',
+        'f',
+        'woman',
+        'girl',
+        'أنثى',
+        'انثى',
+        'بنت',
+        'امرأة',
+        'سيدة',
+      ];
+      if (femalePatterns.any((p) => v == p || v.contains(p)))
+        return Gender.female;
+      if (malePatterns.any((p) => v == p || v.contains(p))) return Gender.male;
+      return Gender.male; // fallback for unknown
+    }
+
+    final bool hasGender =
+        base.containsKey('gender') &&
+        base['gender'] != null &&
+        base['gender'].toString().trim().isNotEmpty;
 
     return PatientInfo(
       deviceId:
@@ -55,10 +86,8 @@ class PatientInfo extends Equatable {
           '',
       patientName: base['patientName'] ?? base['name'],
       age: base['age'] ?? 0,
-      gender: Gender.values.firstWhere(
-        (g) => g.name == base['gender'],
-        orElse: () => Gender.male,
-      ),
+      gender: _parseGender(base['gender']),
+      genderExplicit: hasGender,
       bloodType: base['bloodType'],
       phoneNumber: base['phoneNumber'] ?? '',
       chronicDiseases: List<String>.from(base['chronicDiseases'] ?? []),
@@ -90,6 +119,8 @@ class PatientInfo extends Equatable {
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt.millisecondsSinceEpoch,
       if (device != null) 'device': device!.toJson(),
+      // Not stored as authoritative, but useful in local flows
+      'genderExplicit': genderExplicit,
     };
   }
 
@@ -107,6 +138,7 @@ class PatientInfo extends Equatable {
       'notes': notes,
       'createdAt': createdAt.millisecondsSinceEpoch,
       'updatedAt': updatedAt.millisecondsSinceEpoch,
+      'genderExplicit': genderExplicit,
     };
   }
 
@@ -115,6 +147,7 @@ class PatientInfo extends Equatable {
     String? patientName,
     int? age,
     Gender? gender,
+    bool? genderExplicit,
     String? bloodType,
     String? phoneNumber,
     List<String>? chronicDiseases,
@@ -128,6 +161,7 @@ class PatientInfo extends Equatable {
       patientName: patientName ?? this.patientName,
       age: age ?? this.age,
       gender: gender ?? this.gender,
+      genderExplicit: genderExplicit ?? this.genderExplicit,
       bloodType: bloodType ?? this.bloodType,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       chronicDiseases: chronicDiseases ?? this.chronicDiseases,
@@ -149,6 +183,7 @@ class PatientInfo extends Equatable {
     patientName,
     age,
     gender,
+    genderExplicit,
     bloodType,
     phoneNumber,
     chronicDiseases,

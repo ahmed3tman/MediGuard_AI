@@ -5,7 +5,7 @@ import 'package:spider_doctor/features/auth/services/auth_service.dart';
 import 'package:spider_doctor/features/critical_cases/model/critical_case_model.dart';
 import 'package:spider_doctor/features/critical_cases/services/firebase_critical_cases_service.dart';
 import 'package:spider_doctor/features/devices/model/data_model.dart';
-import 'package:spider_doctor/features/patient_info/services/patient_info_service.dart';
+import 'package:spider_doctor/features/edit_patient_info/services/patient_info_service.dart';
 import 'critical_cases_state.dart';
 
 class CriticalCasesCubit extends Cubit<CriticalCasesState> {

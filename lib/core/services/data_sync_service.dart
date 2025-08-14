@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../features/patient_info/services/patient_info_service.dart';
+import '../../features/edit_patient_info/services/patient_info_service.dart';
 import '../../features/critical_cases/cubit/critical_cases_cubit.dart';
 
 /// خدمة مزامنة شاملة للبيانات بين الأجهزة

@@ -6,10 +6,10 @@ import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 import '../../../patient_detail/cubit/patient_detail_cubit.dart';
 import '../../../patient_detail/cubit/patient_detail_state.dart';
 import '../../../patient_detail/model/patient_vital_signs.dart';
-import '../../../patient_info/cubit/patient_info_cubit.dart';
-import '../../../patient_info/services/firebase_patient_info_service.dart';
-import '../../../patient_info/view/screens/edit_patient_info_screen.dart';
-import '../../../patient_info/view/widgets/patient_info_card.dart';
+import '../../../edit_patient_info/cubit/patient_info_cubit.dart';
+import '../../../edit_patient_info/services/firebase_patient_info_service.dart';
+import '../../../edit_patient_info/view/screens/edit_patient_info_screen.dart';
+import '../../../edit_patient_info/view/widgets/patient_info_card.dart';
 
 /// Patient record screen showing real-time vital signs and ECG chart
 class PatientRecordScreen extends StatefulWidget {

@@ -5,9 +5,9 @@ import '../../../../core/shared/widgets/widgets.dart';
 import '../../../../core/shared/theme/theme.dart';
 import '../../../../core/shared/utils/localized_data.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../../patient_info/cubit/patient_info_cubit.dart';
-import '../../../patient_info/cubit/patient_info_state.dart';
-import '../../../patient_info/model/patient_info_model.dart';
+import '../../cubit/patient_info_cubit.dart';
+import '../../cubit/patient_info_state.dart';
+import '../../model/patient_info_model.dart';
 import '../../../add_device/view/widgets/chronic_diseases_selector.dart';
 
 class EditPatientInfoScreen extends StatefulWidget {

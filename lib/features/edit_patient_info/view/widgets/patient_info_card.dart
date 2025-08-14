@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/shared/theme/theme.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../../patient_info/model/patient_info_model.dart';
+import '../../model/patient_info_model.dart';
 
 class PatientInfoCard extends StatelessWidget {
   final PatientInfo patientInfo;

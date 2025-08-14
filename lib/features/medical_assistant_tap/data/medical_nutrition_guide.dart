@@ -1,3 +1,226 @@
+class MedicalNutritionGuide {
+  /// Build nutrition recommendations based on patient data and known conditions
+  static String recommend(Map<String, dynamic> patientData, bool isArabic) {
+    final double temperature =
+        (patientData['temperature'] as num?)?.toDouble() ?? 0.0;
+    final Map<String, dynamic> bp =
+        (patientData['bloodPressure'] as Map<String, dynamic>?) ?? const {};
+    final int systolic = (bp['systolic'] as num?)?.toInt() ?? 0;
+    final int diastolic = (bp['diastolic'] as num?)?.toInt() ?? 0;
+    final double spo2 = (patientData['spo2'] as num?)?.toDouble() ?? 0.0;
+    final List<dynamic> chronic =
+        (patientData['chronicDiseases'] as List?) ?? const [];
+    final String? notes = patientData['notes'] as String?;
+
+    final List<String> doList = [];
+    final List<String> avoidList = [];
+
+    // General healthy diet
+    if (isArabic) {
+      doList.addAll([
+        'خضروات وفواكه طازجة متنوعة',
+        'حبوب كاملة (شوفان، برغل، خبز أسمر)',
+        'بروتينات خفيفة (سمك، دجاج منزوع الجلد، بقوليات)',
+        'دهون صحية (زيت الزيتون، مكسرات غير مملحة)',
+        'ماء كافٍ على مدار اليوم',
+      ]);
+      avoidList.addAll([
+        'الأطعمة المصنعة وعالية الملح',
+        'السكريات المضافة والمشروبات الغازية',
+        'الدهون المتحولة والمقلية بكثرة',
+      ]);
+    } else {
+      doList.addAll([
+        'Varied fresh vegetables and fruits',
+        'Whole grains (oats, bulgur, whole wheat bread)',
+        'Lean proteins (fish, skinless chicken, legumes)',
+        'Healthy fats (olive oil, unsalted nuts)',
+        'Adequate water intake throughout the day',
+      ]);
+      avoidList.addAll([
+        'Processed and high-salt foods',
+        'Added sugars and soft drinks',
+        'Trans fats and heavily fried foods',
+      ]);
+    }
+
+    // Fever/temperature
+    if (temperature > 37.5) {
+      if (isArabic) {
+        doList.addAll([
+          'شوربات خفيفة ومشروبات دافئة',
+          'سوائل متكررة لتعويض الفقد',
+          'وجبات صغيرة سهلة الهضم',
+        ]);
+        avoidList.addAll(['أطعمة دهنية وثقيلة', 'أطعمة شديدة التوابل']);
+      } else {
+        doList.addAll([
+          'Light soups and warm beverages',
+          'Frequent fluids to compensate losses',
+          'Small, easily digestible meals',
+        ]);
+        avoidList.addAll(['Heavy fatty meals', 'Very spicy foods']);
+      }
+    }
+
+    // Oxygen low
+    if (spo2 > 0.0 && spo2 < 95) {
+      if (isArabic) {
+        doList.addAll([
+          'ترطيب جيد وسوائل دافئة',
+          'أطعمة مضادة للالتهاب (سمك دهني، خضروات ورقية)',
+        ]);
+        avoidList.addAll(['التدخين والملوثات', 'وجبات كبيرة ثقيلة']);
+      } else {
+        doList.addAll([
+          'Good hydration and warm fluids',
+          'Anti-inflammatory foods (fatty fish, leafy greens)',
+        ]);
+        avoidList.addAll(['Smoking and pollutants', 'Large heavy meals']);
+      }
+    }
+
+    // Blood pressure
+    if ((systolic > 0 || diastolic > 0) && (systolic > 140 || diastolic > 90)) {
+      // Hypertensive pattern (DASH-like)
+      if (isArabic) {
+        doList.addAll([
+          'خضروات وفواكه غنية بالبوتاسيوم',
+          'ألبان قليلة الدسم',
+          'تقليل الملح واستبداله بتوابل طبيعية',
+        ]);
+        avoidList.addAll([
+          'الأطعمة المالحة والمعلبة',
+          'اللحوم المصنعة والوجبات السريعة',
+        ]);
+      } else {
+        doList.addAll([
+          'Potassium-rich fruits and vegetables',
+          'Low-fat dairy',
+          'Reduce salt; use natural herbs/spices',
+        ]);
+        avoidList.addAll([
+          'Salty/processed foods',
+          'Processed meats and fast food',
+        ]);
+      }
+    }
+
+    final List<String> chronicLc = chronic
+        .whereType<String>()
+        .map((e) => e.trim().toLowerCase())
+        .toList();
+    final bool hasDiabetes = chronicLc.any(
+      (c) => c.contains('سكري') || c.contains('diab'),
+    );
+    final bool hasHypertension = chronicLc.any(
+      (c) => c.contains('ضغط') || c.contains('hypert'),
+    );
+    final bool hasHeart = chronicLc.any(
+      (c) => c.contains('قلب') || c.contains('card') || c.contains('heart'),
+    );
+    final bool hasKidney = chronicLc.any(
+      (c) => c.contains('كل') || c.contains('renal') || c.contains('kidney'),
+    );
+    final bool hasLiver = chronicLc.any(
+      (c) => c.contains('كبد') || c.contains('hep') || c.contains('liver'),
+    );
+    final bool hasAsthma = chronicLc.any(
+      (c) => c.contains('ربو') || c.contains('asthma'),
+    );
+
+    if (hasDiabetes) {
+      if (isArabic) {
+        doList.addAll([
+          'أطعمة منخفضة المؤشر الجلايسيمي',
+          'ألياف عالية (بقوليات، شوفان)',
+        ]);
+        avoidList.addAll([
+          'السكريات البسيطة والحلويات',
+          'الدقيق الأبيض والمخبوزات',
+        ]);
+      } else {
+        doList.addAll([
+          'Low glycemic index foods',
+          'High-fiber (legumes, oats)',
+        ]);
+        avoidList.addAll([
+          'Simple sugars and sweets',
+          'White flour and pastries',
+        ]);
+      }
+    }
+    if (hasHypertension) {
+      if (isArabic) {
+        doList.add('تقليل الملح لأقصى حد');
+        avoidList.add('الأطعمة عالية الصوديوم');
+      } else {
+        doList.add('Minimize salt intake');
+        avoidList.add('High-sodium foods');
+      }
+    }
+    if (hasHeart) {
+      if (isArabic) {
+        doList.addAll(['أوميغا-3 (سمك السلمون/السردين)', 'زيوت نباتية صحية']);
+        avoidList.addAll(['دهون مشبعة/مهدرجة', 'وجبات مقلية']);
+      } else {
+        doList.addAll(['Omega-3 (salmon/sardines)', 'Healthy plant oils']);
+        avoidList.addAll(['Saturated/trans fats', 'Fried meals']);
+      }
+    }
+    if (hasKidney) {
+      if (isArabic) {
+        doList.addAll(['بروتين معتدل حسب توجيه الطبيب', 'الصوديوم المنخفض']);
+        avoidList.addAll(['أطعمة مصنعة', 'مكملات عشبية غير موثوقة']);
+      } else {
+        doList.addAll(['Moderate protein per physician advice', 'Low sodium']);
+        avoidList.addAll(['Processed foods', 'Unverified herbal supplements']);
+      }
+    }
+    if (hasLiver) {
+      if (isArabic) {
+        doList.addAll(['وجبات خفيفة متوازنة', 'تجنب الدهون الثقيلة']);
+        avoidList.addAll(['المقليات والدهون الثقيلة']);
+      } else {
+        doList.addAll(['Light balanced meals', 'Avoid heavy fats']);
+        avoidList.addAll(['Fried and heavy-fat foods']);
+      }
+    }
+    if (hasAsthma) {
+      if (isArabic) {
+        doList.addAll(['أطعمة مضادة للالتهاب', 'ترطيب جيد']);
+        avoidList.addAll(['المهيجات مثل الكبريتات في بعض الأطعمة/المشروبات']);
+      } else {
+        doList.addAll(['Anti-inflammatory foods', 'Good hydration']);
+        avoidList.addAll(['Irritants like sulfites in some foods/drinks']);
+      }
+    }
+
+    // Notes-based hints
+    if (notes != null && notes.trim().isNotEmpty) {
+      if (isArabic) {
+        doList.add('مراعاة الملاحظات السريرية الخاصة بالحالة');
+      } else {
+        doList.add('Respect any clinical notes specific to the case');
+      }
+    }
+
+    final title = isArabic
+        ? '🍽️ توصيات غذائية:\n\n'
+        : '🍽️ Nutrition recommendations:\n\n';
+    final recs = doList.isEmpty
+        ? ''
+        : (isArabic ? '✅ الموصى به:\n' : '✅ Recommended:\n') +
+              doList.map((e) => '• $e').join('\n') +
+              '\n\n';
+    final avoids = avoidList.isEmpty
+        ? ''
+        : (isArabic ? '🚫 يُنصح بتقليل:\n' : '🚫 To limit/avoid:\n') +
+              avoidList.map((e) => '• $e').join('\n');
+
+    return title + recs + avoids;
+  }
+}
 // /// قاعدة بيانات الأطعمة والمشروبات المناسبة حسب الحالة الطبية
 // class MedicalNutritionGuide {
 //   /// توصيات الأطعمة حسب درجة الحرارة

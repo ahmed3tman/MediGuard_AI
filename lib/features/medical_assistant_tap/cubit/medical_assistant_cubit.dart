@@ -159,6 +159,7 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
         {'question': 'ما هي التوصيات الطبية؟', 'icon': '💊'},
         {'question': 'هل هناك أي مخاوف؟', 'icon': '⚠️'},
         {'question': 'ما هي حالة العلامات الحيوية؟', 'icon': '❤️'},
+        {'question': 'ما الأطعمة الموصى بها للحالة الحالية؟', 'icon': '🍽️'},
       ];
     } else {
       _suggestedQuestions = [
@@ -166,6 +167,7 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
         {'question': 'What are the medical recommendations?', 'icon': '💊'},
         {'question': 'Are there any concerns?', 'icon': '⚠️'},
         {'question': 'How are the vital signs?', 'icon': '❤️'},
+        {'question': 'What foods are recommended now?', 'icon': '🍽️'},
       ];
     }
 

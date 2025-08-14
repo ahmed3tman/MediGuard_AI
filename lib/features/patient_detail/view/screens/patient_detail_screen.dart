@@ -8,9 +8,9 @@ import '../../cubit/patient_detail_state.dart';
 import '../../../patient_record/view/screens/patient_record_screen.dart';
 import '../../../medical_assistant_tap/view/screens/medical_assistant_tap.dart';
 import '../../../medical_assistant_tap/cubit/medical_assistant_cubit.dart';
-import '../../../patient_info/cubit/patient_info_cubit.dart';
-import '../../../patient_info/cubit/patient_info_state.dart';
-import '../../../patient_info/services/patient_info_service.dart';
+import '../../../edit_patient_info/cubit/patient_info_cubit.dart';
+import '../../../edit_patient_info/cubit/patient_info_state.dart';
+import '../../../edit_patient_info/services/patient_info_service.dart';
 import '../../../../core/localization/locale_cubit.dart';
 
 /// Main patient detail screen with tabbed interface
@@ -43,6 +43,8 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
     _medicalAssistantCubit = MedicalAssistantCubit();
     // Initialize streams
     _patientDetailCubit.initialize();
+    // Load patient profile for this device so all tabs (including AI) have accurate data
+    _patientInfoCubit.loadPatientInfo(widget.device.deviceId);
     // مزامنة الاسم عند فتح الشاشة
     _syncPatientName();
   }
@@ -206,10 +208,15 @@ class _PatientDetailScreenState extends State<PatientDetailScreen>
                               patientInfoState.patientInfo != null) {
                             final p = patientInfoState.patientInfo!;
                             patientData.addAll({
+                              // Prefer saved profile name if available
+                              if ((p.patientName ?? '').isNotEmpty)
+                                'patientName': p.patientName,
                               'age': p.age,
-                              'gender': p.gender.name,
+                              // Only include gender if explicitly set (prevents default male leakage)
+                              if (p.genderExplicit) 'gender': p.gender.name,
                               'bloodType': p.bloodType,
                               'chronicDiseases': p.chronicDiseases,
+                              'notes': p.notes,
                             });
                           }
 
