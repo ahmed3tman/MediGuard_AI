@@ -1,4 +1,4 @@
-// import 'medical_nutrition_guide.dart'; // Unused currently
+import 'medical_nutrition_guide.dart';
 
 /// خدمة المساعد الطبي المحلي المحسنة
 class MedicalAssistantService {
@@ -38,6 +38,11 @@ class MedicalAssistantService {
       return isArabic
           ? 'لا توجد بيانات متاحة للمريض حالياً. يرجى التأكد من اتصال الأجهزة.'
           : 'No patient data available currently. Please check device connections.';
+    }
+
+    // أسئلة التغذية بدون بيانات مريض: التزام بعدم تقديم توصيات بدون قراءة
+    if (_isNutritionQuestion(messageLower)) {
+      return _deviceNotConnectedMsg(isArabic);
     }
 
     // رد افتراضي
@@ -167,6 +172,18 @@ class MedicalAssistantService {
     final bool ecgConnected =
         (patientData['ecgConnected'] as bool?) ?? ecgRaw.toString().isNotEmpty;
 
+    // If no signals are connected at all, return a concise not-connected notice
+    final bool anyConnected =
+        tempConnected ||
+        hrConnected ||
+        respiratoryConnected ||
+        bpConnected ||
+        spo2Connected ||
+        ecgConnected;
+    if (!anyConnected) {
+      return _deviceNotConnectedMsg(isArabic);
+    }
+
     // Build context notes block
     final contextConsiderations = _buildContextConsiderations(
       age: age,
@@ -225,6 +242,11 @@ class MedicalAssistantService {
         spo2Connected,
         isArabic,
       );
+    }
+    // Nutrition questions should be handled before broader medical advice
+    if (_isNutritionQuestion(messageLower)) {
+      // Nutrition advice based on patient data; respects top-level connection guard
+      return MedicalNutritionGuide.recommend(patientData, isArabic);
     }
     if (_isMedicalAdviceQuestion(messageLower)) {
       return _generateMedicalRecommendations(
@@ -289,6 +311,13 @@ class MedicalAssistantService {
     }
 
     return evaluation + contextConsiderations;
+  }
+
+  /// Unified message when no devices/signals are connected
+  static String _deviceNotConnectedMsg(bool isArabic) {
+    return isArabic
+        ? 'الجهاز غير متصل حالياً. لن يتم تقديم أي توصيات حتى تظهر قراءة واحدة على الأقل.'
+        : 'Device is not connected. No recommendations will be provided until at least one reading is available.';
   }
 
   /// Normalizes gender strings from various languages to 'male'/'female' when confident; otherwise returns null.
@@ -1085,9 +1114,7 @@ class MedicalAssistantService {
     ].where((x) => x).length;
 
     if (connectedDevices == 0) {
-      return isArabic
-          ? 'لا توجد قياسات متاحة الآن لأن جميع الأجهزة غير متصلة (الجهاز: $deviceId). يرجى فحص الاتصال ثم إعادة المحاولة.'
-          : 'No measurements available now as all devices are disconnected (device: $deviceId). Please check connections and try again.';
+      return _deviceNotConnectedMsg(isArabic);
     }
 
     // تقدير مستوى الاستقرار العام
@@ -1251,9 +1278,7 @@ class MedicalAssistantService {
     ].where((x) => x).length;
 
     if (connectedDevices == 0) {
-      return isArabic
-          ? '⚠️ لا يمكن تقديم توصيات طبية حالياً.\n\n📱 السبب: جميع الأجهزة غير متصلة\n\n🔧 الحلول المطلوبة:\n• تحقق من اتصال الأجهزة الطبية\n• تأكد من شحن بطاريات الأجهزة\n• أعد تشغيل الاتصال اللاسلكي\n• راجع دليل تشغيل الأجهزة\n\n📞 للحصول على توصيات طبية دقيقة، يرجى التأكد من اتصال الأجهزة أولاً.'
-          : '⚠️ Cannot provide medical recommendations currently.\n\n📱 Reason: All devices are disconnected\n\n🔧 Required Solutions:\n• Check medical device connections\n• Ensure device batteries are charged\n• Restart wireless connection\n• Review device operation manual\n\n📞 For accurate medical recommendations, please ensure devices are connected first.';
+      return _deviceNotConnectedMsg(isArabic);
     }
 
     List<String> adviceList = [];
@@ -1389,9 +1414,7 @@ class MedicalAssistantService {
 
     // إذا لم تكن هناك أجهزة متصلة
     if (connectedDevices == 0) {
-      return isArabic
-          ? '⚠️ تحليل المخاوف:\n\n� جميع الأجهزة الطبية غير متصلة حالياً\n\n� الوضع الحالي:\n• لا توجد بيانات متاحة للتحليل\n• لا يمكن تقييم الحالة الصحية\n• المراقبة الطبية غير نشطة\n\n� خطوات بسيطة لإعادة الاتصال:\n• تحقق من تشغيل الأجهزة\n• تأكد من شحن البطاريات\n• راجع الاتصال اللاسلكي\n• أعد تشغيل الأجهزة إذا لزم الأمر\n\n📋 ملاحظة: إذا كان المريض بخير ولا يحتاج للمراقبة، فلا توجد مشكلة.'
-          : '⚠️ Concerns Analysis:\n\n� All medical devices are currently disconnected\n\n� Current Status:\n• No data available for analysis\n• Cannot assess health condition\n• Medical monitoring is inactive\n\n� Simple Steps to Reconnect:\n• Check if devices are powered on\n• Ensure batteries are charged\n• Review wireless connection\n• Restart devices if necessary\n\n📋 Note: If patient is well and doesn\'t need monitoring, there\'s no problem.';
+      return _deviceNotConnectedMsg(isArabic);
     }
 
     List<String> criticalIssues = [];

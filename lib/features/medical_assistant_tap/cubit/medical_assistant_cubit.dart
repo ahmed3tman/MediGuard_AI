@@ -151,24 +151,111 @@ class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
 
   /// تحديث الأسئلة المقترحة
   void _updateSuggestedQuestions(bool isArabic) {
-    // print('📝 تحديث الأسئلة المقترحة - اللغة العربية: $isArabic');
+    // Evaluate connection status from current patient data
+    bool _toBool(dynamic v) => v is bool ? v : false;
+    double _toDouble(dynamic v) {
+      if (v == null) return 0.0;
+      if (v is num) return v.toDouble();
+      return double.tryParse(v.toString()) ?? 0.0;
+    }
+
+    int _toInt(dynamic v) {
+      if (v == null) return 0;
+      if (v is int) return v;
+      if (v is num) return v.toInt();
+      return int.tryParse(v.toString()) ?? 0;
+    }
+
+    final bool tempConnected =
+        _toBool(_currentPatientData['tempConnected']) ||
+        _toDouble(
+              _currentPatientData['temperature'] ?? _currentPatientData['temp'],
+            ) >
+            0.0;
+    final bool hrConnected =
+        _toBool(_currentPatientData['hrConnected']) ||
+        _toDouble(
+              _currentPatientData['heartRate'] ??
+                  _currentPatientData['hr'] ??
+                  _currentPatientData['pulse'],
+            ) >
+            0.0;
+    final bool bpConnected =
+        _toBool(_currentPatientData['bpConnected']) ||
+        (_toInt(
+                  _currentPatientData['systolic'] ??
+                      (_currentPatientData['bloodPressure'] is Map
+                          ? (_currentPatientData['bloodPressure']
+                                as Map)['systolic']
+                          : null),
+                ) >
+                0 ||
+            _toInt(
+                  _currentPatientData['diastolic'] ??
+                      (_currentPatientData['bloodPressure'] is Map
+                          ? (_currentPatientData['bloodPressure']
+                                as Map)['diastolic']
+                          : null),
+                ) >
+                0);
+    final bool spo2Connected =
+        _toBool(_currentPatientData['spo2Connected']) ||
+        _toDouble(
+              _currentPatientData['spo2'] ??
+                  _currentPatientData['SpO2'] ??
+                  _currentPatientData['oxygen'],
+            ) >
+            0.0;
+    final bool ecgConnected =
+        _toBool(_currentPatientData['ecgConnected']) ||
+        (_currentPatientData['ecg'] ??
+                _currentPatientData['ECG'] ??
+                _currentPatientData['ecgStatus'] ??
+                '')
+            .toString()
+            .toString()
+            .trim()
+            .isNotEmpty;
+
+    final bool anyConnected =
+        tempConnected ||
+        hrConnected ||
+        bpConnected ||
+        spo2Connected ||
+        ecgConnected;
 
     if (isArabic) {
-      _suggestedQuestions = [
-        {'question': 'اوصف لي حالة المريض', 'icon': '📊'},
-        {'question': 'ما هي التوصيات الطبية؟', 'icon': '💊'},
-        {'question': 'هل هناك أي مخاوف؟', 'icon': '⚠️'},
-        {'question': 'ما هي حالة العلامات الحيوية؟', 'icon': '❤️'},
-        {'question': 'ما الأطعمة الموصى بها للحالة الحالية؟', 'icon': '🍽️'},
-      ];
+      _suggestedQuestions = anyConnected
+          ? [
+              {'question': 'اوصف لي حالة المريض', 'icon': '📊'},
+              {'question': 'ما هي التوصيات الطبية؟', 'icon': '💊'},
+              {'question': 'هل هناك أي مخاوف؟', 'icon': '⚠️'},
+              {'question': 'ما هي حالة العلامات الحيوية؟', 'icon': '❤️'},
+              {
+                'question': 'ما الأطعمة الموصى بها للحالة الحالية؟',
+                'icon': '🍽️',
+              },
+            ]
+          : [
+              {'question': 'تحقق من اتصال الجهاز', 'icon': '🔌'},
+              {'question': 'ما هي حالة العلامات الحيوية؟', 'icon': '❤️'},
+            ];
     } else {
-      _suggestedQuestions = [
-        {'question': 'Describe patient condition', 'icon': '📊'},
-        {'question': 'What are the medical recommendations?', 'icon': '💊'},
-        {'question': 'Are there any concerns?', 'icon': '⚠️'},
-        {'question': 'How are the vital signs?', 'icon': '❤️'},
-        {'question': 'What foods are recommended now?', 'icon': '🍽️'},
-      ];
+      _suggestedQuestions = anyConnected
+          ? [
+              {'question': 'Describe patient condition', 'icon': '📊'},
+              {
+                'question': 'What are the medical recommendations?',
+                'icon': '💊',
+              },
+              {'question': 'Are there any concerns?', 'icon': '⚠️'},
+              {'question': 'How are the vital signs?', 'icon': '❤️'},
+              {'question': 'What foods are recommended now?', 'icon': '🍽️'},
+            ]
+          : [
+              {'question': 'Check device connection', 'icon': '🔌'},
+              {'question': 'How are the vital signs?', 'icon': '❤️'},
+            ];
     }
 
     // print('📋 عدد الأسئلة المقترحة: ${_suggestedQuestions.length}');
