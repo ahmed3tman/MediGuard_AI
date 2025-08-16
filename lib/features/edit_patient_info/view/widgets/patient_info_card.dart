@@ -9,6 +9,22 @@ class PatientInfoCard extends StatelessWidget {
 
   const PatientInfoCard({super.key, required this.patientInfo, this.onEdit});
 
+  String _formatTime(DateTime dateTime, AppLocalizations l10n) {
+    if (dateTime.millisecondsSinceEpoch == 0) return '';
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return l10n.timeJustNow;
+    } else if (difference.inMinutes < 60) {
+      return l10n.timeMinutesAgo(difference.inMinutes.toString());
+    } else if (difference.inHours < 24) {
+      return l10n.timeHoursAgo(difference.inHours.toString());
+    } else {
+      return '${dateTime.day}/${dateTime.month} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -241,6 +257,28 @@ class PatientInfoCard extends StatelessWidget {
             const SizedBox(height: 12),
             _buildNotesSection(context),
           ],
+
+          // Footer: last updated time (tight at the bottom)
+          const SizedBox(height: 10),
+          if (patientInfo.updatedAt.millisecondsSinceEpoch != 0)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.history, size: 14, color: Colors.grey[500]),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${AppLocalizations.of(context).lastUpdatedLabel}${_formatTime(patientInfo.updatedAt, AppLocalizations.of(context))}',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey[600],
+                      fontFamily: 'NeoSansArabic',
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

@@ -1,4 +1,4 @@
-import 'medical_nutrition_guide.dart';
+// import 'medical_nutrition_guide.dart'; // Unused currently
 
 /// خدمة المساعد الطبي المحلي المحسنة
 class MedicalAssistantService {
@@ -66,240 +66,236 @@ class MedicalAssistantService {
     final List<dynamic> chronic =
         (patientData['chronicDiseases'] as List?) ?? const [];
     final String? notes = patientData['notes'] as String?;
+    // Basic vitals parsing with tolerant keys
+    double _toDouble(dynamic v) {
+      if (v == null) return 0.0;
+      if (v is num) return v.toDouble();
+      return double.tryParse(v.toString()) ?? 0.0;
+    }
 
-    final temperature = patientData['temperature'] as double? ?? 0.0;
-    final heartRate = patientData['heartRate'] as double? ?? 0.0;
-    final respiratoryRate = patientData['respiratoryRate'] as double? ?? 0.0;
-    final bloodPressure =
-        patientData['bloodPressure'] as Map<String, dynamic>? ?? {};
-    final spo2 = patientData['spo2'] as double? ?? 0.0;
-    final deviceId = patientData['deviceId'] as String? ?? '';
+    int _toInt(dynamic v) {
+      if (v == null) return 0;
+      if (v is int) return v;
+      if (v is num) return v.toInt();
+      return int.tryParse(v.toString()) ?? 0;
+    }
 
-    final systolic = bloodPressure['systolic'] as int? ?? 0;
-    final diastolic = bloodPressure['diastolic'] as int? ?? 0;
+    // Temperature
+    final double temperature = _toDouble(
+      patientData['temperature'] ??
+          patientData['temp'] ??
+          patientData['Temperature'],
+    );
 
-    // تحديد حالة الاتصال بطريقة أكثر دقة ومهنية
-    // الجهاز متصل إذا كانت هناك قراءة معقولة أو إشارة من الجهاز
-    final tempConnected = temperature > 0.0;
-    final hrConnected = heartRate > 0.0;
-    final respiratoryConnected = respiratoryRate > 0.0;
-    final bpConnected = (systolic > 0 || diastolic > 0);
-    final spo2Connected = spo2 > 0.0;
+    // Heart rate
+    final double heartRate = _toDouble(
+      patientData['heartRate'] ??
+          patientData['heart_rate'] ??
+          patientData['hr'] ??
+          patientData['pulse'] ??
+          patientData['bpm'],
+    );
 
-    final messageLower = message.toLowerCase();
+    // Respiratory rate
+    final double respiratoryRate = _toDouble(
+      patientData['respiratoryRate'] ??
+          patientData['resp_rate'] ??
+          patientData['respiratory'] ??
+          patientData['breathingRate'] ??
+          patientData['rr'],
+    );
 
-    // If the user asked for a general description/analysis, include profile context header
-    final bool wantsOverview =
-        _isPatientStatusQuestion(messageLower) ||
-        _isGeneralAnalysisQuestion(messageLower) ||
-        _isVitalSignsStatusQuestion(messageLower) ||
-        _isMedicalAdviceQuestion(messageLower) ||
-        _isConcernsQuestion(messageLower);
-
-    String profileHeader = '';
-    if (wantsOverview) {
-      final ageText = age != null && age > 0
-          ? (isArabic ? 'العمر: $age' : 'Age: $age')
-          : '';
-      String genderText = '';
-      if (genderNorm != null) {
-        genderText = isArabic
-            ? (genderNorm == 'female' ? 'النوع: أنثى' : 'النوع: ذكر')
-            : 'Gender: ${genderNorm == 'female' ? 'Female' : 'Male'}';
-      } else if (rawGender.isNotEmpty) {
-        // If provided but not confidently recognized, show as Unspecified to avoid wrong default
-        genderText = isArabic ? 'النوع: غير محدد' : 'Gender: Unspecified';
-      }
-      final btText = (bloodType != null && bloodType.trim().isNotEmpty)
-          ? (isArabic ? 'فصيلة الدم: $bloodType' : 'Blood Type: $bloodType')
-          : '';
-      final chronicText = chronic.isNotEmpty
-          ? (isArabic
-                ? 'أمراض مزمنة: ${chronic.whereType<String>().join(', ')}'
-                : 'Chronic conditions: ${chronic.whereType<String>().join(', ')}')
-          : '';
-      final notesText = (notes != null && notes.trim().isNotEmpty)
-          ? (isArabic ? 'ملاحظات: ${notes.trim()}' : 'Notes: ${notes.trim()}')
-          : '';
-
-      final List<String> parts = [];
-      if (patientName.isNotEmpty) {
-        parts.add(isArabic ? 'المريض: $patientName' : 'Patient: $patientName');
-      }
-      for (final p in [ageText, genderText, btText, chronicText, notesText]) {
-        if (p.isNotEmpty) parts.add(p);
-      }
-
-      if (parts.isNotEmpty) {
-        profileHeader =
-            (isArabic ? '🧾 بيانات المريض\n' : '🧾 Patient Profile\n') +
-            parts.join(isArabic ? '\n' : '\n') +
-            '\n\n';
+    // Blood pressure (support nested structures and string like "120/80")
+    int systolic = 0;
+    int diastolic = 0;
+    final dynamic bp = patientData['bloodPressure'] ?? patientData['bp'];
+    if (bp is Map) {
+      systolic = _toInt(bp['systolic']);
+      diastolic = _toInt(bp['diastolic']);
+    } else {
+      systolic = _toInt(
+        patientData['systolic'] ?? patientData['sbp'] ?? patientData['sys'],
+      );
+      diastolic = _toInt(
+        patientData['diastolic'] ?? patientData['dbp'] ?? patientData['dia'],
+      );
+      final String? bpStr = (patientData['bp'] ?? patientData['bloodPressure'])
+          ?.toString();
+      if ((systolic == 0 || diastolic == 0) &&
+          bpStr != null &&
+          bpStr.contains('/')) {
+        final parts = bpStr.split('/');
+        if (parts.length >= 2) {
+          systolic = int.tryParse(parts[0].trim()) ?? systolic;
+          diastolic = int.tryParse(parts[1].trim()) ?? diastolic;
+        }
       }
     }
 
-    // Build context considerations once
+    // SpO2
+    final double spo2 = _toDouble(
+      patientData['spo2'] ??
+          patientData['SpO2'] ??
+          patientData['oxygen'] ??
+          patientData['oxygenSaturation'],
+    );
+
+    // ECG (status text or coded)
+    final String ecgRaw =
+        (patientData['ecg'] ??
+                patientData['ECG'] ??
+                patientData['ecgStatus'] ??
+                patientData['ecg_status'] ??
+                patientData['ecg_result'] ??
+                patientData['ecgResult'] ??
+                '')
+            .toString();
+    final String ecgStatus = _parseEcgStatus(ecgRaw);
+
+    // Connection flags (fallback to presence of sensible values)
+    final bool tempConnected =
+        (patientData['tempConnected'] as bool?) ?? (temperature > 0);
+    final bool hrConnected =
+        (patientData['hrConnected'] as bool?) ?? (heartRate > 0);
+    final bool respiratoryConnected =
+        (patientData['respiratoryConnected'] as bool?) ?? (respiratoryRate > 0);
+    final bool bpConnected =
+        (patientData['bpConnected'] as bool?) ??
+        (systolic > 0 && diastolic > 0);
+    final bool spo2Connected =
+        (patientData['spo2Connected'] as bool?) ?? (spo2 > 0);
+    final bool ecgConnected =
+        (patientData['ecgConnected'] as bool?) ?? ecgRaw.toString().isNotEmpty;
+
+    // Build context notes block
     final contextConsiderations = _buildContextConsiderations(
       age: age,
-      gender: genderNorm ?? rawGender,
+      gender: rawGender,
       chronic: chronic,
       notes: notes,
       isArabic: isArabic,
     );
 
-    // Nutrition question detection (after header/considerations are ready)
-    if (_isNutritionQuestion(messageLower)) {
-      return profileHeader +
-          MedicalNutritionGuide.recommend(patientData, isArabic) +
-          contextConsiderations;
-    }
+    // Route by question intent
+    final messageLower = message.toLowerCase();
 
-    // أسئلة عن درجة الحرارة
     if (_isTemperatureQuestion(messageLower)) {
-      return profileHeader +
-          _analyzeTemperature(temperature, tempConnected, isArabic) +
-          contextConsiderations;
+      return _analyzeTemperature(temperature, tempConnected, isArabic);
     }
-
-    // أسئلة عن معدل النبض
     if (_isHeartRateQuestion(messageLower)) {
-      return profileHeader +
-          _analyzeHeartRate(heartRate, hrConnected, isArabic) +
-          contextConsiderations;
+      return _analyzeHeartRate(heartRate, hrConnected, isArabic);
     }
-
-    // أسئلة عن معدل التنفس
     if (_isRespiratoryRateQuestion(messageLower)) {
-      return profileHeader +
-          _analyzeRespiratoryRate(
-            respiratoryRate,
-            respiratoryConnected,
-            isArabic,
-          ) +
-          contextConsiderations;
+      return _analyzeRespiratoryRate(
+        respiratoryRate,
+        respiratoryConnected,
+        isArabic,
+      );
     }
-
-    // أسئلة عن ضغط الدم
     if (_isBloodPressureQuestion(messageLower)) {
-      return profileHeader +
-          _analyzeBloodPressure(systolic, diastolic, bpConnected, isArabic) +
-          contextConsiderations;
+      return _analyzeBloodPressure(systolic, diastolic, bpConnected, isArabic);
     }
-
-    // أسئلة عن الأكسجين
     if (_isOxygenQuestion(messageLower)) {
-      return profileHeader +
-          _analyzeOxygen(spo2, spo2Connected, isArabic) +
-          contextConsiderations;
+      return _analyzeOxygen(spo2, spo2Connected, isArabic);
     }
-
-    // أسئلة عن التوصيات الطبية
-    if (_isMedicalAdviceQuestion(messageLower)) {
-      return profileHeader +
-          _generateMedicalRecommendations(
-            temperature,
-            heartRate,
-            systolic,
-            diastolic,
-            spo2,
-            tempConnected,
-            hrConnected,
-            bpConnected,
-            spo2Connected,
-            isArabic,
-          ) +
-          contextConsiderations;
-    }
-
-    // أسئلة عن المخاوف
-    if (_isConcernsQuestion(messageLower)) {
-      return profileHeader +
-          _generateConcernsAnalysis(
-            temperature,
-            heartRate,
-            systolic,
-            diastolic,
-            spo2,
-            tempConnected,
-            hrConnected,
-            bpConnected,
-            spo2Connected,
-            isArabic,
-          ) +
-          contextConsiderations;
-    }
-
-    // أسئلة عن حالة العلامات الحيوية
     if (_isVitalSignsStatusQuestion(messageLower)) {
-      return profileHeader +
-          _generateVitalSignsStatus(
-            temperature,
-            heartRate,
-            systolic,
-            diastolic,
-            spo2,
-            tempConnected,
-            hrConnected,
-            bpConnected,
-            spo2Connected,
-            isArabic,
-          ) +
-          contextConsiderations;
+      return _generateVitalSignsStatus(
+        temperature,
+        heartRate,
+        systolic,
+        diastolic,
+        spo2,
+        tempConnected,
+        hrConnected,
+        bpConnected,
+        spo2Connected,
+        isArabic,
+      );
+    }
+    if (_isConcernsQuestion(messageLower)) {
+      return _generateConcernsAnalysis(
+        temperature,
+        heartRate,
+        systolic,
+        diastolic,
+        spo2,
+        tempConnected,
+        hrConnected,
+        bpConnected,
+        spo2Connected,
+        isArabic,
+      );
+    }
+    if (_isMedicalAdviceQuestion(messageLower)) {
+      return _generateMedicalRecommendations(
+        temperature,
+        heartRate,
+        systolic,
+        diastolic,
+        spo2,
+        tempConnected,
+        hrConnected,
+        bpConnected,
+        spo2Connected,
+        isArabic,
+      );
     }
 
-    // وصف حالة المريض - التحليل الشامل
-    if (_isPatientStatusQuestion(messageLower) ||
-        _isGeneralAnalysisQuestion(messageLower)) {
-      return profileHeader +
-          _generateCompleteAnalysis(
-            temperature,
-            heartRate,
-            systolic,
-            diastolic,
-            spo2,
-            tempConnected,
-            hrConnected,
-            bpConnected,
-            spo2Connected,
-            deviceId,
-            isArabic,
-            name: patientName.isNotEmpty ? patientName : null,
-            age: age,
-            genderNorm: genderNorm,
-          ) +
-          contextConsiderations;
+    // Default/general analysis: match user language (Arabic vs English)
+    String evaluation;
+    if (isArabic) {
+      evaluation = _evaluatePatientStatusReportArabic(
+        name: patientName,
+        age: age,
+        genderNorm: genderNorm,
+        bloodType: bloodType,
+        chronic: chronic,
+        notes: notes,
+        temperature: temperature,
+        heartRate: heartRate,
+        respiratoryRate: respiratoryRate,
+        systolic: systolic,
+        diastolic: diastolic,
+        spo2: spo2,
+        ecgStatus: ecgStatus,
+        tempConnected: tempConnected,
+        hrConnected: hrConnected,
+        respiratoryConnected: respiratoryConnected,
+        bpConnected: bpConnected,
+        spo2Connected: spo2Connected,
+        ecgConnected: ecgConnected,
+      );
+    } else {
+      evaluation = _evaluatePatientStatusReportEnglish(
+        name: patientName,
+        age: age,
+        bloodType: bloodType,
+        chronic: chronic,
+        notes: notes,
+        temperature: temperature,
+        heartRate: heartRate,
+        respiratoryRate: respiratoryRate,
+        systolic: systolic,
+        diastolic: diastolic,
+        spo2: spo2,
+        ecgStatus: ecgStatus,
+        tempConnected: tempConnected,
+        hrConnected: hrConnected,
+        respiratoryConnected: respiratoryConnected,
+        bpConnected: bpConnected,
+        spo2Connected: spo2Connected,
+        ecgConnected: ecgConnected,
+      );
     }
 
-    // تحليل عام للحالة
-    return profileHeader +
-        _generateCompleteAnalysis(
-          temperature,
-          heartRate,
-          systolic,
-          diastolic,
-          spo2,
-          tempConnected,
-          hrConnected,
-          bpConnected,
-          spo2Connected,
-          deviceId,
-          isArabic,
-          name: patientName.isNotEmpty ? patientName : null,
-          age: age,
-          genderNorm: genderNorm,
-        ) +
-        contextConsiderations;
+    return evaluation + contextConsiderations;
   }
 
   /// Normalizes gender strings from various languages to 'male'/'female' when confident; otherwise returns null.
   static String? _normalizeGender(String raw) {
     final v = raw.trim().toLowerCase();
     if (v.isEmpty) return null;
-
-    // Exact-match male indicators (avoid substring false positives)
     const maleSet = {'male', 'm', 'man', 'ذكر', 'ولد', 'رجل'};
-
-    // Exact-match female indicators
     const femaleSet = {
       'female',
       'f',
@@ -311,7 +307,6 @@ class MedicalAssistantService {
       'امرأة',
       'سيدة',
     };
-
     if (femaleSet.contains(v)) return 'female';
     if (maleSet.contains(v)) return 'male';
     return null; // unknown or custom value
@@ -475,6 +470,394 @@ class MedicalAssistantService {
       buffer.write(idx >= 0 ? eastern[idx] : ch);
     }
     return buffer.toString();
+  }
+
+  // ===== ECG parsing and Arabic report per provided rules =====
+  static String _parseEcgStatus(String raw) {
+    final v = raw.trim().toLowerCase();
+    if (v.isEmpty) return '';
+    if (v.contains('normal') || v.contains('طبيعي')) return 'normal';
+    if (v.contains('arr') || v.contains('اضطراب')) return 'arrhythmia';
+    if (v.contains('abn') ||
+        v.contains('غير طبيعي') ||
+        v.contains('غير طبيعيه')) {
+      return 'abnormal';
+    }
+    return 'abnormal';
+  }
+
+  static String _ecgLabelAr(String status) {
+    switch (status) {
+      case 'normal':
+        return 'طبيعي';
+      case 'arrhythmia':
+        return 'اضطراب';
+      case 'abnormal':
+      default:
+        return 'غير طبيعي';
+    }
+  }
+
+  static String _ecgLabelEn(String status) {
+    switch (status) {
+      case 'normal':
+        return 'Normal';
+      case 'arrhythmia':
+        return 'Arrhythmia';
+      case 'abnormal':
+      default:
+        return 'Abnormal';
+    }
+  }
+
+  static String _evaluatePatientStatusReportArabic({
+    required String name,
+    int? age,
+    String? genderNorm,
+    String? bloodType,
+    required List<dynamic> chronic,
+    String? notes,
+    required double temperature,
+    required double heartRate,
+    required double respiratoryRate,
+    required int systolic,
+    required int diastolic,
+    required double spo2,
+    required String ecgStatus,
+    required bool tempConnected,
+    required bool hrConnected,
+    required bool respiratoryConnected,
+    required bool bpConnected,
+    required bool spo2Connected,
+    required bool ecgConnected,
+  }) {
+    final String notesText = (notes ?? '').toLowerCase();
+    final bool hasSevereSymptoms = RegExp(
+      r'ضيق تنفس|ألم صدر|الم صدر|ازرقاق|زرق|إغماء|اغماء|فقدان وعي|تشوش|دوخة شديدة|تعرق بارد|chest pain|shortness of breath|syncope|cyanosis',
+    ).hasMatch(notesText);
+    final bool hasMildSymptoms = RegExp(
+      r'تعب|ارهاق|إرهاق|صداع|سعال خفيف|دوخة|dizzy|fatigue|headache|cough',
+    ).hasMatch(notesText);
+    final bool postExercise = RegExp(
+      r'بعد الرياضة|رياضة|تمرين|exercise|workout',
+    ).hasMatch(notesText);
+
+    final bool hasChronic = chronic.whereType<String>().isNotEmpty;
+
+    int tempSev = 0;
+    if (tempConnected && temperature > 0) {
+      if (temperature < 35.0)
+        tempSev = 3;
+      else if (temperature <= 37.5)
+        tempSev = 0;
+      else if (temperature <= 38.5)
+        tempSev = 1;
+      else
+        tempSev = 2;
+    }
+
+    int hrSev = 0;
+    if (hrConnected && heartRate > 0) {
+      if (heartRate < 50) {
+        hrSev =
+            (hasSevereSymptoms ||
+                ecgStatus == 'abnormal' ||
+                ecgStatus == 'arrhythmia')
+            ? 3
+            : 2;
+      } else if (heartRate <= 100) {
+        hrSev = 0;
+      } else if (heartRate <= 120) {
+        hrSev = 2;
+      } else {
+        hrSev = 3;
+      }
+    }
+
+    int rrSev = 0;
+    if (respiratoryConnected && respiratoryRate > 0) {
+      if (respiratoryRate < 12)
+        rrSev = 3;
+      else if (respiratoryRate <= 20)
+        rrSev = 0;
+      else if (respiratoryRate <= 28)
+        rrSev = 2;
+      else
+        rrSev = 3;
+    }
+
+    int spo2Sev = 0;
+    if (spo2Connected && spo2 > 0) {
+      if (spo2 < 90)
+        spo2Sev = 3;
+      else if (spo2 <= 94)
+        spo2Sev = 2;
+      else
+        spo2Sev = 0;
+    }
+
+    int bpSev = 0;
+    if (bpConnected && (systolic > 0 || diastolic > 0)) {
+      if (systolic < 90 || diastolic < 60) {
+        bpSev = hasSevereSymptoms ? 3 : 2;
+      } else if (systolic <= 120 && diastolic <= 80) {
+        bpSev = 0;
+      } else if (systolic <= 140 && diastolic <= 90) {
+        bpSev = 1;
+      } else {
+        bpSev = (systolic >= 160 || diastolic >= 100) ? 3 : 2;
+      }
+    }
+
+    // Compute overall severity
+    final severities = [tempSev, hrSev, rrSev, spo2Sev, bpSev];
+    int maxSev = severities.fold(0, (p, c) => c > p ? c : p);
+    final abnormalCount = severities.where((s) => s >= 2).length;
+    if (abnormalCount >= 2 && maxSev < 3) maxSev += 1;
+    if ((ecgStatus == 'abnormal' || ecgStatus == 'arrhythmia') && maxSev > 0)
+      maxSev = (maxSev + 1).clamp(0, 3);
+    if (hasChronic && maxSev > 0) maxSev = (maxSev + 1).clamp(0, 3);
+    if (hasSevereSymptoms) maxSev = (maxSev + 1).clamp(0, 3);
+    if (maxSev == 0 && (hasMildSymptoms || postExercise)) maxSev = 1;
+
+    final String severityLabel = () {
+      switch (maxSev) {
+        case 3:
+          return 'خطيرة جداً';
+        case 2:
+          return 'متوسطة';
+        case 1:
+          return 'بسيطة';
+        default:
+          return 'مستقرة';
+      }
+    }();
+
+    final bool female = genderNorm == 'female';
+    final String personWord = female ? 'المريضة' : 'المريض';
+    final String stateWord = female ? 'حالتها' : 'حالته';
+    final String namePrefix = name.isNotEmpty
+        ? '$personWord $name'
+        : personWord;
+
+    // Problems: labeled readings for clarity
+    final List<String> problems = [];
+    if (tempSev >= 1) {
+      problems.add('الحرارة: ${temperature.toStringAsFixed(1)}°م');
+    }
+    if (hrSev >= 1) {
+      problems.add('النبض: ${heartRate.toStringAsFixed(0)}/د');
+    }
+    if (rrSev >= 1) {
+      problems.add('التنفس: ${respiratoryRate.toStringAsFixed(0)}/د');
+    }
+    if (bpSev >= 1) {
+      problems.add('الضغط: $systolic/$diastolic');
+    }
+    if (spo2Sev >= 1) {
+      problems.add('الأكسجين: ${spo2.toStringAsFixed(0)}%');
+    }
+    if (ecgConnected && ecgStatus != 'normal') {
+      problems.add('تخطيط القلب: ${_ecgLabelAr(ecgStatus)}');
+    }
+
+    final String problemsBlock = problems.isEmpty
+        ? '• لا توجد مشاكل واضحة في العلامات الحيوية.'
+        : problems.map((e) => '• $e').join('\n');
+
+    String guidance;
+    if (maxSev == 3) {
+      guidance =
+          'اذهب إلى المستشفى فوراً أو اتصل بالطوارئ، خاصة مع أي ضيق تنفس أو ألم صدر.';
+    } else if (maxSev == 2) {
+      guidance =
+          'يُفضل زيارة الطبيب قريباً جداً ومراقبة الأعراض عن قرب خلال الساعات القادمة.';
+    } else if (maxSev == 1) {
+      guidance =
+          'الراحة وشرب السوائل والمتابعة خلال 24–48 ساعة. زر الطبيب إذا ساءت الأعراض.';
+    } else {
+      guidance =
+          'لا توجد مشكلة حالياً. المتابعة الدورية والمحافظة على نمط حياة صحي.';
+    }
+
+    return ('$namePrefix $stateWord $severityLabel.\n\n'
+        'العلامات التي فيها مشكلة:\n$problemsBlock\n\n'
+        'التوجيه:\n• $guidance');
+  }
+
+  static String _evaluatePatientStatusReportEnglish({
+    required String name,
+    int? age,
+    String? bloodType,
+    required List<dynamic> chronic,
+    String? notes,
+    required double temperature,
+    required double heartRate,
+    required double respiratoryRate,
+    required int systolic,
+    required int diastolic,
+    required double spo2,
+    required String ecgStatus,
+    required bool tempConnected,
+    required bool hrConnected,
+    required bool respiratoryConnected,
+    required bool bpConnected,
+    required bool spo2Connected,
+    required bool ecgConnected,
+  }) {
+    final String notesText = (notes ?? '').toLowerCase();
+    final bool hasSevereSymptoms = RegExp(
+      r'chest pain|shortness of breath|syncope|cyanosis|faint|loss of consciousness|confusion|severe dizziness|cold sweat|ألم صدر|ضيق تنفس|إغماء|ازرقاق',
+    ).hasMatch(notesText);
+    final bool hasMildSymptoms = RegExp(
+      r'fatigue|dizzy|headache|mild cough|tired|ارهاق|تعب|دوخة|صداع|سعال خفيف',
+    ).hasMatch(notesText);
+    final bool postExercise = RegExp(
+      r'exercise|workout|رياضة|تمرين',
+    ).hasMatch(notesText);
+
+    final bool hasChronic = chronic.whereType<String>().isNotEmpty;
+
+    int tempSev = 0;
+    if (tempConnected && temperature > 0) {
+      if (temperature < 35.0)
+        tempSev = 3;
+      else if (temperature <= 37.5)
+        tempSev = 0;
+      else if (temperature <= 38.5)
+        tempSev = 1;
+      else
+        tempSev = 2;
+    }
+
+    int hrSev = 0;
+    if (hrConnected && heartRate > 0) {
+      if (heartRate < 50) {
+        hrSev =
+            (hasSevereSymptoms ||
+                ecgStatus == 'abnormal' ||
+                ecgStatus == 'arrhythmia')
+            ? 3
+            : 2;
+      } else if (heartRate <= 100) {
+        hrSev = 0;
+      } else if (heartRate <= 120) {
+        hrSev = 2;
+      } else {
+        hrSev = 3;
+      }
+    }
+
+    int rrSev = 0;
+    if (respiratoryConnected && respiratoryRate > 0) {
+      if (respiratoryRate < 12)
+        rrSev = 3;
+      else if (respiratoryRate <= 20)
+        rrSev = 0;
+      else if (respiratoryRate <= 28)
+        rrSev = 2;
+      else
+        rrSev = 3;
+    }
+
+    int spo2Sev = 0;
+    if (spo2Connected && spo2 > 0) {
+      if (spo2 < 90)
+        spo2Sev = 3;
+      else if (spo2 <= 94)
+        spo2Sev = 2;
+      else
+        spo2Sev = 0;
+    }
+
+    int bpSev = 0;
+    if (bpConnected && (systolic > 0 || diastolic > 0)) {
+      if (systolic < 90 || diastolic < 60) {
+        bpSev = hasSevereSymptoms ? 3 : 2;
+      } else if (systolic <= 120 && diastolic <= 80) {
+        bpSev = 0;
+      } else if (systolic <= 140 && diastolic <= 90) {
+        bpSev = 1;
+      } else {
+        bpSev = (systolic >= 160 || diastolic >= 100) ? 3 : 2;
+      }
+    }
+
+    // Compute overall severity
+    final severities = [tempSev, hrSev, rrSev, spo2Sev, bpSev];
+    int maxSev = severities.fold(0, (p, c) => c > p ? c : p);
+    final abnormalCount = severities.where((s) => s >= 2).length;
+    if (abnormalCount >= 2 && maxSev < 3) maxSev += 1;
+    if ((ecgStatus == 'abnormal' || ecgStatus == 'arrhythmia') && maxSev > 0)
+      maxSev = (maxSev + 1).clamp(0, 3);
+    if (hasChronic && maxSev > 0) maxSev = (maxSev + 1).clamp(0, 3);
+    if (hasSevereSymptoms) maxSev = (maxSev + 1).clamp(0, 3);
+    if (maxSev == 0 && (hasMildSymptoms || postExercise)) maxSev = 1;
+
+    final String severityLabel = () {
+      switch (maxSev) {
+        case 3:
+          return 'very critical';
+        case 2:
+          return 'moderate';
+        case 1:
+          return 'mild';
+        default:
+          return 'stable';
+      }
+    }();
+
+    final String personWord = 'Patient';
+    final String namePrefix = name.isNotEmpty
+        ? '$personWord $name'
+        : 'The patient';
+
+    // Problems: labeled readings for clarity
+    final List<String> problems = [];
+    if (tempSev >= 1) {
+      problems.add('Temperature: ${temperature.toStringAsFixed(1)}°C');
+    }
+    if (hrSev >= 1) {
+      problems.add('Heart rate: ${heartRate.toStringAsFixed(0)}/min');
+    }
+    if (rrSev >= 1) {
+      problems.add(
+        'Respiratory rate: ${respiratoryRate.toStringAsFixed(0)}/min',
+      );
+    }
+    if (bpSev >= 1) {
+      problems.add('Blood pressure: $systolic/$diastolic');
+    }
+    if (spo2Sev >= 1) {
+      problems.add('SpO₂: ${spo2.toStringAsFixed(0)}%');
+    }
+    if (ecgConnected && ecgStatus != 'normal') {
+      problems.add('ECG: ${_ecgLabelEn(ecgStatus)}');
+    }
+
+    final String problemsBlock = problems.isEmpty
+        ? '• No obvious problems in vital signs.'
+        : problems.map((e) => '• $e').join('\\n');
+
+    String guidance;
+    if (maxSev == 3) {
+      guidance =
+          'Go to the hospital immediately or call emergency, especially with any shortness of breath or chest pain.';
+    } else if (maxSev == 2) {
+      guidance =
+          'Strongly recommended to visit a doctor very soon and monitor symptoms closely over the next hours.';
+    } else if (maxSev == 1) {
+      guidance =
+          'Rest, drink fluids, and follow up within 24–48 hours. See a doctor if symptoms worsen.';
+    } else {
+      guidance =
+          'No issues detected currently. Maintain periodic monitoring and a healthy lifestyle.';
+    }
+
+    final String stateWordEn = 'condition is';
+    return ('$namePrefix $stateWordEn $severityLabel.\\n\\n'
+        'Indicators with problems:\n$problemsBlock\\n\\n'
+        'Guidance:\n• $guidance');
   }
 
   /// تحليل درجة الحرارة
@@ -1148,7 +1531,7 @@ class MedicalAssistantService {
     if (criticalIssues.isEmpty &&
         warnings.isEmpty &&
         disconnectedWarnings.isEmpty) {
-      concerns += isArabic  
+      concerns += isArabic
           ? '✅ لا توجد مخاوف حالياً. جميع الأجهزة متصلة والعلامات الحيوية ضمن المعدل الطبيعي.'
           : '✅ No current concerns. All devices connected and vital signs within normal range.';
     } else if (criticalIssues.isEmpty &&
@@ -1362,3 +1745,5 @@ class MedicalAssistantService {
     ).hasMatch(message);
   }
 }
+
+// (Removed duplicate extension with static helpers; all methods live inside the class now.)
