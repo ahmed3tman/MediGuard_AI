@@ -87,7 +87,10 @@ class PatientDetailService {
         readings = Map<String, dynamic>.from(v);
         final lu = readings?['lastUpdated'];
         if (lu is int) {
-          lastUpdated = DateTime.fromMillisecondsSinceEpoch(lu);
+          // Handle seconds vs milliseconds epoch
+          final bool looksLikeSeconds = lu < 1000000000000; // 1e12
+          final millis = looksLikeSeconds ? lu * 1000 : lu;
+          lastUpdated = DateTime.fromMillisecondsSinceEpoch(millis);
         }
       } else {
         readings = {};
@@ -105,85 +108,154 @@ class PatientDetailService {
   /// ECG stream now reads from /devices/{id}/readings (ecg scalar or waveform)
   static Stream<List<EcgReading>> getEcgReadingsStream(String deviceId) {
     if (currentUserId == null) return Stream.value([]);
-    final ref = _database.ref('devices/$deviceId/readings');
+
+    final refs = <DatabaseReference>[
+      _database.ref('devices/$deviceId/readings'),
+      _database.ref('users/$currentUserId/devices/$deviceId/readings'),
+      _database.ref('device_readings/$deviceId/current'),
+    ];
 
     final controller = StreamController<List<EcgReading>>.broadcast();
-    StreamSubscription<DatabaseEvent>? dbSub;
-    Timer? timer;
+    final List<StreamSubscription<DatabaseEvent>> subs = [];
+    // Rolling buffer for scalar ECG values using lastUpdated timestamps
+    final List<EcgReading> scalarBuffer = <EcgReading>[];
+    const int scalarMaxKeep = 50 * 10; // 10 seconds at 50Hz equivalent length
 
-    // State for continuous generation
-    double bpm = 70.0;
-    final List<EcgReading> buffer = <EcgReading>[];
-    int tick = 0;
+    List<EcgReading> _parseWaveform(dynamic data) {
+      if (data is! Map) return <EcgReading>[];
+      final map = Map<String, dynamic>.from(data);
 
-    void emitSample() {
-      // 20 Hz sampling
-      final double value = _generateEcgWaveform(tick, bpm);
-      final now = DateTime.now();
-      buffer.add(EcgReading(value: value, timestamp: now));
-      // Keep last 500 samples (~25s at 20Hz)
-      const int maxSamples = 500;
-      if (buffer.length > maxSamples) {
-        buffer.removeRange(0, buffer.length - maxSamples);
+      dynamic findWaveform(dynamic m) {
+        if (m is! Map) return null;
+        if (m['ecgData'] is List) return m['ecgData'];
+        if (m['ecg'] is List) return m['ecg'];
+        if (m['waveform'] is List) return m['waveform'];
+        if (m['ecgWaveform'] is List) return m['ecgWaveform'];
+        if (m['current'] is Map) return findWaveform(m['current']);
+        return null;
       }
-      tick = (tick + 1) % 1000000; // avoid overflow
-      if (!controller.isClosed) controller.add(List.unmodifiable(buffer));
+
+      final dynamic wf = findWaveform(map);
+      if (wf is List) {
+        // Accept numbers or numeric strings
+        final List<double> samples = [];
+        for (final e in wf) {
+          if (e == null) continue;
+          if (e is num)
+            samples.add(e.toDouble());
+          else if (e is String) {
+            final v = double.tryParse(e);
+            if (v != null) samples.add(v);
+          }
+        }
+        if (samples.isEmpty) return <EcgReading>[];
+
+        // Assign relative timestamps at 50Hz
+        const double sampleRateHz = 50.0;
+        final int n = samples.length;
+        final now = DateTime.now();
+        final start = now.subtract(
+          Duration(microseconds: (1e6 * n / sampleRateHz).round()),
+        );
+        final readings = List<EcgReading>.generate(n, (i) {
+          final ts = start.add(
+            Duration(microseconds: (1e6 * (i + 1) / sampleRateHz).round()),
+          );
+          return EcgReading(value: samples[i], timestamp: ts);
+        });
+        const int maxKeep = 50 * 10; // 10s
+        return readings.length > maxKeep
+            ? readings.sublist(readings.length - maxKeep)
+            : readings;
+      }
+
+      // Also accept map<timestamp,value>
+      if (map.values.isNotEmpty) {
+        final entries = <MapEntry<DateTime, double>>[];
+        map.forEach((k, v) {
+          DateTime? ts;
+          // try parse k as ISO or milliseconds
+          ts = DateTime.tryParse(k);
+          ts ??= int.tryParse(k) != null
+              ? DateTime.fromMillisecondsSinceEpoch(int.parse(k))
+              : null;
+          double? val;
+          if (v is num) val = v.toDouble();
+          if (v is String) val = double.tryParse(v);
+          if (ts != null && val != null) {
+            entries.add(MapEntry(ts, val));
+          }
+        });
+        entries.sort((a, b) => a.key.compareTo(b.key));
+        return entries
+            .map((e) => EcgReading(value: e.value, timestamp: e.key))
+            .toList();
+      }
+
+      return <EcgReading>[];
     }
 
-    controller.onListen = () {
-      // Subscribe to device readings to update BPM
-      dbSub = ref.onValue.listen((event) {
-        final data = event.snapshot.value;
-        if (data is Map) {
-          final map = Map<String, dynamic>.from(data);
-          final raw = (map['ecg'] ?? map['heartRate'] ?? 0.0).toDouble();
-          if (raw <= 0) return;
-          // Normalize unreasonable values
-          bpm = raw > 200 ? (60 + (raw % 40)).toDouble() : raw;
+    void handle(DatabaseEvent event) {
+      final data = event.snapshot.value;
+      if (data == null) return;
+      final wave = _parseWaveform(data);
+      if (wave.isNotEmpty) {
+        if (!controller.isClosed) controller.add(wave);
+        return;
+      }
+      // Fallback: accept scalar ecg + lastUpdated as discrete samples
+      if (data is Map) {
+        final map = Map<String, dynamic>.from(data);
+        // Seek in common containers
+        Map<String, dynamic>? cur = map;
+        if (map['current'] is Map) {
+          cur = Map<String, dynamic>.from(map['current']);
         }
-      });
-      // Start periodic generation
-      timer = Timer.periodic(
-        const Duration(milliseconds: 50),
-        (_) => emitSample(),
-      );
-    };
+        final ecgScalar = cur['ecg'] ?? cur['heartRate'];
+        final lu = cur['lastUpdated'] ?? map['lastUpdated'];
+        double? val;
+        if (ecgScalar is num) val = ecgScalar.toDouble();
+        if (ecgScalar is String) val = double.tryParse(ecgScalar);
+        if (val != null) {
+          // accept only > 0
+          if (val > 0) {
+            DateTime ts = DateTime.now();
+            if (lu is int) {
+              final looksLikeSeconds = lu < 1000000000000;
+              final millis = looksLikeSeconds ? lu * 1000 : lu;
+              ts = DateTime.fromMillisecondsSinceEpoch(millis);
+            } else if (lu is String) {
+              final parsed = DateTime.tryParse(lu);
+              if (parsed != null) ts = parsed;
+            }
+            // Append only if ts is newer than last
+            if (scalarBuffer.isEmpty ||
+                ts.isAfter(scalarBuffer.last.timestamp)) {
+              scalarBuffer.add(EcgReading(value: val, timestamp: ts));
+              // Trim window ~ last 30 seconds of samples (sparse, not 50Hz)
+              while (scalarBuffer.length > scalarMaxKeep) {
+                scalarBuffer.removeAt(0);
+              }
+              if (!controller.isClosed) {
+                controller.add(List.unmodifiable(scalarBuffer));
+              }
+            }
+          }
+        }
+      }
+    }
+
+    for (final r in refs) {
+      subs.add(r.onValue.listen(handle));
+    }
 
     controller.onCancel = () async {
-      await dbSub?.cancel();
-      timer?.cancel();
+      for (final s in subs) {
+        await s.cancel();
+      }
     };
 
     return controller.stream;
-  }
-
-  /// Generate ECG waveform pattern based on heart rate
-  static double _generateEcgWaveform(int index, double heartRate) {
-    // Heart-rate-dependent ECG simulation
-    const double sampleRate = 20.0; // samples per second (50 ms)
-    final double bps = (heartRate <= 0 ? 60.0 : heartRate) / 60.0; // beats/s
-    int samplesPerBeat = (sampleRate / bps).round();
-    samplesPerBeat = samplesPerBeat.clamp(6, 60); // constrain cycle length
-    final double phase = (index % samplesPerBeat) / samplesPerBeat; // 0..1
-
-    // Simplified ECG morphology by phase
-    if (phase < 0.12) {
-      return 0.1; // P wave
-    } else if (phase < 0.18) {
-      return 0.0; // PR segment
-    } else if (phase < 0.22) {
-      return -0.3; // Q
-    } else if (phase < 0.26) {
-      return 1.5; // R peak
-    } else if (phase < 0.30) {
-      return -0.8; // S
-    } else if (phase < 0.50) {
-      return 0.0; // ST segment
-    } else if (phase < 0.66) {
-      return 0.4; // T wave
-    } else {
-      return 0.0; // baseline
-    }
   }
 
   /// Clean up old ECG data to prevent database bloat

@@ -17,6 +17,12 @@ class EcgSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Detect if there is any non-zero signal in the provided readings
+    final bool hasAnySamples = ecgReadings.isNotEmpty;
+    final bool hasSignal = ecgReadings.any((r) => r.value.abs() > 1e-6);
+    final bool isActuallyConnected =
+        vitalSigns.isActuallyConnected && hasSignal;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -33,7 +39,7 @@ class EcgSection extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: ecgReadings.isNotEmpty
+                color: isActuallyConnected
                     ? Colors.green[100]
                     : Colors.grey[100],
                 borderRadius: BorderRadius.circular(12),
@@ -42,23 +48,23 @@ class EcgSection extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    ecgReadings.isNotEmpty
+                    isActuallyConnected
                         ? Icons.radio_button_checked
                         : Icons.radio_button_off,
                     size: 12,
-                    color: ecgReadings.isNotEmpty
+                    color: isActuallyConnected
                         ? Colors.green[700]
                         : Colors.grey[600],
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    ecgReadings.isNotEmpty
+                    isActuallyConnected
                         ? l10n.ecgConnectedStatus
                         : l10n.ecgNotConnectedStatus,
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: ecgReadings.isNotEmpty
+                      color: isActuallyConnected
                           ? Colors.green[700]
                           : Colors.grey[600],
                     ),
@@ -77,7 +83,7 @@ class EcgSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Colors.blue[300]!, width: 2),
           ),
-          child: ecgReadings.isEmpty
+          child: (!hasAnySamples || !hasSignal)
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -88,20 +94,34 @@ class EcgSection extends StatelessWidget {
                         size: 32,
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        l10n.ecgDeviceNotConnectedError,
-                        style: TextStyle(
-                          color: Colors.orange[700],
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                      if (!vitalSigns.isActuallyConnected)
+                        Text(
+                          l10n.ecgDeviceNotConnectedError,
+                          style: TextStyle(
+                            color: Colors.orange[700],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      else
+                        Text(
+                          l10n.noEcgDataAvailable,
+                          style: TextStyle(
+                            color: Colors.orange[700],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
                       const SizedBox(height: 4),
-                      Text(
-                        l10n.ecgDeviceNotConnectedHint,
-                        style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                        textAlign: TextAlign.center,
-                      ),
+                      if (!vitalSigns.isActuallyConnected)
+                        Text(
+                          l10n.ecgDeviceNotConnectedHint,
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                     ],
                   ),
                 )
