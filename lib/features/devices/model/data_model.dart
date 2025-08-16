@@ -126,12 +126,15 @@ class Device extends Equatable {
     String? name,
     Map<String, dynamic>? readings,
     DateTime? lastUpdated,
+    bool forceLastUpdated = false,
   }) {
     return Device(
       deviceId: deviceId ?? this.deviceId,
       name: name ?? this.name,
       readings: readings ?? this.readings,
-      lastUpdated: lastUpdated ?? this.lastUpdated,
+      lastUpdated: forceLastUpdated
+          ? lastUpdated
+          : (lastUpdated ?? this.lastUpdated),
     );
   }
 

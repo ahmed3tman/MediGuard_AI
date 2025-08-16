@@ -290,21 +290,9 @@ class _DeviceCardState extends State<DeviceCard> {
   }
 
   Widget _buildStatusWidget(BuildContext context) {
-    if (widget.device.hasValidReadings && widget.device.lastUpdated != null) {
-      return Text(
-        '${AppLocalizations.of(context).lastUpdated}: ${_formatDateTime(widget.device.lastUpdated!, context)}',
-        style: Theme.of(
-          context,
-        ).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontSize: 11),
-      );
-    } else if (widget.device.hasValidReadings) {
-      return Text(
-        AppLocalizations.of(context).deviceConnected,
-        style: Theme.of(
-          context,
-        ).textTheme.bodySmall?.copyWith(color: Colors.green[600], fontSize: 12),
-      );
-    } else {
+    final lu = widget.device.lastUpdated;
+    // 1) No signal at all
+    if (lu == null || !widget.device.hasValidReadings) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         decoration: BoxDecoration(
@@ -322,6 +310,25 @@ class _DeviceCardState extends State<DeviceCard> {
         ),
       );
     }
+
+    final diffSeconds = DateTime.now().difference(lu).inSeconds;
+    // 2) Real-time (<= 5 seconds)
+    if (diffSeconds <= 5) {
+      return Text(
+        AppLocalizations.of(context).deviceConnected,
+        style: Theme.of(
+          context,
+        ).textTheme.bodySmall?.copyWith(color: Colors.green[600], fontSize: 12),
+      );
+    }
+
+    // 3) Stale: show last updated since ...
+    return Text(
+      '${AppLocalizations.of(context).lastUpdated}: ${_formatDateTime(lu, context)}',
+      style: Theme.of(
+        context,
+      ).textTheme.bodySmall?.copyWith(color: Colors.grey[600], fontSize: 11),
+    );
   }
 
   Widget _buildVitalSignTile({

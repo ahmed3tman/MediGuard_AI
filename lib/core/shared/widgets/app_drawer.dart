@@ -33,6 +33,46 @@ class _AppDrawerState extends State<AppDrawer> {
     }
   }
 
+  Widget _buildSquareAvatar(String? photoUrl) {
+    final double size = 56;
+    final borderRadius = BorderRadius.circular(12);
+
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: borderRadius,
+        child: Image.network(
+          photoUrl,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: borderRadius,
+              ),
+              alignment: Alignment.center,
+              child: Icon(Icons.person, size: 36, color: Colors.blue[600]),
+            );
+          },
+        ),
+      );
+    }
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: borderRadius,
+      ),
+      alignment: Alignment.center,
+      child: Icon(Icons.person, size: 36, color: Colors.blue[600]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = AuthService.currentUser;
@@ -57,7 +97,14 @@ class _AppDrawerState extends State<AppDrawer> {
               print('Drawer - User profile: $userProfile');
               print('Drawer - User name: $userName, email: $userEmail');
 
-              return UserAccountsDrawerHeader(
+              final photoUrl =
+                  userProfile?['photoUrl'] ??
+                  userProfile?['imageUrl'] ??
+                  user?.photoURL;
+
+              return Container(
+                height: 150,
+                width: double.infinity,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Colors.blue[600]!, Colors.blue[400]!],
@@ -65,17 +112,47 @@ class _AppDrawerState extends State<AppDrawer> {
                     end: Alignment.bottomRight,
                   ),
                 ),
-                accountName: Text(
-                  userName,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
-                accountEmail: Text(userEmail),
-                currentAccountPicture: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, size: 40, color: Colors.blue[600]),
+                child: SafeArea(
+                  bottom: false,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      _buildSquareAvatar(photoUrl),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              userName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              userEmail,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white.withOpacity(0.9),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },

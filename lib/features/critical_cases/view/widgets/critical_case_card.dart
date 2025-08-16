@@ -29,8 +29,14 @@ class CriticalCaseCard extends StatelessWidget {
         (criticalCase.spo2 == 0.0) &&
         ((criticalCase.bloodPressure['systolic'] ?? 0) == 0) &&
         ((criticalCase.bloodPressure['diastolic'] ?? 0) == 0);
-    bool isNotConnected =
-        now.difference(criticalCase.lastUpdated).inMinutes > 10 || noData;
+    final age = now.difference(criticalCase.lastUpdated);
+    // Tri-state:
+    // 1) Not connected: no data at all
+    final bool triNotConnected = noData;
+    // 2) Real-time: lastUpdated within 5 seconds
+    final bool triRealtime = !triNotConnected && age.inSeconds <= 5;
+    // 3) Else: stale -> show last updated since
+    final bool isNotConnected = triNotConnected;
 
     return InkWell(
       onTap: () {
@@ -115,7 +121,11 @@ class CriticalCaseCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        isNotConnected ? l10n.notConnected : l10n.connected,
+                        triRealtime
+                            ? l10n.connected
+                            : (isNotConnected
+                                  ? l10n.notConnected
+                                  : l10n.lastUpdated),
                         style: TextStyle(
                           color: isNotConnected
                               ? Colors.grey
@@ -148,9 +158,10 @@ class CriticalCaseCard extends StatelessWidget {
                         isNotConnected: isNotConnected,
                       ),
                       const SizedBox(height: 16),
-                      _CriticalCaseFooter(
-                        lastUpdated: criticalCase.lastUpdated,
-                      ),
+                      if (!triRealtime && !triNotConnected)
+                        _CriticalCaseFooter(
+                          lastUpdated: criticalCase.lastUpdated,
+                        ),
                     ],
                   ),
                 ),

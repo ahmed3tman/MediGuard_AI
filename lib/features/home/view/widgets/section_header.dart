@@ -31,37 +31,38 @@ class SectionHeader extends StatelessWidget {
       child: showButton && buttonText != null && onButtonPressed != null
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [_buildTitleColumn(), _buildActionButton()],
+              children: [
+                Expanded(child: _buildTitleColumn()),
+                _buildActionButton(),
+              ],
             )
           : _buildTitleColumn(),
     );
   }
 
   Widget _buildTitleColumn() {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: isTablet ? 22 : 20,
-              fontWeight: FontWeight.bold,
-              fontFamily: isArabic ? 'NeoSansArabic' : null,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: isTablet ? 22 : 20,
+            fontWeight: FontWeight.bold,
+            fontFamily: isArabic ? 'NeoSansArabic' : null,
           ),
-          SizedBox(height: isTablet ? 6 : 4),
-          Text(
-            subtitle,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: isTablet ? 14 : 13,
-              fontFamily: isArabic ? 'NeoSansArabic' : null,
-            ),
+        ),
+        SizedBox(height: isTablet ? 6 : 4),
+        Text(
+          subtitle,
+          style: TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: isTablet ? 14 : 13,
+            fontFamily: isArabic ? 'NeoSansArabic' : null,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

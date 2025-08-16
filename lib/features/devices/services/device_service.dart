@@ -9,6 +9,39 @@ class DeviceService {
 
   static String? get currentUserId => _auth.currentUser?.uid;
 
+  // Normalize various timestamp formats (ms epoch, s epoch, ISO string)
+  static DateTime? _parseTimestamp(dynamic value) {
+    if (value == null) return null;
+    try {
+      if (value is int) {
+        // If it's too small to be millis, treat as seconds
+        final bool looksLikeSeconds = value < 1000000000000; // 1e12
+        final int millis = looksLikeSeconds ? value * 1000 : value;
+        return DateTime.fromMillisecondsSinceEpoch(millis);
+      }
+      if (value is num) {
+        final doubleVal = value.toDouble();
+        final int intVal = doubleVal.round();
+        final bool looksLikeSeconds = intVal < 1000000000000;
+        final millis = looksLikeSeconds ? intVal * 1000 : intVal;
+        return DateTime.fromMillisecondsSinceEpoch(millis);
+      }
+      if (value is String) {
+        // Numeric string
+        final intVal = int.tryParse(value);
+        if (intVal != null) {
+          final bool looksLikeSeconds = intVal < 1000000000000;
+          final int millis = looksLikeSeconds ? intVal * 1000 : intVal;
+          return DateTime.fromMillisecondsSinceEpoch(millis);
+        }
+        // ISO datetime string
+        final iso = DateTime.tryParse(value);
+        if (iso != null) return iso;
+      }
+    } catch (_) {}
+    return null;
+  }
+
   // ---------------- Add / Link Device ----------------
   // Link existing physical device to current user (no readings duplication)
   static Future<void> addDevice(String deviceId, String deviceName) async {
@@ -75,9 +108,7 @@ class DeviceService {
           final m = Map<String, dynamic>.from(readingsData);
           // Extract lastUpdated from nested readings path
           final lu = m['lastUpdated'];
-          if (lu != null && lu is int) {
-            lastUpdated = DateTime.fromMillisecondsSinceEpoch(lu);
-          }
+          lastUpdated = _parseTimestamp(lu);
           readingsMap = m;
         }
 
@@ -116,8 +147,9 @@ class DeviceService {
             } catch (_) {}
           } else {
             // Ensure placeholder exists to hold name until readings arrive
-            if (!latestDevices.containsKey(deviceId)) {
-              final name = meta['patientName'] ?? meta['name'] ?? deviceId;
+            final name = meta['patientName'] ?? meta['name'] ?? deviceId;
+            final existing = latestDevices[deviceId];
+            if (existing == null) {
               latestDevices[deviceId] = Device(
                 deviceId: deviceId,
                 name: name,
@@ -125,11 +157,8 @@ class DeviceService {
                 lastUpdated: null,
               );
             } else {
-              // Update name if changed
-              final name = meta['patientName'] ?? meta['name'] ?? deviceId;
-              latestDevices[deviceId] = latestDevices[deviceId]!.copyWith(
-                name: name,
-              );
+              // Update only the name; keep readings and lastUpdated intact
+              latestDevices[deviceId] = existing.copyWith(name: name);
             }
           }
           attachReadingListener(deviceId);
@@ -253,7 +282,7 @@ class DeviceService {
       if (v is Map) {
         readings = Map<String, dynamic>.from(v);
         final lu = readings['lastUpdated'];
-        if (lu is int) lastUpdated = DateTime.fromMillisecondsSinceEpoch(lu);
+        lastUpdated = _parseTimestamp(lu);
       }
       emit();
     });
@@ -273,7 +302,29 @@ class DeviceService {
       event,
     ) {
       final data = event.snapshot.value;
-      if (data is Map) return Map<String, dynamic>.from(data);
+      if (data is Map) {
+        // Some feeds wrap under { current: { ... } }
+        Map<String, dynamic> readings;
+        if (data['current'] is Map) {
+          readings = Map<String, dynamic>.from(
+            Map<String, dynamic>.from(data)['current'] as Map,
+          );
+        } else {
+          readings = Map<String, dynamic>.from(data);
+        }
+        // Accept common timestamp aliases
+        final rawTs =
+            readings['lastUpdated'] ??
+            readings['updatedAt'] ??
+            readings['timestamp'] ??
+            readings['ts'];
+        // Normalize lastUpdated if present (support seconds/ms/ISO)
+        final normalized = _parseTimestamp(rawTs);
+        if (normalized != null) {
+          readings['lastUpdated'] = normalized.millisecondsSinceEpoch;
+        } // If no timestamp at all, leave it absent; do not inject a fake 'now'
+        return readings;
+      }
       return null;
     });
   }
@@ -284,17 +335,23 @@ class DeviceService {
     Map<String, dynamic> newReadings,
   ) async {
     final readingsRef = _database.ref('devices/$deviceId/readings');
-    await readingsRef.update({
-      ...newReadings,
-      'lastUpdated': ServerValue.timestamp,
-    });
+    // If caller provided lastUpdated, normalize it; else rely on server timestamp
+    final providedTs = _parseTimestamp(newReadings['lastUpdated']);
+    final payload = Map<String, dynamic>.from(newReadings);
+    payload['lastUpdated'] =
+        providedTs?.millisecondsSinceEpoch ?? ServerValue.timestamp;
+    await readingsRef.update(payload);
   }
 
   static Future<void> updateDeviceWithExternalReadings(
     String deviceId,
     Map<String, dynamic> externalReadings,
   ) async {
-    await updateDeviceReadings(deviceId, externalReadings);
+    // Ensure lastUpdated is carried and normalized
+    final m = Map<String, dynamic>.from(externalReadings);
+    final ts = _parseTimestamp(m['lastUpdated']);
+    if (ts != null) m['lastUpdated'] = ts.millisecondsSinceEpoch;
+    await updateDeviceReadings(deviceId, m);
   }
 
   static Future<void> updateDeviceName(String deviceId, String newName) async {
