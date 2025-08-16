@@ -146,15 +146,42 @@ class EcgChart extends StatelessWidget {
         ),
       );
     }
-    final spots = readings.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), entry.value.value);
-    }).toList();
-    final values = readings.map((e) => e.value).toList();
-    final minValue = values.reduce((a, b) => a < b ? a : b);
-    final maxValue = values.reduce((a, b) => a > b ? a : b);
+    // Time-based sliding window to create a continuous scrolling waveform
+    const int windowSeconds =
+        10; // narrower window to spread the waveform horizontally
+    final int lastMillis = readings.last.timestamp.millisecondsSinceEpoch;
+    final int fromMillis = lastMillis - (windowSeconds * 1000);
+    final List<EcgReading> window = readings
+        .where((r) => r.timestamp.millisecondsSinceEpoch >= fromMillis)
+        .toList(growable: false);
+
+    // Map timestamps to a relative 0..windowSeconds domain for stable axis
+    final double lastSec = lastMillis / 1000.0;
+    final double startSec = lastSec - windowSeconds;
+
+    final spots = window.map((r) {
+      final double t = r.timestamp.millisecondsSinceEpoch / 1000.0;
+      return FlSpot((t - startSec).clamp(0, windowSeconds).toDouble(), r.value);
+    }).toList()..sort((a, b) => a.x.compareTo(b.x));
+
+    final values = window.isNotEmpty
+        ? window.map((e) => e.value).toList()
+        : [0.0, 1.0];
+    double minValue = values.reduce((a, b) => a < b ? a : b);
+    double maxValue = values.reduce((a, b) => a > b ? a : b);
+    if (minValue == maxValue) {
+      // Avoid a flat range which can cause zero intervals
+      minValue -= 1.0;
+      maxValue += 1.0;
+    }
     final padding = (maxValue - minValue) * 0.1;
     final minY = minValue - padding;
     final maxY = maxValue + padding;
+
+    // Use a fixed X-axis domain [0..windowSeconds] so the waveform scrolls smoothly
+    const double minXVal = 0.0;
+    final double maxXVal = windowSeconds.toDouble();
+
     return LineChart(
       LineChartData(
         gridData: FlGridData(
@@ -162,7 +189,7 @@ class EcgChart extends StatelessWidget {
           drawVerticalLine: true,
           drawHorizontalLine: true,
           horizontalInterval: (maxY - minY) / 6,
-          verticalInterval: spots.length > 20 ? spots.length / 8 : 3,
+          verticalInterval: (windowSeconds / 8).clamp(0.5, 5),
           getDrawingHorizontalLine: (value) {
             return FlLine(
               color: Colors.blue[200]!.withOpacity(0.4),
@@ -198,24 +225,22 @@ class EcgChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 30,
-              interval: spots.length > 15 ? spots.length / 6 : 3,
+              interval: (windowSeconds / 6).clamp(0.5, 5),
               getTitlesWidget: (value, meta) {
-                if (value.toInt() < readings.length && value.toInt() >= 0) {
-                  final reading = readings[value.toInt()];
-                  final time = reading.timestamp;
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
-                      style: TextStyle(
-                        color: Colors.blue[700],
-                        fontSize: 9,
-                        fontWeight: FontWeight.w500,
-                      ),
+                // value is within minXVal..maxXVal, show seconds relative to right edge
+                final secondsAgo = (maxXVal - value).clamp(0, windowSeconds);
+                final display = secondsAgo.round();
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Text(
+                    '-${display}s',
+                    style: TextStyle(
+                      color: Colors.blue[700],
+                      fontSize: 9,
+                      fontWeight: FontWeight.w500,
                     ),
-                  );
-                }
-                return const Text('');
+                  ),
+                );
               },
             ),
           ),
@@ -236,7 +261,7 @@ class EcgChart extends StatelessWidget {
             isCurved: true,
             curveSmoothness: 0.3,
             color: Colors.red[600],
-            barWidth: 2.5,
+            barWidth: 1,
             isStrokeCapRound: true,
             dotData: const FlDotData(show: false),
             belowBarData: BarAreaData(
@@ -260,9 +285,9 @@ class EcgChart extends StatelessWidget {
             getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
               return touchedBarSpots.map((barSpot) {
                 final flSpot = barSpot;
-                if (flSpot.x.toInt() < readings.length &&
-                    flSpot.x.toInt() >= 0) {
-                  final reading = readings[flSpot.x.toInt()];
+                final idx = flSpot.x.toInt();
+                if (idx < window.length && idx >= 0) {
+                  final reading = window[idx];
                   final time = reading.timestamp;
                   return LineTooltipItem(
                     l10n.ecgTooltip(
@@ -281,8 +306,8 @@ class EcgChart extends StatelessWidget {
             },
           ),
         ),
-        minX: 0,
-        maxX: readings.length.toDouble() - 1,
+        minX: minXVal,
+        maxX: maxXVal,
         minY: minY,
         maxY: maxY,
       ),

@@ -105,53 +105,84 @@ class PatientDetailService {
   /// ECG stream now reads from /devices/{id}/readings (ecg scalar or waveform)
   static Stream<List<EcgReading>> getEcgReadingsStream(String deviceId) {
     if (currentUserId == null) return Stream.value([]);
-    return _database.ref('devices/$deviceId/readings').onValue.asyncMap((
-      event,
-    ) async {
-      final data = event.snapshot.value;
-      if (data is! Map) return <EcgReading>[];
-      final map = Map<String, dynamic>.from(data);
-      final ecgValue = (map['ecg'] ?? map['heartRate'] ?? 0.0).toDouble();
-      if (ecgValue <= 0) return <EcgReading>[];
-      double normalizedHR = ecgValue;
-      if (ecgValue > 200) normalizedHR = (60 + (ecgValue % 40)).toDouble();
-      final List<EcgReading> readings = [];
-      final baseTime = DateTime.now();
-      for (int i = 0; i < 20; i++) {
-        final waveformValue = _generateEcgWaveform(i, normalizedHR);
-        readings.add(
-          EcgReading(
-            value: waveformValue,
-            timestamp: baseTime.add(Duration(milliseconds: i * 50)),
-          ),
-        );
+    final ref = _database.ref('devices/$deviceId/readings');
+
+    final controller = StreamController<List<EcgReading>>.broadcast();
+    StreamSubscription<DatabaseEvent>? dbSub;
+    Timer? timer;
+
+    // State for continuous generation
+    double bpm = 70.0;
+    final List<EcgReading> buffer = <EcgReading>[];
+    int tick = 0;
+
+    void emitSample() {
+      // 20 Hz sampling
+      final double value = _generateEcgWaveform(tick, bpm);
+      final now = DateTime.now();
+      buffer.add(EcgReading(value: value, timestamp: now));
+      // Keep last 500 samples (~25s at 20Hz)
+      const int maxSamples = 500;
+      if (buffer.length > maxSamples) {
+        buffer.removeRange(0, buffer.length - maxSamples);
       }
-      return readings;
-    });
+      tick = (tick + 1) % 1000000; // avoid overflow
+      if (!controller.isClosed) controller.add(List.unmodifiable(buffer));
+    }
+
+    controller.onListen = () {
+      // Subscribe to device readings to update BPM
+      dbSub = ref.onValue.listen((event) {
+        final data = event.snapshot.value;
+        if (data is Map) {
+          final map = Map<String, dynamic>.from(data);
+          final raw = (map['ecg'] ?? map['heartRate'] ?? 0.0).toDouble();
+          if (raw <= 0) return;
+          // Normalize unreasonable values
+          bpm = raw > 200 ? (60 + (raw % 40)).toDouble() : raw;
+        }
+      });
+      // Start periodic generation
+      timer = Timer.periodic(
+        const Duration(milliseconds: 50),
+        (_) => emitSample(),
+      );
+    };
+
+    controller.onCancel = () async {
+      await dbSub?.cancel();
+      timer?.cancel();
+    };
+
+    return controller.stream;
   }
 
   /// Generate ECG waveform pattern based on heart rate
   static double _generateEcgWaveform(int index, double heartRate) {
-    // Simple ECG pattern simulation
-    final double normalizedIndex = (index % 20) / 20.0;
+    // Heart-rate-dependent ECG simulation
+    const double sampleRate = 20.0; // samples per second (50 ms)
+    final double bps = (heartRate <= 0 ? 60.0 : heartRate) / 60.0; // beats/s
+    int samplesPerBeat = (sampleRate / bps).round();
+    samplesPerBeat = samplesPerBeat.clamp(6, 60); // constrain cycle length
+    final double phase = (index % samplesPerBeat) / samplesPerBeat; // 0..1
 
-    // QRS complex pattern
-    if (normalizedIndex < 0.1) {
+    // Simplified ECG morphology by phase
+    if (phase < 0.12) {
       return 0.1; // P wave
-    } else if (normalizedIndex < 0.15) {
-      return 0.0; // P-R interval
-    } else if (normalizedIndex < 0.2) {
-      return -0.3; // Q wave
-    } else if (normalizedIndex < 0.25) {
-      return 1.5; // R wave (peak)
-    } else if (normalizedIndex < 0.3) {
-      return -0.8; // S wave
-    } else if (normalizedIndex < 0.5) {
-      return 0.0; // S-T segment
-    } else if (normalizedIndex < 0.65) {
+    } else if (phase < 0.18) {
+      return 0.0; // PR segment
+    } else if (phase < 0.22) {
+      return -0.3; // Q
+    } else if (phase < 0.26) {
+      return 1.5; // R peak
+    } else if (phase < 0.30) {
+      return -0.8; // S
+    } else if (phase < 0.50) {
+      return 0.0; // ST segment
+    } else if (phase < 0.66) {
       return 0.4; // T wave
     } else {
-      return 0.0; // Baseline
+      return 0.0; // baseline
     }
   }
 

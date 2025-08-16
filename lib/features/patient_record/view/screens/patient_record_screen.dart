@@ -37,6 +37,13 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
     super.build(context); // for keep alive
     final l10n = AppLocalizations.of(context);
     return BlocBuilder<PatientDetailCubit, PatientDetailState>(
+      buildWhen: (previous, current) {
+        // Rebuild the whole page only when switching state types (e.g., loading -> loaded -> error).
+        if (previous.runtimeType != current.runtimeType) return true;
+        // If both are loaded, avoid rebuilding the entire page; inner BlocSelectors will update only numbers.
+        return !(previous is PatientDetailLoaded &&
+            current is PatientDetailLoaded);
+      },
       builder: (context, state) {
         if (state is! PatientDetailLoaded) {
           return Center(
@@ -51,9 +58,6 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
           );
         }
 
-        final vitalSigns = state.vitalSigns;
-        final ecgReadings = state.ecgReadings;
-
         return RefreshIndicator(
           onRefresh: () async {
             await context.read<PatientDetailCubit>().refreshData();
@@ -67,15 +71,15 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
                 // Patient Information Section
                 _buildRealtimePatientInfoSection(),
                 // Vital Signs Grid
-                _buildVitalSignsGrid(vitalSigns, l10n),
+                _buildVitalSignsGrid(l10n),
                 //  const SizedBox(height: 4),
 
                 // Blood Pressure Section (moved before ECG)
-                _buildBloodPressureSection(vitalSigns, l10n),
+                _buildBloodPressureSection(l10n),
                 const SizedBox(height: 20),
 
                 // ECG Chart Section
-                _buildEcgSection(ecgReadings, vitalSigns, l10n),
+                _buildEcgSection(l10n),
                 const SizedBox(height: 30),
 
                 // Controls
@@ -92,10 +96,9 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
   @override
   bool get wantKeepAlive => true;
 
-  Widget _buildVitalSignsGrid(
-    PatientVitalSigns vitalSigns,
-    AppLocalizations l10n,
-  ) {
+  // Lightweight view models are defined after the widget class
+
+  Widget _buildVitalSignsGrid(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -115,40 +118,72 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
           children: [
-            VitalSignCard(
-              title: l10n.temperature,
-              value: _getTemperatureDisplay(vitalSigns.temperature, l10n),
-              unit: vitalSigns.temperature > 0 ? '°C' : '',
-              icon: Icons.thermostat,
-              color: Colors.deepOrange.shade300,
-              isConnected: vitalSigns.temperature > 0,
+            // Temperature
+            BlocSelector<PatientDetailCubit, PatientDetailState, double>(
+              selector: (state) => state is PatientDetailLoaded
+                  ? state.vitalSigns.temperature
+                  : 0.0,
+              builder: (context, temp) {
+                final isConnected = temp > 0;
+                return VitalSignCard(
+                  title: l10n.temperature,
+                  value: _getTemperatureDisplay(temp, l10n),
+                  unit: isConnected ? '°C' : '',
+                  icon: Icons.thermostat,
+                  color: Colors.deepOrange.shade300,
+                  isConnected: isConnected,
+                );
+              },
             ),
-            VitalSignCard(
-              title: l10n.heartRate,
-              value: _getHeartRateDisplay(vitalSigns.heartRate, l10n),
-              unit: vitalSigns.heartRate > 0 ? 'BPM' : '',
-              icon: Icons.favorite,
-              color: Colors.red.shade300,
-              isConnected: vitalSigns.heartRate > 0,
+            // Heart rate
+            BlocSelector<PatientDetailCubit, PatientDetailState, double>(
+              selector: (state) => state is PatientDetailLoaded
+                  ? state.vitalSigns.heartRate
+                  : 0.0,
+              builder: (context, hr) {
+                final isConnected = hr > 0;
+                return VitalSignCard(
+                  title: l10n.heartRate,
+                  value: _getHeartRateDisplay(hr, l10n),
+                  unit: isConnected ? 'BPM' : '',
+                  icon: Icons.favorite,
+                  color: Colors.red.shade300,
+                  isConnected: isConnected,
+                );
+              },
             ),
-            VitalSignCard(
-              title: l10n.respiratoryRate,
-              value: _getRespiratoryRateDisplay(
-                vitalSigns.respiratoryRate,
-                l10n,
-              ),
-              unit: vitalSigns.respiratoryRate > 0 ? 'BPM' : '',
-              icon: Icons.air_outlined,
-              color: Colors.teal.shade300,
-              isConnected: vitalSigns.respiratoryRate > 0,
+            // Respiratory rate
+            BlocSelector<PatientDetailCubit, PatientDetailState, double>(
+              selector: (state) => state is PatientDetailLoaded
+                  ? state.vitalSigns.respiratoryRate
+                  : 0.0,
+              builder: (context, rr) {
+                final isConnected = rr > 0;
+                return VitalSignCard(
+                  title: l10n.respiratoryRate,
+                  value: _getRespiratoryRateDisplay(rr, l10n),
+                  unit: isConnected ? 'BPM' : '',
+                  icon: Icons.air_outlined,
+                  color: Colors.teal.shade300,
+                  isConnected: isConnected,
+                );
+              },
             ),
-            VitalSignCard(
-              title: l10n.spo2,
-              value: _getSpo2Display(vitalSigns.spo2, l10n),
-              unit: vitalSigns.spo2 > 0 ? '%' : '',
-              icon: Icons.air,
-              color: Colors.cyan.shade400,
-              isConnected: vitalSigns.spo2 > 0,
+            // SpO2
+            BlocSelector<PatientDetailCubit, PatientDetailState, double>(
+              selector: (state) =>
+                  state is PatientDetailLoaded ? state.vitalSigns.spo2 : 0.0,
+              builder: (context, spo2) {
+                final isConnected = spo2 > 0;
+                return VitalSignCard(
+                  title: l10n.spo2,
+                  value: _getSpo2Display(spo2, l10n),
+                  unit: isConnected ? '%' : '',
+                  icon: Icons.air,
+                  color: Colors.cyan.shade400,
+                  isConnected: isConnected,
+                );
+              },
             ),
           ],
         ),
@@ -195,15 +230,25 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
     );
   }
 
-  Widget _buildEcgSection(
-    List<EcgReading> ecgReadings,
-    PatientVitalSigns vitalSigns,
-    AppLocalizations l10n,
-  ) {
-    return EcgSection(
-      ecgReadings: ecgReadings,
-      vitalSigns: vitalSigns,
-      l10n: l10n,
+  Widget _buildEcgSection(AppLocalizations l10n) {
+    return BlocSelector<PatientDetailCubit, PatientDetailState, _EcgViewData>(
+      selector: (state) {
+        if (state is PatientDetailLoaded) {
+          return _EcgViewData(
+            readings: state.ecgReadings,
+            vitalSigns: state.vitalSigns,
+          );
+        }
+        return const _EcgViewData(readings: [], vitalSigns: null);
+      },
+      builder: (context, data) {
+        if (data.vitalSigns == null) return const SizedBox.shrink();
+        return EcgSection(
+          ecgReadings: data.readings,
+          vitalSigns: data.vitalSigns!,
+          l10n: l10n,
+        );
+      },
     );
   }
 
@@ -303,10 +348,7 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
     return respiratoryRate.toStringAsFixed(0);
   }
 
-  Widget _buildBloodPressureSection(
-    PatientVitalSigns vitalSigns,
-    AppLocalizations l10n,
-  ) {
+  Widget _buildBloodPressureSection(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -318,89 +360,103 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.indigo.withOpacity(0.2), width: 1),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.indigo.withOpacity(0.06),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
+        BlocSelector<PatientDetailCubit, PatientDetailState, _BpViewData>(
+          selector: (state) {
+            if (state is! PatientDetailLoaded) {
+              return const _BpViewData(0, 0, false, false);
+            }
+            final bp = state.vitalSigns.bloodPressure;
+            final sys = bp['systolic'] ?? 0;
+            final dia = bp['diastolic'] ?? 0;
+            final connected = sys > 0 && dia > 0;
+            final normal =
+                connected && sys >= 90 && sys <= 120 && dia >= 60 && dia <= 80;
+            return _BpViewData(sys, dia, connected, normal);
+          },
+          builder: (context, bp) {
+            return Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.indigo.withOpacity(0.2),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.indigo.withOpacity(0.06),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.monitor_heart,
-                size: 28,
-                color: Colors.indigo.shade300,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _getBloodPressureDisplay(vitalSigns.bloodPressure, l10n),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.monitor_heart,
+                    size: 28,
+                    color: Colors.indigo.shade300,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          bp.connected
+                              ? '${bp.sys}/${bp.dia}'
+                              : l10n.deviceNotConnected,
+                          style: TextStyle(
+                            fontSize: bp.connected ? 20 : 14,
+                            fontWeight: FontWeight.bold,
+                            color: bp.connected
+                                ? (bp.normal
+                                      ? Colors.green[700]
+                                      : Colors.red[700])
+                                : Colors.grey[600],
+                          ),
+                        ),
+                        if (bp.connected)
+                          Text(
+                            'mmHg',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: bp.connected
+                          ? (bp.normal ? Colors.green[100] : Colors.red[100])
+                          : Colors.grey[100],
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      bp.connected
+                          ? (bp.normal ? l10n.normal : l10n.abnormal)
+                          : l10n.deviceNotConnected,
                       style: TextStyle(
-                        fontSize:
-                            _isBloodPressureConnected(vitalSigns.bloodPressure)
-                            ? 20
-                            : 14,
-                        fontWeight: FontWeight.bold,
-                        color:
-                            _isBloodPressureConnected(vitalSigns.bloodPressure)
-                            ? (vitalSigns.isBloodPressureNormal
-                                  ? Colors.green[700]
-                                  : Colors.red[700])
+                        fontSize: bp.connected ? 10 : 8,
+                        fontWeight: FontWeight.w600,
+                        color: bp.connected
+                            ? (bp.normal ? Colors.green[700] : Colors.red[700])
                             : Colors.grey[600],
                       ),
                     ),
-                    if (_isBloodPressureConnected(vitalSigns.bloodPressure))
-                      Text(
-                        'mmHg',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                      ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: _isBloodPressureConnected(vitalSigns.bloodPressure)
-                      ? (vitalSigns.isBloodPressureNormal
-                            ? Colors.green[100]
-                            : Colors.red[100])
-                      : Colors.grey[100],
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  _isBloodPressureConnected(vitalSigns.bloodPressure)
-                      ? (vitalSigns.isBloodPressureNormal
-                            ? l10n.normal
-                            : l10n.abnormal)
-                      : l10n.deviceNotConnected,
-                  style: TextStyle(
-                    fontSize:
-                        _isBloodPressureConnected(vitalSigns.bloodPressure)
-                        ? 10
-                        : 8,
-                    fontWeight: FontWeight.w600,
-                    color: _isBloodPressureConnected(vitalSigns.bloodPressure)
-                        ? (vitalSigns.isBloodPressureNormal
-                              ? Colors.green[700]
-                              : Colors.red[700])
-                        : Colors.grey[600],
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ],
     );
@@ -422,4 +478,19 @@ class _PatientRecordScreenState extends State<PatientRecordScreen>
       context.read<PatientInfoCubit>().loadPatientInfo(patientInfo.deviceId);
     }
   }
+}
+
+// Lightweight view models used by BlocSelectors to limit rebuild scope
+class _EcgViewData {
+  final List<EcgReading> readings;
+  final PatientVitalSigns? vitalSigns;
+  const _EcgViewData({required this.readings, required this.vitalSigns});
+}
+
+class _BpViewData {
+  final int sys;
+  final int dia;
+  final bool connected;
+  final bool normal;
+  const _BpViewData(this.sys, this.dia, this.connected, this.normal);
 }
