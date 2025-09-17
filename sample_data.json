@@ -1,5 +1,3 @@
-// Sample data structure for Firebase Realtime Database
-// This shows how the data will be organized in Firebase
 
 {
   "users": {
@@ -56,6 +54,3 @@
   }
 }
 
-// Each doctor (user) can only see their own devices
-// Real-time updates happen when medical devices send new readings
-// The app will show alerts for abnormal readings

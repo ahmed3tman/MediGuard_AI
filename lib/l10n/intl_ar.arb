@@ -120,6 +120,10 @@
   "patientNameMinLength": "اسم المريض يجب أن يكون حرفين على الأقل",
   "pleaseEnterDeviceId": "يرجى إدخال معرف الجهاز",
   "deviceIdMinLength": "معرف الجهاز يجب أن يكون 3 أحرف على الأقل",
+  "deviceNameMinLength": "اسم الجهاز يجب أن يكون حرفين على الأقل",
+  "@deviceNameMinLength": {
+    "description": "Device name minimum length validation"
+  },
   "deviceInfoMessage": "تأكد من أن معرف الجهاز يتطابق مع معرف الجهاز الفعلي. سيتم استخدامه لاستقبال البيانات في الوقت الفعلي.",
   "errorSigningOut": "خطأ في تسجيل الخروج",
   "settingsComingSoon": "الإعدادات - قريباً",

@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.spider_doctor"
-    compileSdk = 35  // Updated for Flutter 3.22+ compatibility
+    compileSdk = 36  // Updated to satisfy plugin requirements
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -33,8 +33,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.spider_doctor"
-        minSdk = 23
-        targetSdk = 35  // Updated target SDK
+        minSdk = flutter.minSdkVersion
+    targetSdk = 36  // Updated target SDK
         versionCode = 1
         versionName = "1.0"
         
@@ -70,13 +70,13 @@ android {
 }
 
 dependencies {
-    // Firebase BOM for version management
-    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-    
-    // Firebase dependencies with KTX extensions
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-database-ktx")
-    implementation("com.google.firebase:firebase-analytics-ktx")
+    // Firebase BOM for version management (uses root project property if provided)
+    implementation(platform("com.google.firebase:firebase-bom:${project.findProperty("FirebaseSDKVersion") ?: "34.0.0"}"))
+
+    // Firebase dependencies (BOM provides versions)
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-analytics")
     
     // AndroidX dependencies
     implementation("androidx.multidex:multidex:2.0.1")

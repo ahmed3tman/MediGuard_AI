@@ -294,7 +294,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deviceIdMinLength => 'معرف الجهاز يجب أن يكون 3 أحرف على الأقل';
 
   @override
-  String get deviceNameMinLength => 'Device name must be at least 2 characters';
+  String get deviceNameMinLength => 'اسم الجهاز يجب أن يكون حرفين على الأقل';
 
   @override
   String get deviceInfoMessage =>
