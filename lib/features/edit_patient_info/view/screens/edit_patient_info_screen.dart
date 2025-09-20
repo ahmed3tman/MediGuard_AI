@@ -3,12 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/shared/widgets/widgets.dart';
 import '../../../../core/shared/theme/theme.dart';
-import '../../../../core/shared/utils/localized_data.dart';
 import '../../../../l10n/generated/app_localizations.dart';
+import '../../model/patient_info_model.dart';
 import '../../cubit/patient_info_cubit.dart';
 import '../../cubit/patient_info_state.dart';
-import '../../model/patient_info_model.dart';
-import '../../../add_device/view/widgets/chronic_diseases_selector.dart';
+import '../../controllers/edit_patient_info_page_controller.dart';
 
 class EditPatientInfoScreen extends StatefulWidget {
   final String deviceId;
@@ -25,16 +24,9 @@ class EditPatientInfoScreen extends StatefulWidget {
 }
 
 class _EditPatientInfoScreenState extends State<EditPatientInfoScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _patientNameController = TextEditingController();
-  final _ageController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _notesController = TextEditingController();
-
-  Gender _selectedGender = Gender.male;
-  String _selectedBloodType = '';
-  List<String> _selectedChronicDiseases = [];
-  bool _isInitialized = false;
+  final EditPatientInfoPageController controller =
+      EditPatientInfoPageController();
+  PatientInfoCubit? _providedCubit;
 
   @override
   void initState() {
@@ -44,52 +36,27 @@ class _EditPatientInfoScreenState extends State<EditPatientInfoScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_isInitialized) {
-      _isInitialized = true;
-      _initializeData();
-    }
-  }
-
-  void _initializeData() {
-    final bloodTypes = LocalizedData.getBloodTypes(context);
-    final diseases = LocalizedData.getChronicDiseases(context);
-
-    if (widget.patientInfo != null) {
-      final info = widget.patientInfo!;
-      _patientNameController.text = info.patientName ?? '';
-      _ageController.text = info.age.toString();
-      _phoneController.text = info.phoneNumber ?? '';
-      _notesController.text = info.notes ?? '';
-      _selectedGender = info.gender;
-      _selectedBloodType = info.bloodType ?? bloodTypes.last; // 'Unspecified'
-      _selectedChronicDiseases = info.chronicDiseases.isEmpty
-          ? [diseases.last] // 'No chronic diseases'
-          : info.chronicDiseases;
-    } else {
-      _selectedBloodType = bloodTypes.last;
-      _selectedChronicDiseases = [diseases.last];
-    }
+    controller.initializeIfNeeded(context, widget.patientInfo);
   }
 
   @override
   void dispose() {
-    _patientNameController.dispose();
-    _ageController.dispose();
-    _phoneController.dispose();
-    _notesController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     // حاول إعادة استخدام PatientInfoCubit إن وجد وإلا أنشئ واحداً محلياً
-    PatientInfoCubit? existingCubit;
     try {
-      existingCubit = context.read<PatientInfoCubit>();
+      _providedCubit = context.read<PatientInfoCubit>();
     } catch (_) {
-      existingCubit = null;
+      _providedCubit = null;
     }
-    final scaffold = Scaffold(
+
+    // localized data will be requested by reusable widgets when needed
+
+    final content = Scaffold(
       appBar: CustomAppBar(title: AppLocalizations.of(context).editPatientInfo),
       body: BlocListener<PatientInfoCubit, PatientInfoState>(
         listener: (context, state) {
@@ -107,65 +74,23 @@ class _EditPatientInfoScreenState extends State<EditPatientInfoScreen> {
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
+          child: SingleChildScrollView(
+            child: Form(
+              key: controller.formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Header
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primaryColor.withOpacity(0.1),
-                          AppColors.primaryColor.withOpacity(0.05),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.person_outline,
-                          size: 40,
-                          color: AppColors.primaryColor,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppLocalizations.of(context).updatePatientInfo,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'NeoSansArabic',
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${AppLocalizations.of(context).deviceIdDisplay} ${widget.deviceId}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                  fontFamily: 'NeoSansArabic',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                  GradientHeader(
+                    icon: Icons.person_outline,
+                    title: AppLocalizations.of(context).updatePatientInfo,
+                    subtitle:
+                        '${AppLocalizations.of(context).deviceIdDisplay} ${widget.deviceId}',
                   ),
                   const SizedBox(height: 24),
 
-                  // Patient name field (optional)
+                  // Patient name
                   TextFormField(
-                    controller: _patientNameController,
+                    controller: controller.patientNameController,
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context).patientName,
                       hintText: AppLocalizations.of(context).enterPatientName,
@@ -185,9 +110,9 @@ class _EditPatientInfoScreenState extends State<EditPatientInfoScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Age field
+                  // Age
                   TextFormField(
-                    controller: _ageController,
+                    controller: controller.ageController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -224,123 +149,25 @@ class _EditPatientInfoScreenState extends State<EditPatientInfoScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Gender selection
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppLocalizations.of(context).gender,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 12,
-                            fontFamily: 'NeoSansArabic',
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.person_outline,
-                              color: AppColors.primaryColor,
-                              size: 24,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: RadioListTile<Gender>(
-                                      title: Text(
-                                        AppLocalizations.of(context).male,
-                                        style: const TextStyle(
-                                          fontFamily: 'NeoSansArabic',
-                                        ),
-                                      ),
-                                      value: Gender.male,
-                                      groupValue: _selectedGender,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedGender = value!;
-                                        });
-                                      },
-                                      activeColor: AppColors.primaryColor,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: RadioListTile<Gender>(
-                                      title: Text(
-                                        AppLocalizations.of(context).female,
-                                        style: const TextStyle(
-                                          fontFamily: 'NeoSansArabic',
-                                        ),
-                                      ),
-                                      value: Gender.female,
-                                      groupValue: _selectedGender,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedGender = value!;
-                                        });
-                                      },
-                                      activeColor: AppColors.primaryColor,
-                                      contentPadding: EdgeInsets.zero,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  // Gender
+                  GenderSelector(
+                    value: controller.selectedGender,
+                    onChanged: (g) =>
+                        setState(() => controller.selectedGender = g),
                   ),
                   const SizedBox(height: 16),
 
-                  // Blood type dropdown
-                  DropdownButtonFormField<String>(
-                    value: _selectedBloodType,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(context).bloodType,
-                      prefixIcon: const Icon(
-                        Icons.water_drop_outlined,
-                        color: AppColors.primaryColor,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                    items: BloodTypes.types.map((bloodType) {
-                      return DropdownMenuItem(
-                        value: bloodType,
-                        child: Text(
-                          bloodType,
-                          style: const TextStyle(fontFamily: 'NeoSansArabic'),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedBloodType = value!;
-                      });
-                    },
+                  // Blood type
+                  BloodTypeDropdown(
+                    selected: controller.selectedBloodType,
+                    onChanged: (v) =>
+                        setState(() => controller.selectedBloodType = v),
                   ),
                   const SizedBox(height: 16),
 
-                  // Phone number field
+                  // Phone
                   TextFormField(
-                    controller: _phoneController,
+                    controller: controller.phoneController,
                     keyboardType: TextInputType.phone,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -375,20 +202,20 @@ class _EditPatientInfoScreenState extends State<EditPatientInfoScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Chronic diseases selector
+                  // Chronic diseases
                   ChronicDiseasesSelector(
-                    selectedDiseases: _selectedChronicDiseases,
+                    selectedDiseases: controller.selectedChronicDiseases,
                     onSelectionChanged: (diseases) {
                       setState(() {
-                        _selectedChronicDiseases = diseases;
+                        controller.selectedChronicDiseases = diseases;
                       });
                     },
                   ),
                   const SizedBox(height: 16),
 
-                  // Notes field
+                  // Notes
                   TextFormField(
-                    controller: _notesController,
+                    controller: controller.notesController,
                     maxLines: 3,
                     decoration: InputDecoration(
                       labelText: AppLocalizations.of(context).notes,
@@ -409,7 +236,7 @@ class _EditPatientInfoScreenState extends State<EditPatientInfoScreen> {
                   ),
                   const SizedBox(height: 32),
 
-                  // Save button
+                  // Save
                   BlocBuilder<PatientInfoCubit, PatientInfoState>(
                     builder: (context, state) {
                       final isLoading = state is PatientInfoSaving;
@@ -417,7 +244,10 @@ class _EditPatientInfoScreenState extends State<EditPatientInfoScreen> {
                         text: AppLocalizations.of(context).saveChanges,
                         onPressed: isLoading
                             ? null
-                            : () => _saveChanges(context),
+                            : () => controller.saveChanges(
+                                context,
+                                widget.deviceId,
+                              ),
                         isLoading: isLoading,
                         width: double.infinity,
                         fontFamily: 'NeoSansArabic',
@@ -432,33 +262,11 @@ class _EditPatientInfoScreenState extends State<EditPatientInfoScreen> {
         ),
       ),
     );
-    if (existingCubit != null) {
-      return scaffold;
-    } else {
-      return BlocProvider<PatientInfoCubit>(
-        create: (_) => PatientInfoCubit(),
-        child: scaffold,
-      );
-    }
-  }
 
-  void _saveChanges(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      final age = int.tryParse(_ageController.text.trim()) ?? 0;
-      final phoneNumber = _phoneController.text.trim();
-      final patientName = _patientNameController.text.trim();
-      final notes = _notesController.text.trim();
-
-      context.read<PatientInfoCubit>().updatePatientInfo(
-        deviceId: widget.deviceId,
-        patientName: patientName.isEmpty ? null : patientName,
-        age: age,
-        gender: _selectedGender,
-        bloodType: _selectedBloodType,
-        phoneNumber: phoneNumber.isEmpty ? null : phoneNumber,
-        chronicDiseases: _selectedChronicDiseases,
-        notes: notes.isEmpty ? null : notes,
-      );
-    }
+    if (_providedCubit != null) return content;
+    return BlocProvider<PatientInfoCubit>(
+      create: (_) => PatientInfoCubit(),
+      child: content,
+    );
   }
 }

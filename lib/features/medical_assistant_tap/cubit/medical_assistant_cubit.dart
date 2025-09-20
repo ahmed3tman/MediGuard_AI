@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import '../model/medical_assistant_models.dart';
 import 'medical_assistant_state.dart';
-import '../data/hugging_face_service.dart';
+import '../data/medical_assistant_service.dart';
 
 class MedicalAssistantCubit extends Cubit<MedicalAssistantState> {
   MedicalAssistantCubit() : super(MedicalAssistantInitial());

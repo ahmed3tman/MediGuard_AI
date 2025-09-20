@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/shared/theme/theme.dart';
 import '../../../../l10n/generated/app_localizations.dart';
-import '../../model/patient_info_model.dart';
+import '../../../edit_patient_info/model/patient_info_model.dart';
+import 'patient_info_item.dart';
+import 'chronic_diseases_section.dart';
+import 'notes_section.dart';
 
 class PatientInfoCard extends StatelessWidget {
   final PatientInfo patientInfo;
@@ -189,8 +192,7 @@ class PatientInfoCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _buildInfoItem(
-                  context,
+                child: PatientInfoItem(
                   icon: Icons.cake,
                   label: AppLocalizations.of(context).age,
                   value: patientInfo.age > 0
@@ -200,8 +202,7 @@ class PatientInfoCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: _buildInfoItem(
-                  context,
+                child: PatientInfoItem(
                   icon: patientInfo.gender == Gender.male
                       ? Icons.male
                       : Icons.female,
@@ -249,13 +250,13 @@ class PatientInfoCard extends StatelessWidget {
           if (patientInfo.chronicDiseases.isNotEmpty &&
               !patientInfo.chronicDiseases.contains('لا يوجد')) ...[
             const SizedBox(height: 12),
-            _buildChronicDiseasesSection(context),
+            ChronicDiseasesSection(diseases: patientInfo.chronicDiseases),
           ],
 
           // Notes section
           if (patientInfo.notes != null && patientInfo.notes!.isNotEmpty) ...[
             const SizedBox(height: 12),
-            _buildNotesSection(context),
+            NotesSection(notes: patientInfo.notes!),
           ],
 
           // Footer: last updated time (tight at the bottom)
@@ -290,136 +291,14 @@ class PatientInfoCard extends StatelessWidget {
     required String label,
     required String value,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 14, color: AppColors.primaryColor),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey[600],
-                    fontFamily: 'NeoSansArabic',
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 3),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              fontFamily: 'NeoSansArabic',
-            ),
-          ),
-        ],
-      ),
-    );
+    return PatientInfoItem(icon: icon, label: label, value: value);
   }
 
   Widget _buildChronicDiseasesSection(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.health_and_safety,
-                size: 14,
-                color: AppColors.primaryColor,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                AppLocalizations.of(context).chronicDiseases,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[600],
-                  fontFamily: 'NeoSansArabic',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Wrap(
-            spacing: 6,
-            runSpacing: 3,
-            children: patientInfo.chronicDiseases.map((disease) {
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  disease,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: AppColors.primaryColor,
-                    fontFamily: 'NeoSansArabic',
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
+    return ChronicDiseasesSection(diseases: patientInfo.chronicDiseases);
   }
 
   Widget _buildNotesSection(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.note, size: 14, color: AppColors.primaryColor),
-              const SizedBox(width: 6),
-              Text(
-                AppLocalizations.of(context).notes,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[600],
-                  fontFamily: 'NeoSansArabic',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            patientInfo.notes!,
-            style: const TextStyle(fontSize: 12, fontFamily: 'NeoSansArabic'),
-          ),
-        ],
-      ),
-    );
+    return NotesSection(notes: patientInfo.notes!);
   }
 }

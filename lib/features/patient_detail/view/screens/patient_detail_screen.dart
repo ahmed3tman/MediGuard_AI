@@ -5,7 +5,7 @@ import 'package:spider_doctor/features/devices/model/data_model.dart';
 import 'package:spider_doctor/l10n/generated/app_localizations.dart';
 import '../../cubit/patient_detail_cubit.dart';
 import '../../cubit/patient_detail_state.dart';
-import '../../../patient_record/view/screens/patient_record_screen.dart';
+import '../../../patient_records_tap/view/screens/patient_records_screen.dart';
 import '../../../medical_assistant_tap/view/screens/medical_assistant_tap.dart';
 import '../../../medical_assistant_tap/cubit/medical_assistant_cubit.dart';
 import '../../../edit_patient_info/cubit/patient_info_cubit.dart';

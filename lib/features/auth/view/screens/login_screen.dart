@@ -34,16 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   actions: [
-      //     Padding(
-      //       padding: const EdgeInsets.only(right: 16.0),
-      //       child: const LanguageSwitcher(),
-      //     ),
-      //   ],
-      // ),
+    
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -261,24 +252,5 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Future<void> _handleAnonymousLogin() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
 
-  //   try {
-  //     await AuthService.signInAnonymously();
-  //     // The StreamBuilder in MyApp will handle navigation automatically
-  //   } catch (e) {
-  //     if (mounted) {
-  //       CustomSnackBar.showError(context, message: e.toString());
-  //     }
-  //   } finally {
-  //     if (mounted) {
-  //       setState(() {
-  //         _isLoading = false;
-  //       });
-  //     }
-  //   }
-  // }
 }

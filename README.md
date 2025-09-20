@@ -1,77 +1,399 @@
-<!-- # Spider Doctor
+# MediGuard AI
 
-Spider Doctor is a comprehensive Flutter-based mobile application designed for remote patient monitoring. It allows doctors to track vital signs, manage patient data, and receive critical alerts, all in real-time. The app also features a smart medical assistant to provide quick insights and answer medical queries.
+MediGuard AI is a Flutter mobile application for remote patient monitoring and device management. The app ingests real-time physiological data (ECG, heart rate, respiratory rate, etc.), displays live charts and historical trends, surfaces critical cases, and includes an AI-assisted medical helper for summaries and guidance.
 
 ## Features
 
-- **User Authentication**: Secure login and registration for doctors.
-- **Device Management**: Add, view, and manage patient monitoring devices.
-- **Patient Dashboard**: A centralized view of all patients and their current status.
-- **Patient Details**: In-depth view of each patient, including:
-  - Real-time vital signs (e.g., ECG, heart rate, temperature).
-  - Historical data visualization with charts.
-- **Critical Cases**: A dedicated section to highlight patients requiring immediate attention.
-- **Medical Assistant**: An AI-powered assistant that can:
-  - Analyze vital signs and provide summaries.
-  - Answer medical questions based on a knowledge base.
-  - Offer nutritional guidance.
-- **Profile Management**: Update doctor's information.
-- **Settings**: Customize application settings, including language (English/Arabic).
+- Firebase authentication and user accounts
+- Real-time device data ingestion and display (Firebase Realtime Database)
+- Device management UI for adding and linking devices to patients
 
-## Project Structure
+---
 
-The project follows a clean, feature-driven architecture to ensure scalability and maintainability. The codebase is organized as follows:
+# MediGuard AI
 
-- `lib/`: Main source code directory.
-  - `core/`: Contains shared code used across multiple features.
-    - `localization/`: Handles internationalization and localization.
-    - `shared/`: Includes shared widgets, themes, colors, and utility functions.
-  - `features/`: Each feature of the application is encapsulated in its own directory.
-    - `auth/`: User authentication.
-    - `devices/`: Device management.
-    - `patient_detail/`: Patient data and vital signs.
-    - `medical_assistant/`: AI assistant.
-    - ... and so on.
-  - `navigation/`: Manages routing and navigation.
-  - `main.dart`: The entry point of the application.
+MediGuard AI is a Flutter mobile application for remote patient monitoring and device management. The app ingests real-time physiological data (ECG, heart rate, respiratory rate, etc.), displays live charts and historical trends, surfaces critical cases, and provides an AI-assisted assistant for summaries and guidance.
 
-Each feature directory is typically structured into:
+## Features
 
-- `cubit/`: State management using Flutter BLoC (Cubit).
-- `model/`: Data models specific to the feature.
-- `services/` or `repository/`: Data handling and business logic.
-- `view/`: UI components, divided into `screens` and `widgets`.
+- Firebase authentication and user accounts
 
-## Packages Used
+- Real-time device data ingestion and display (Firebase Realtime Database)
 
-- **State Management**: `flutter_bloc`, `equatable`
-- **Backend (BaaS)**: `firebase_core`, `firebase_auth`, `firebase_database`
-- **UI**: `flutter_floating_bottom_bar`, `fl_chart`, `flutter_html`
-- **Localization**: `flutter_localizations`, `intl`
-- **Local Storage**: `shared_preferences`
-- **Networking**: `http`
-- **Environment Variables**: `flutter_dotenv`
-- **Utilities**: `url_launcher`
+- Device management UI for adding and linking devices to patients
 
-## Getting Started
+- Patient dashboard and per-patient detail pages with charts (`fl_chart`)
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-repo/spider_doctor.git
-    cd spider_doctor
-    ```
-2.  **Install dependencies:**
-    ```bash
-    flutter pub get
-    ```
-3.  **Set up Firebase:**
-    - Create a new Firebase project.
-    - Add an Android and/or iOS app to your Firebase project.
-    - Download `google-services.json` (for Android) and `GoogleService-Info.plist` (for iOS) and place them in the appropriate directories (`android/app/` and `ios/Runner/`).
-4.  **Create a `.env` file:**
-    - Create a `.env` file in the root of the project.
-    - Add any necessary environment variables (e.g., API keys for the medical assistant).
-5.  **Run the app:**
-    ```bash
-    flutter run
-    ``` -->
+- Critical-case detection and UI alerts
+
+- AI assistant integration (configure API keys via environment variables)
+
+- English/Arabic localization via `l10n/`
+
+## Project layout
+
+- `lib/`
+
+  - `core/` — shared utilities, theming, constants, and localization wiring
+  - `features/` — feature modules (e.g., `auth`, `devices`, `patient_detail`, `medical_assistant`)
+  - `navigation/` — routing configuration
+  - `main.dart` — application entrypoint
+
+- `assets/` — images and fonts (NeoSansArabic included)
+
+- `android/`, `ios/` — platform-specific code and Firebase config files
+
+- `test/` — unit and widget tests
+
+## Major dependencies
+
+Key packages (see `pubspec.yaml` for versions):
+
+- `firebase_core`, `firebase_auth`, `firebase_database`
+- `flutter_bloc`, `equatable`
+- `fl_chart`
+- `flutter_localizations`, `intl`
+- `shared_preferences`
+- `flutter_dotenv`
+- `http`
+- `mobile_scanner`
+
+## Local setup
+
+Prerequisites:
+
+- Flutter SDK (Dart >= 3.8). Verify with:
+
+  ```bash
+  flutter --version
+  ```
+
+- Android Studio or Xcode for emulators and platform tooling
+
+Steps:
+
+1. Clone the repository and open it:
+
+   ```bash
+   git clone <repo-url>
+   cd "MediGuard AI"
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   flutter pub get
+   ```
+
+3. (Optional) Generate code (if your workflow uses code generation):
+
+   ```bash
+   flutter pub run build_runner build --delete-conflicting-outputs
+   ```
+
+Note: `flutter: generate: true` is enabled in `pubspec.yaml`, so some generated files may already exist.
+
+## Firebase configuration
+
+1. Create or use an existing Firebase project on the Firebase Console: [Firebase Console](https://console.firebase.google.com/)
+
+2. Add Android and/or iOS apps in the Firebase console and download the platform config files:
+
+   - `google-services.json` → place into `android/app/`
+   - `GoogleService-Info.plist` → place into `ios/Runner/`
+
+3. If `lib/firebase_options.dart` is used (generated by `flutterfire`), ensure it matches your Firebase project. You can generate it with `flutterfire configure`.
+
+Security note: Do not commit production API keys or secrets. Use environment variables or CI secrets.
+
+## Environment variables
+
+If the app integrates external services (AI assistant, etc.), add a `.env` file in the repository root with required keys. Example:
+
+```env
+AI_API_KEY=your_api_key_here
+AI_ENDPOINT=https://api.example.com
+```
+
+Search the codebase for `flutter_dotenv` usage to find exact variable names required.
+
+## Running the app
+
+Run on the default connected device or emulator:
+
+```bash
+flutter run
+```
+
+List devices and run on a specific device:
+
+```bash
+flutter devices
+flutter run -d <deviceId>
+```
+
+Build release artifacts:
+
+```bash
+flutter build apk --release
+flutter build ios --release
+```
+
+## Testing
+
+Run unit and widget tests:
+
+```bash
+flutter test
+```
+
+Add tests under the `test/` folder following existing patterns.
+
+## Developer notes & edge cases
+
+- Real-time streams: implement throttling/debouncing and reconnection strategies for Realtime Database listeners.
+
+- Partial or malformed device payloads: parse defensively to avoid runtime crashes.
+
+- Alerts: de-duplicate and rate-limit notifications to avoid alert storms.
+
+- Platform permissions: handle runtime permissions for camera (scanner), Bluetooth, and background processing where applicable.
+
+- Localization: ensure `l10n/` contains translations for user-facing strings and run `flutter gen-l10n` when needed.
+
+Edge cases to manually test:
+
+1. Device disconnects/reconnects with delayed timestamps
+2. Offline behavior and synchronization when network recovers
+3. Concurrent critical alerts from multiple patients
+
+## Release checklist
+
+- Rotate or remove development API keys and secrets
+- Confirm Firebase platform files point to the correct project
+- Test core flows on physical Android and iOS devices
+- Verify localization for all target locales
+- Run `flutter analyze` and `flutter test` in CI
+
+## Further improvements (suggestions)
+
+- Add a `docs/` folder with per-feature developer guides and API contracts
+- Add integration tests that run against Firebase emulators
+- Add CI workflows to run static analysis, tests, and build smoke artifacts
+
+If you'd like, I can also generate an Arabic README (`README.ar.md`) or scaffold a `docs/` directory with quickstart guides for each feature.
+
+## Where to find more context
+
+- `IMPLEMENTATION_SUMMARY.md`, `UNIFIED_SYSTEM_README.md`, and `SUMMARY_COMPLETION.md` contain design notes and migration history.
+
+## Suggestions / Next steps
+
+- Generate a localized README in Arabic (`README.ar.md`).
+- Scaffold a `docs/` directory with per-feature quickstarts and developer guides.
+
+2. Intermittent network (offline-first UX) and data synchronization once back online.
+3. Multiple simultaneous critical alerts from different patients.
+
+## Release checklist
+
+# MediGuard AI
+
+MediGuard AI is a Flutter mobile application for remote patient monitoring and device management. The app ingests real-time physiological data (ECG, heart rate, respiratory rate, etc.), displays live charts and historical trends, surfaces critical cases, and provides an AI-assisted assistant for summaries and guidance.
+
+## Features
+
+- Firebase authentication and user accounts
+- Real-time device data ingestion and display (Firebase Realtime Database)
+- Device management UI for adding and linking devices to patients
+- Patient dashboard and per-patient detail pages with charts (`fl_chart`)
+- Critical-case detection and UI alerts
+- AI assistant integration (configure API keys via environment variables)
+- English/Arabic localization via `l10n/`
+
+## Project layout
+
+- `lib/`
+  - `core/` — shared utilities, theming, constants, and localization wiring
+  - `features/` — feature modules (e.g., `auth`, `devices`, `patient_detail`, `medical_assistant`)
+  - `navigation/` — routing configuration
+  - `main.dart` — application entrypoint
+- `assets/` — images and fonts (NeoSansArabic included)
+- `android/`, `ios/` — platform-specific code and Firebase config files
+- `test/` — unit and widget tests
+
+## Major dependencies
+
+Key packages (see `pubspec.yaml` for versions):
+
+- `firebase_core`, `firebase_auth`, `firebase_database`
+- `flutter_bloc`, `equatable`
+- `fl_chart`
+- `flutter_localizations`, `intl`
+- `shared_preferences`
+- `flutter_dotenv`
+- `http`
+- `mobile_scanner`
+
+## Local setup
+
+Prerequisites:
+
+- Flutter SDK (Dart >= 3.8). Verify with:
+
+  ```bash
+  flutter --version
+  ```
+
+- Android Studio or Xcode for emulators and platform tooling
+
+Steps:
+
+1. Clone the repository and open it:
+
+   ```bash
+   git clone <repo-url>
+   cd "MediGuard AI"
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   flutter pub get
+   ```
+
+3. (Optional) Generate code (if your workflow uses code generation):
+
+   ```bash
+   flutter pub run build_runner build --delete-conflicting-outputs
+   ```
+
+Note: `flutter: generate: true` is enabled in `pubspec.yaml`, so some generated files may already exist.
+
+## Firebase configuration
+
+1. Create or use an existing Firebase project on the Firebase Console: <https://console.firebase.google.com/>
+
+2. Add Android and/or iOS apps in the Firebase console and download the platform config files:
+
+   - `google-services.json` → place into `android/app/`
+   - `GoogleService-Info.plist` → place into `ios/Runner/`
+
+3. If `lib/firebase_options.dart` is used (generated by `flutterfire`), ensure it matches your Firebase project. You can generate it with `flutterfire configure`.
+
+Security note: Do not commit production API keys or secrets. Use environment variables or CI secrets.
+
+## Environment variables
+
+If the app integrates external services (AI assistant, etc.), add a `.env` file in the repository root with required keys. Example:
+
+```env
+AI_API_KEY=your_api_key_here
+AI_ENDPOINT=https://api.example.com
+```
+
+Search the codebase for `flutter_dotenv` usage to find exact variable names required.
+
+## Running the app
+
+Run on the default connected device or emulator:
+
+```bash
+flutter run
+```
+
+List devices and run on a specific device:
+
+```bash
+flutter devices
+flutter run -d <deviceId>
+```
+
+Build release artifacts:
+
+```bash
+flutter build apk --release
+flutter build ios --release
+```
+
+## Testing
+
+Run unit and widget tests:
+
+```bash
+flutter test
+```
+
+Add tests under the `test/` folder following existing patterns.
+
+## Developer notes & edge cases
+
+- Real-time streams: implement throttling/debouncing and reconnection strategies for Realtime Database listeners.
+- Partial or malformed device payloads: parse defensively to avoid runtime crashes.
+- Alerts: de-duplicate and rate-limit notifications to avoid alert storms.
+- Platform permissions: handle runtime permissions for camera (scanner), Bluetooth, and background processing where applicable.
+- Localization: ensure `l10n/` contains translations for user-facing strings and run `flutter gen-l10n` when needed.
+
+Edge cases to manually test:
+
+1. Device disconnects/reconnects with delayed timestamps
+2. Offline behavior and synchronization when network recovers
+3. Concurrent critical alerts from multiple patients
+
+## Release checklist
+
+- Rotate or remove development API keys and secrets
+- Confirm Firebase platform files point to the correct project
+- Test core flows on physical Android and iOS devices
+- Verify localization for all target locales
+- Run `flutter analyze` and `flutter test` in CI
+
+## Further improvements (suggestions)
+
+- Add a `docs/` folder with per-feature developer guides and API contracts
+- Add integration tests that run against Firebase emulators
+- Add CI workflows to run static analysis, tests, and build smoke artifacts
+
+If you'd like, I can also generate an Arabic README (`README.ar.md`) or scaffold a `docs/` directory with quickstart guides for each feature.
+
+## Where to find more context
+
+- `IMPLEMENTATION_SUMMARY.md`, `UNIFIED_SYSTEM_README.md`, and `SUMMARY_COMPLETION.md` contain design notes and migration history.
+
+## Suggestions / Next steps
+
+- Generate a localized README in Arabic (`README.ar.md`).
+- Scaffold a `docs/` directory with per-feature quickstarts and developer guides.
+
+## Conformance note
+
+This README intentionally references only the current product name and implementation. I scanned the repository and left other code and config unchanged; if you want a full rename or refactor (package names, imports, platform identifiers), I can prepare a safe migration plan and apply it once you approve.
+
+- `IMPLEMENTATION_SUMMARY.md`, `UNIFIED_SYSTEM_README.md`, and `SUMMARY_COMPLETION.md` contain design notes and migration history.
+
+## Next steps (optional help I can do)
+
+- Create an English + Arabic README split (or `README.ar.md`).
+- Add a `docs/` folder with per-feature developer guides.
+- Create CI workflow that runs `flutter analyze`, `flutter test`, and builds a smoke APK.
+
+If you'd like, I will now:
+
+1. Open the updated `README.md` to verify the content and then mark the todo as completed.
+
+   ## Suggestions / Next Steps
+
+   - Add a `docs/` directory containing per-feature developer guides and API contracts.
+   - Add integration tests that run against Firebase emulators to validate Realtime Database behavior without touching production.
+   - Add CI checks to run `flutter analyze`, `flutter test`, and a smoke build on merge.
+
+   ## Where to Look for More Context
+
+   - `IMPLEMENTATION_SUMMARY.md`, `UNIFIED_SYSTEM_README.md`, and `SUMMARY_COMPLETION.md` contain background decisions and migration notes.
+
+   ***
+
+   If you'd like, I can also:
+
+   - Generate a separate localized README in Arabic.
+   - Create a `docs/` scaffold with quickstart guides for new developers.
