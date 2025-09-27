@@ -45,8 +45,13 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
-            isMinifyEnabled = true
-            isShrinkResources = true
+            // Disable code shrinking/minification for now to avoid R8 missing-class
+            // errors (Play Core classes) during release builds. This yields a larger
+            // APK but ensures the build completes. If you want minification later,
+            // re-enable and add the required ProGuard rules (see
+            // build/app/outputs/mapping/release/missing_rules.txt).
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
