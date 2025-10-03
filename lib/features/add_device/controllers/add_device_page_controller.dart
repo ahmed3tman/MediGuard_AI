@@ -8,6 +8,8 @@ import '../view/widgets/manual_device_id_dialog.dart';
 import '../../../core/shared/widgets/widgets.dart';
 import '../../../core/shared/utils/localized_data.dart';
 import '../../../l10n/generated/app_localizations.dart';
+import '../../devices/services/device_service.dart'
+    show DeviceNotFoundException;
 
 /// Controller that holds controllers and simple state for the Add Device page.
 /// Keeps UI (the Widget) thin by moving logic here.
@@ -134,8 +136,15 @@ class AddDevicePageController {
         patientInfo: patientInfo,
       );
     } catch (e) {
-      // surface via snackbar
-      FloatingSnackBar.showError(context, message: e.toString());
+      final l10n = AppLocalizations.of(context);
+      if (e is DeviceNotFoundException) {
+        FloatingSnackBar.showError(
+          context,
+          message: l10n.deviceSerialNotFound(e.deviceId),
+        );
+      } else {
+        FloatingSnackBar.showError(context, message: e.toString());
+      }
     }
   }
 }

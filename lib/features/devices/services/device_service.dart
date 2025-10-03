@@ -1,11 +1,28 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../model/data_model.dart';
+
+class DeviceNotFoundException implements Exception {
+  final String deviceId;
+
+  DeviceNotFoundException(this.deviceId);
+
+  @override
+  String toString() => 'DeviceNotFoundException: Device $deviceId not found';
+}
 
 class DeviceService {
   static final FirebaseDatabase _database = FirebaseDatabase.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static const String _localDemoStorageKey = 'local_demo_devices_v1';
+  static Map<String, Device> _localDemoDevices = {};
+  static bool _localDemoLoaded = false;
+  static Future<void>? _localDemoLoading;
+  static final StreamController<void> _localDemoChanges =
+      StreamController<void>.broadcast();
 
   static String? get currentUserId => _auth.currentUser?.uid;
 
@@ -44,19 +61,29 @@ class DeviceService {
 
   // ---------------- Add / Link Device ----------------
   // Link existing physical device to current user (no readings duplication)
-  static Future<void> addDevice(String deviceId, String deviceName) async {
-    if (currentUserId == null) throw Exception('User not authenticated');
-    if (deviceId.trim().isEmpty) {
+  static Future<void> addDevice(
+    String deviceId,
+    String deviceName, {
+    bool createPlaceholderIfMissing = false,
+  }) async {
+    deviceId = deviceId.trim();
+    if (deviceId.isEmpty) {
       throw Exception('Device ID cannot be empty');
     }
-    // Basic normalization
-    deviceId = deviceId.trim();
+
+    if (createPlaceholderIfMissing) {
+      await _addLocalDemoDevice(deviceId, deviceName);
+      return;
+    }
+
+    if (currentUserId == null) throw Exception('User not authenticated');
 
     // Ensure physical device exists at /devices/{deviceId}
     final physicalRef = _database.ref('devices/$deviceId');
     final physicalSnap = await physicalRef.get();
+
     if (!physicalSnap.exists) {
-      throw Exception('Device not found on network (devices/$deviceId)');
+      throw DeviceNotFoundException(deviceId);
     }
 
     // Create patient link (metadata only) if absent
@@ -86,15 +113,47 @@ class DeviceService {
   // ---------------- Devices Stream (merged) ----------------
   // Internally manages per-device listeners for /devices/{id}/readings
   static Stream<List<Device>> getDevicesStream() {
-    if (currentUserId == null) return Stream.value([]);
+    final controller = StreamController<List<Device>>.broadcast();
+    final localLoad = _ensureLocalDemoLoaded();
+
+    if (currentUserId == null) {
+      StreamSubscription<void>? localSub;
+
+      Future<void> emitLocal() async {
+        await localLoad;
+        controller.add(_localDemoDevices.values.toList());
+      }
+
+      localSub = _localDemoChanges.stream.listen((_) {
+        emitLocal();
+      });
+
+      localLoad.then((_) => emitLocal());
+
+      controller.onCancel = () async {
+        await localSub?.cancel();
+      };
+
+      return controller.stream;
+    }
 
     final patientsRef = _database.ref('users/$currentUserId/patients');
-    final controller = StreamController<List<Device>>.broadcast();
     final Map<String, StreamSubscription<DatabaseEvent>> readingSubs = {};
     final Map<String, Device> latestDevices = {};
+    StreamSubscription<void>? localSub;
+    var patientSnapshotReceived = false;
 
-    Future<void> emitDevices() async {
-      controller.add(latestDevices.values.toList());
+    Future<void> emitDevices({bool force = false}) async {
+      await localLoad;
+      if (!force && !patientSnapshotReceived && _localDemoDevices.isEmpty) {
+        return;
+      }
+      final combined = <String, Device>{};
+      combined.addAll(latestDevices);
+      _localDemoDevices.forEach((id, device) {
+        combined.putIfAbsent(id, () => device);
+      });
+      controller.add(combined.values.toList());
     }
 
     void attachReadingListener(String deviceId) {
@@ -121,13 +180,14 @@ class DeviceService {
           readings: readingsMap,
           lastUpdated: lastUpdated,
         );
-        emitDevices();
+        emitDevices(force: true);
       });
     }
 
     final patientsSub = patientsRef.onValue.listen((event) {
       final data = event.snapshot.value;
       final currentIds = <String>{};
+      patientSnapshotReceived = true;
       if (data is Map) {
         final patientsMap = Map<dynamic, dynamic>.from(data);
         for (final entry in patientsMap.entries) {
@@ -174,11 +234,18 @@ class DeviceService {
         readingSubs.remove(id);
         latestDevices.remove(id);
       }
-      emitDevices();
+      emitDevices(force: true);
     });
+
+    localSub = _localDemoChanges.stream.listen((_) {
+      emitDevices(force: _localDemoDevices.isNotEmpty);
+    });
+
+    localLoad.then((_) => emitDevices(force: _localDemoDevices.isNotEmpty));
 
     controller.onCancel = () async {
       await patientsSub.cancel();
+      await localSub?.cancel();
       for (final sub in readingSubs.values) {
         await sub.cancel();
       }
@@ -235,62 +302,25 @@ class DeviceService {
 
   // Single device merged stream
   static Stream<Device?> getDeviceReadingsStream(String deviceId) {
-    if (currentUserId == null) return Stream.value(null);
-    // Combine patient meta + readings
-    final patientRef = _database.ref('users/$currentUserId/patients/$deviceId');
-    final readingsRef = _database.ref('devices/$deviceId/readings');
+    StreamSubscription? patientSub;
+    StreamSubscription? readingsSub;
+    StreamSubscription<void>? localSub;
+    late final StreamController<Device?> controller;
+    controller = StreamController<Device?>.broadcast(
+      onListen: () {
+        _initDeviceStream(deviceId, controller, (sub1, sub2, local) {
+          patientSub = sub1;
+          readingsSub = sub2;
+          localSub = local;
+        });
+      },
+      onCancel: () async {
+        await patientSub?.cancel();
+        await readingsSub?.cancel();
+        await localSub?.cancel();
+      },
+    );
 
-    // Use controller to merge
-    final controller = StreamController<Device?>.broadcast();
-    Map<String, dynamic> meta = {};
-    Map<String, dynamic> readings = {};
-    DateTime? lastUpdated;
-
-    void emit() {
-      if (meta.isEmpty && readings.isEmpty) {
-        // fallback legacy nested if exists inside meta['device']
-        if (meta['device'] is Map) {
-          try {
-            controller.add(
-              Device.fromJson(Map<String, dynamic>.from(meta['device'])),
-            );
-            return;
-          } catch (_) {}
-        }
-        controller.add(null);
-        return;
-      }
-      final name =
-          meta['patientName'] ?? meta['name'] ?? meta['deviceId'] ?? deviceId;
-      controller.add(
-        Device(
-          deviceId: deviceId,
-          name: name,
-          readings: readings,
-          lastUpdated: lastUpdated,
-        ),
-      );
-    }
-
-    final sub1 = patientRef.onValue.listen((e) {
-      final v = e.snapshot.value;
-      if (v is Map) meta = Map<String, dynamic>.from(v);
-      emit();
-    });
-    final sub2 = readingsRef.onValue.listen((e) {
-      final v = e.snapshot.value;
-      if (v is Map) {
-        readings = Map<String, dynamic>.from(v);
-        final lu = readings['lastUpdated'];
-        lastUpdated = _parseTimestamp(lu);
-      }
-      emit();
-    });
-
-    controller.onCancel = () async {
-      await sub1.cancel();
-      await sub2.cancel();
-    };
     return controller.stream;
   }
 
@@ -334,9 +364,30 @@ class DeviceService {
     String deviceId,
     Map<String, dynamic> newReadings,
   ) async {
-    final readingsRef = _database.ref('devices/$deviceId/readings');
-    // If caller provided lastUpdated, normalize it; else rely on server timestamp
+    await _ensureLocalDemoLoaded();
     final providedTs = _parseTimestamp(newReadings['lastUpdated']);
+    final localMillis =
+        providedTs?.millisecondsSinceEpoch ??
+        DateTime.now().millisecondsSinceEpoch;
+
+    if (_localDemoDevices.containsKey(deviceId)) {
+      final existing = _localDemoDevices[deviceId]!;
+      final updatedReadings = Map<String, dynamic>.from(existing.readings);
+      updatedReadings.addAll(newReadings);
+      updatedReadings['lastUpdated'] = localMillis;
+
+      _localDemoDevices[deviceId] = existing.copyWith(
+        readings: updatedReadings,
+        lastUpdated: DateTime.fromMillisecondsSinceEpoch(localMillis),
+        forceLastUpdated: true,
+      );
+
+      await _persistLocalDemoDevices();
+      _notifyLocalDemoListeners();
+      return;
+    }
+
+    final readingsRef = _database.ref('devices/$deviceId/readings');
     final payload = Map<String, dynamic>.from(newReadings);
     payload['lastUpdated'] =
         providedTs?.millisecondsSinceEpoch ?? ServerValue.timestamp;
@@ -350,11 +401,22 @@ class DeviceService {
     // Ensure lastUpdated is carried and normalized
     final m = Map<String, dynamic>.from(externalReadings);
     final ts = _parseTimestamp(m['lastUpdated']);
-    if (ts != null) m['lastUpdated'] = ts.millisecondsSinceEpoch;
+    if (ts != null) {
+      m['lastUpdated'] = ts.millisecondsSinceEpoch;
+    }
     await updateDeviceReadings(deviceId, m);
   }
 
   static Future<void> updateDeviceName(String deviceId, String newName) async {
+    await _ensureLocalDemoLoaded();
+    if (_localDemoDevices.containsKey(deviceId)) {
+      final existing = _localDemoDevices[deviceId]!;
+      _localDemoDevices[deviceId] = existing.copyWith(name: newName);
+      await _persistLocalDemoDevices();
+      _notifyLocalDemoListeners();
+      return;
+    }
+
     if (currentUserId == null) throw Exception('User not authenticated');
     final patientRef = _database.ref('users/$currentUserId/patients/$deviceId');
     await patientRef.update({
@@ -364,12 +426,27 @@ class DeviceService {
   }
 
   static Future<void> deleteDevice(String deviceId) async {
+    await _ensureLocalDemoLoaded();
+    if (_localDemoDevices.remove(deviceId) != null) {
+      await _persistLocalDemoDevices();
+      _notifyLocalDemoListeners();
+      return;
+    }
+
     if (currentUserId == null) throw Exception('User not authenticated');
     final patientRef = _database.ref('users/$currentUserId/patients/$deviceId');
     await patientRef.remove(); // unlink only
   }
 
   static Future<void> simulateDeviceData(String deviceId) async {
+    await _ensureLocalDemoLoaded();
+    if (_localDemoDevices.containsKey(deviceId)) {
+      final now = DateTime.now();
+      final simulatedReadings = _generateDemoReadings(now);
+      await updateDeviceReadings(deviceId, simulatedReadings);
+      return;
+    }
+
     final random = DateTime.now().millisecondsSinceEpoch % 100;
     final simulatedReadings = {
       'temperature': 36.5 + (random % 20) / 10,
@@ -383,5 +460,180 @@ class DeviceService {
       },
     };
     await updateDeviceReadings(deviceId, simulatedReadings);
+  }
+
+  static Future<void> _ensureLocalDemoLoaded() async {
+    if (_localDemoLoaded) return;
+    if (_localDemoLoading != null) {
+      await _localDemoLoading;
+      return;
+    }
+    _localDemoLoading = _loadLocalDemoDevices();
+    await _localDemoLoading;
+  }
+
+  static Future<void> _loadLocalDemoDevices() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString(_localDemoStorageKey);
+      if (jsonString == null || jsonString.isEmpty) {
+        _localDemoDevices = {};
+        return;
+      }
+      final decoded = jsonDecode(jsonString);
+      if (decoded is List) {
+        final loaded = <String, Device>{};
+        for (final entry in decoded) {
+          if (entry is Map) {
+            try {
+              final device = Device.fromJson(Map<String, dynamic>.from(entry));
+              loaded[device.deviceId] = device;
+            } catch (_) {}
+          }
+        }
+        _localDemoDevices = loaded;
+      } else {
+        _localDemoDevices = {};
+      }
+    } catch (_) {
+      _localDemoDevices = {};
+    } finally {
+      _localDemoLoaded = true;
+      _localDemoLoading = null;
+    }
+  }
+
+  static Future<void> _persistLocalDemoDevices() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final list = _localDemoDevices.values
+          .map((device) => device.toJson())
+          .toList();
+      await prefs.setString(_localDemoStorageKey, jsonEncode(list));
+    } catch (_) {}
+  }
+
+  static void _notifyLocalDemoListeners() {
+    if (!_localDemoChanges.isClosed) {
+      _localDemoChanges.add(null);
+    }
+  }
+
+  static Map<String, dynamic> _generateDemoReadings(DateTime now) {
+    final base = now.millisecondsSinceEpoch % 20;
+    return {
+      'temperature': 36.5 + (base % 5) / 10,
+      'heartRate': 70 + (base % 15),
+      'respiratoryRate': 14 + (base % 6),
+      'spo2': 96 + (base % 4),
+      'bloodPressure': {
+        'systolic': 115 + (base % 10),
+        'diastolic': 75 + (base % 6),
+      },
+      'source': 'demo',
+      'isDemo': true,
+      'lastUpdated': now.millisecondsSinceEpoch,
+    };
+  }
+
+  static Future<void> _addLocalDemoDevice(
+    String deviceId,
+    String deviceName,
+  ) async {
+    await _ensureLocalDemoLoaded();
+    final now = DateTime.now();
+    final device = Device(
+      deviceId: deviceId,
+      name: deviceName,
+      readings: _generateDemoReadings(now),
+      lastUpdated: now,
+    );
+    _localDemoDevices[deviceId] = device;
+    await _persistLocalDemoDevices();
+    _notifyLocalDemoListeners();
+  }
+
+  static Future<void> _initDeviceStream(
+    String deviceId,
+    StreamController<Device?> controller,
+    void Function(
+      StreamSubscription<DatabaseEvent>?,
+      StreamSubscription<DatabaseEvent>?,
+      StreamSubscription<void>?,
+    )
+    registerSubs,
+  ) async {
+    await _ensureLocalDemoLoaded();
+
+    if (_localDemoDevices.containsKey(deviceId)) {
+      void emitLocal() {
+        controller.add(_localDemoDevices[deviceId]);
+      }
+
+      emitLocal();
+      final localSub = _localDemoChanges.stream.listen((_) {
+        emitLocal();
+      });
+      registerSubs(null, null, localSub);
+      return;
+    }
+
+    if (currentUserId == null) {
+      controller.add(null);
+      registerSubs(null, null, null);
+      return;
+    }
+
+    final patientRef = _database.ref('users/$currentUserId/patients/$deviceId');
+    final readingsRef = _database.ref('devices/$deviceId/readings');
+
+    Map<String, dynamic> meta = {};
+    Map<String, dynamic> readings = {};
+    DateTime? lastUpdated;
+
+    void emitRemote() {
+      if (meta.isEmpty && readings.isEmpty) {
+        if (meta['device'] is Map) {
+          try {
+            controller.add(
+              Device.fromJson(Map<String, dynamic>.from(meta['device'])),
+            );
+            return;
+          } catch (_) {}
+        }
+        controller.add(null);
+        return;
+      }
+      final name =
+          meta['patientName'] ?? meta['name'] ?? meta['deviceId'] ?? deviceId;
+      controller.add(
+        Device(
+          deviceId: deviceId,
+          name: name,
+          readings: readings,
+          lastUpdated: lastUpdated,
+        ),
+      );
+    }
+
+    final patientSub = patientRef.onValue.listen((event) {
+      final v = event.snapshot.value;
+      if (v is Map) {
+        meta = Map<String, dynamic>.from(v);
+      }
+      emitRemote();
+    });
+
+    final readingsSub = readingsRef.onValue.listen((event) {
+      final v = event.snapshot.value;
+      if (v is Map) {
+        readings = Map<String, dynamic>.from(v);
+        final lu = readings['lastUpdated'];
+        lastUpdated = _parseTimestamp(lu);
+      }
+      emitRemote();
+    });
+
+    registerSubs(patientSub, readingsSub, null);
   }
 }

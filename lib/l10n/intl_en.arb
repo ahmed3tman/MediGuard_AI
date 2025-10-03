@@ -883,6 +883,16 @@
       }
     }
   },
+  "deviceSerialNotFound": "No registered device matches the serial {deviceId}. Please double-check the number and try again.",
+  "@deviceSerialNotFound": {
+    "description": "Shown when a device serial number is not found in the database",
+    "placeholders": {
+      "deviceId": {
+        "type": "String",
+        "example": "ABC-123"
+      }
+    }
+  },
   "deviceIdInfo": "Device ID is the number on the device label or you can scan it using the QR code attached to the device",
   "@deviceIdInfo": {
     "description": "Information about device ID"

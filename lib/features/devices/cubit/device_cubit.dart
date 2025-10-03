@@ -22,10 +22,22 @@ class DeviceCubit extends Cubit<DeviceState> {
   }
 
   // Add a new device
-  Future<void> addDevice(String deviceId, String deviceName) async {
+  Future<void> addDevice(
+    String deviceId,
+    String deviceName, {
+    bool allowCreatePlaceholder = false,
+  }) async {
     emit(DeviceAdding());
     try {
-      await DeviceService.addDevice(deviceId, deviceName);
+      await DeviceService.addDevice(
+        deviceId,
+        deviceName,
+        createPlaceholderIfMissing: allowCreatePlaceholder,
+      );
+
+      if (allowCreatePlaceholder) {
+        await DeviceService.simulateDeviceData(deviceId);
+      }
       emit(DeviceAdded());
       loadDevices(); // Reload devices after adding
     } catch (e) {

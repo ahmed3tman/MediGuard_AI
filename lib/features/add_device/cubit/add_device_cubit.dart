@@ -18,6 +18,7 @@ class AddDeviceCubit extends Cubit<AddDeviceState> {
       emit(AddDeviceSuccess(patientInfo));
     } catch (e) {
       emit(AddDeviceError(e.toString()));
+      rethrow;
     }
   }
 }

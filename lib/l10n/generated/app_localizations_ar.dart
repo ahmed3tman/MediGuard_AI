@@ -675,6 +675,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String deviceSerialNotFound(String deviceId) {
+    return 'لا يوجد جهاز مسجل برقم التسلسل $deviceId. يرجى التأكد من الرقم والمحاولة مرة أخرى.';
+  }
+
+  @override
   String get deviceIdInfo =>
       'معرف الجهاز هو الرقم الموجود على ملصق الجهاز أو يمكنك مسحه باستخدام رمز QR المرفق مع الجهاز';
 

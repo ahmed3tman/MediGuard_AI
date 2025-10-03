@@ -1376,6 +1376,12 @@ abstract class AppLocalizations {
   /// **'Device ID entered: {deviceId}'**
   String deviceIdEnteredManually(String deviceId);
 
+  /// Shown when a device serial number is not found in the database
+  ///
+  /// In en, this message translates to:
+  /// **'No registered device matches the serial {deviceId}. Please double-check the number and try again.'**
+  String deviceSerialNotFound(String deviceId);
+
   /// Information about device ID
   ///
   /// In en, this message translates to:

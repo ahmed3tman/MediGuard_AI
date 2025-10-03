@@ -345,6 +345,16 @@
       }
     }
   },
+  "deviceSerialNotFound": "لا يوجد جهاز مسجل برقم التسلسل {deviceId}. يرجى التأكد من الرقم والمحاولة مرة أخرى.",
+  "@deviceSerialNotFound": {
+    "description": "رسالة تظهر عند عدم العثور على رقم تسلسلي للجهاز في قاعدة البيانات",
+    "placeholders": {
+      "deviceId": {
+        "type": "String",
+        "example": "ABC-123"
+      }
+    }
+  },
   "deviceIdInfo": "معرف الجهاز هو الرقم الموجود على ملصق الجهاز أو يمكنك مسحه باستخدام رمز QR المرفق مع الجهاز",
   "patientInformation": "بيانات المريض",
   "patientName": "اسم المريض",

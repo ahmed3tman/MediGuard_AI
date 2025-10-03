@@ -110,6 +110,7 @@ class _DevicesScreenState extends State<DevicesScreen> {
               context.read<DeviceCubit>().addDevice(
                 'DEMO001',
                 '${AppLocalizations.of(context).demo} Device',
+                allowCreatePlaceholder: true,
               );
             },
           ),

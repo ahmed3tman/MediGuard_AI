@@ -680,6 +680,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String deviceSerialNotFound(String deviceId) {
+    return 'No registered device matches the serial $deviceId. Please double-check the number and try again.';
+  }
+
+  @override
   String get deviceIdInfo =>
       'Device ID is the number on the device label or you can scan it using the QR code attached to the device';
 
